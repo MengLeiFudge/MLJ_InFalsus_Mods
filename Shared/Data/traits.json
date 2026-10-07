@@ -1,0 +1,564 @@
+[
+  {
+    "Id": 2,
+    "Name": "开幕攻击",
+    "Tier": 1,
+    "Effects": [
+      8096
+    ],
+    "Conditions": [
+      10
+    ]
+  },
+  {
+    "Id": 3,
+    "Name": "开幕攻击 II",
+    "Tier": 2,
+    "Effects": [
+      8096
+    ],
+    "Conditions": [
+      10
+    ]
+  },
+  {
+    "Id": 4,
+    "Name": "开幕攻击 III",
+    "Tier": 3,
+    "Effects": [
+      8096
+    ],
+    "Conditions": [
+      10
+    ]
+  },
+  {
+    "Id": 5,
+    "Name": "终幕攻击",
+    "Tier": 1,
+    "Effects": [
+      8096
+    ],
+    "Conditions": [
+      1
+    ]
+  },
+  {
+    "Id": 6,
+    "Name": "终幕攻击 II",
+    "Tier": 2,
+    "Effects": [
+      8096
+    ],
+    "Conditions": [
+      1
+    ]
+  },
+  {
+    "Id": 7,
+    "Name": "终幕攻击 III",
+    "Tier": 3,
+    "Effects": [
+      8096
+    ],
+    "Conditions": [
+      1
+    ]
+  },
+  {
+    "Id": 8,
+    "Name": "突入攻击",
+    "Tier": 1,
+    "Effects": [
+      8096
+    ],
+    "Conditions": [
+      8
+    ]
+  },
+  {
+    "Id": 9,
+    "Name": "突入攻击 II",
+    "Tier": 2,
+    "Effects": [
+      8096
+    ],
+    "Conditions": [
+      8
+    ]
+  },
+  {
+    "Id": 10,
+    "Name": "突入攻击 III",
+    "Tier": 3,
+    "Effects": [
+      8096
+    ],
+    "Conditions": [
+      8
+    ]
+  },
+  {
+    "Id": 11,
+    "Name": "周期攻击 III",
+    "Tier": 3,
+    "Effects": [
+      8096
+    ],
+    "Conditions": [
+      9
+    ]
+  },
+  {
+    "Id": 12,
+    "Name": "回响攻击 III",
+    "Tier": 3,
+    "Effects": [
+      8096
+    ],
+    "Conditions": [
+      2
+    ]
+  },
+  {
+    "Id": 13,
+    "Name": "余波攻击",
+    "Tier": 1,
+    "Effects": [
+      8096
+    ],
+    "Conditions": [
+      3
+    ]
+  },
+  {
+    "Id": 14,
+    "Name": "余波攻击 II",
+    "Tier": 2,
+    "Effects": [
+      8096
+    ],
+    "Conditions": [
+      3
+    ]
+  },
+  {
+    "Id": 15,
+    "Name": "余波攻击 III",
+    "Tier": 3,
+    "Effects": [
+      8096
+    ],
+    "Conditions": [
+      3
+    ]
+  },
+  {
+    "Id": 16,
+    "Name": "内在压迫",
+    "Tier": 3,
+    "Effects": [
+      128,
+      129
+    ],
+    "Conditions": [
+      6,
+      6
+    ]
+  },
+  {
+    "Id": 18,
+    "Name": "内在削弱",
+    "Tier": 3,
+    "Effects": [
+      129
+    ],
+    "Conditions": [
+      6
+    ]
+  },
+  {
+    "Id": 19,
+    "Name": "范围内在削弱",
+    "Tier": 3,
+    "Effects": [
+      129
+    ],
+    "Conditions": [
+      7
+    ]
+  },
+  {
+    "Id": 20,
+    "Name": "内在眩惑",
+    "Tier": 3,
+    "Effects": [
+      128
+    ],
+    "Conditions": [
+      6
+    ]
+  },
+  {
+    "Id": 21,
+    "Name": "范围内在眩惑",
+    "Tier": 3,
+    "Effects": [
+      128
+    ],
+    "Conditions": [
+      7
+    ]
+  },
+  {
+    "Id": 22,
+    "Name": "开幕回复",
+    "Tier": 1,
+    "Effects": [
+      8097
+    ],
+    "Conditions": [
+      10
+    ]
+  },
+  {
+    "Id": 23,
+    "Name": "开幕回复 II",
+    "Tier": 2,
+    "Effects": [
+      8097
+    ],
+    "Conditions": [
+      10
+    ]
+  },
+  {
+    "Id": 24,
+    "Name": "开幕回复 III",
+    "Tier": 3,
+    "Effects": [
+      8097
+    ],
+    "Conditions": [
+      10
+    ]
+  },
+  {
+    "Id": 25,
+    "Name": "终幕回复",
+    "Tier": 1,
+    "Effects": [
+      8097
+    ],
+    "Conditions": [
+      1
+    ]
+  },
+  {
+    "Id": 26,
+    "Name": "终幕回复 II",
+    "Tier": 2,
+    "Effects": [
+      8097
+    ],
+    "Conditions": [
+      1
+    ]
+  },
+  {
+    "Id": 27,
+    "Name": "终幕回复 III",
+    "Tier": 3,
+    "Effects": [
+      8097
+    ],
+    "Conditions": [
+      1
+    ]
+  },
+  {
+    "Id": 28,
+    "Name": "突入回复",
+    "Tier": 1,
+    "Effects": [
+      8097
+    ],
+    "Conditions": [
+      8
+    ]
+  },
+  {
+    "Id": 29,
+    "Name": "突入回复 II",
+    "Tier": 2,
+    "Effects": [
+      8097
+    ],
+    "Conditions": [
+      8
+    ]
+  },
+  {
+    "Id": 30,
+    "Name": "突入回复 III",
+    "Tier": 3,
+    "Effects": [
+      8097
+    ],
+    "Conditions": [
+      8
+    ]
+  },
+  {
+    "Id": 31,
+    "Name": "周期回复 III",
+    "Tier": 3,
+    "Effects": [
+      8097
+    ],
+    "Conditions": [
+      9
+    ]
+  },
+  {
+    "Id": 32,
+    "Name": "回响回复 III",
+    "Tier": 3,
+    "Effects": [
+      8097
+    ],
+    "Conditions": [
+      2
+    ]
+  },
+  {
+    "Id": 33,
+    "Name": "余波回复",
+    "Tier": 1,
+    "Effects": [
+      8097
+    ],
+    "Conditions": [
+      3
+    ]
+  },
+  {
+    "Id": 34,
+    "Name": "余波回复 II",
+    "Tier": 2,
+    "Effects": [
+      8097
+    ],
+    "Conditions": [
+      3
+    ]
+  },
+  {
+    "Id": 35,
+    "Name": "余波回复 III",
+    "Tier": 3,
+    "Effects": [
+      8097
+    ],
+    "Conditions": [
+      3
+    ]
+  },
+  {
+    "Id": 36,
+    "Name": "内在增强 III",
+    "Tier": 3,
+    "Effects": [
+      1,
+      2
+    ],
+    "Conditions": [
+      6,
+      6
+    ]
+  },
+  {
+    "Id": 37,
+    "Name": "外部增强 III",
+    "Tier": 3,
+    "Effects": [
+      1,
+      2
+    ],
+    "Conditions": [
+      4,
+      4
+    ]
+  },
+  {
+    "Id": 38,
+    "Name": "外围增强 III",
+    "Tier": 3,
+    "Effects": [
+      1,
+      2
+    ],
+    "Conditions": [
+      5,
+      5
+    ]
+  },
+  {
+    "Id": 39,
+    "Name": "范围内在增强 III",
+    "Tier": 3,
+    "Effects": [
+      1,
+      2
+    ],
+    "Conditions": [
+      7,
+      7
+    ]
+  },
+  {
+    "Id": 40,
+    "Name": "精神强化",
+    "Tier": 1,
+    "Effects": [
+      2
+    ],
+    "Conditions": [
+      6
+    ]
+  },
+  {
+    "Id": 41,
+    "Name": "精神强化 II",
+    "Tier": 2,
+    "Effects": [
+      2
+    ],
+    "Conditions": [
+      6
+    ]
+  },
+  {
+    "Id": 42,
+    "Name": "精神强化 III",
+    "Tier": 3,
+    "Effects": [
+      2
+    ],
+    "Conditions": [
+      6
+    ]
+  },
+  {
+    "Id": 43,
+    "Name": "范围精神强化",
+    "Tier": 1,
+    "Effects": [
+      2
+    ],
+    "Conditions": [
+      7
+    ]
+  },
+  {
+    "Id": 44,
+    "Name": "范围精神强化 II",
+    "Tier": 2,
+    "Effects": [
+      2
+    ],
+    "Conditions": [
+      7
+    ]
+  },
+  {
+    "Id": 45,
+    "Name": "范围精神强化 III",
+    "Tier": 3,
+    "Effects": [
+      2
+    ],
+    "Conditions": [
+      7
+    ]
+  },
+  {
+    "Id": 46,
+    "Name": "集中强化",
+    "Tier": 1,
+    "Effects": [
+      1
+    ],
+    "Conditions": [
+      6
+    ]
+  },
+  {
+    "Id": 47,
+    "Name": "集中强化 II",
+    "Tier": 2,
+    "Effects": [
+      1
+    ],
+    "Conditions": [
+      6
+    ]
+  },
+  {
+    "Id": 48,
+    "Name": "集中强化 III",
+    "Tier": 3,
+    "Effects": [
+      1
+    ],
+    "Conditions": [
+      6
+    ]
+  },
+  {
+    "Id": 49,
+    "Name": "范围集中强化",
+    "Tier": 1,
+    "Effects": [
+      1
+    ],
+    "Conditions": [
+      7
+    ]
+  },
+  {
+    "Id": 50,
+    "Name": "范围集中强化 II",
+    "Tier": 2,
+    "Effects": [
+      1
+    ],
+    "Conditions": [
+      7
+    ]
+  },
+  {
+    "Id": 51,
+    "Name": "范围集中强化 III",
+    "Tier": 3,
+    "Effects": [
+      1
+    ],
+    "Conditions": [
+      7
+    ]
+  },
+  {
+    "Id": 63,
+    "Name": "极限攻击 III",
+    "Tier": 3,
+    "Effects": [
+      8096,
+      8096
+    ],
+    "Conditions": [
+      10,
+      1
+    ]
+  }
+]

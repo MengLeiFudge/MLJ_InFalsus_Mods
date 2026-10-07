@@ -1,0 +1,1668 @@
+{
+  "SourceSha256": "6caa2f7571ab41a497d6af9403d969d06ae8a44cd3d834ef9073a62119a3b2a1",
+  "CatalogId": "e32417bd7fa5886ce5fd6345",
+  "Penalty": 2,
+  "EncounterCount": 31,
+  "CardCount": 94,
+  "IdentityFields": [
+    "recipe",
+    "power",
+    "fortitude",
+    "slots",
+    "left",
+    "right",
+    "strikes",
+    "color",
+    "ordered traits"
+  ],
+  "Skills": [
+    {
+      "Id": 4,
+      "Name": "开幕攻击 III",
+      "Count": 0,
+      "Weight": 1
+    },
+    {
+      "Id": 7,
+      "Name": "终幕攻击 III",
+      "Count": 0,
+      "Weight": 1
+    },
+    {
+      "Id": 10,
+      "Name": "突入攻击 III",
+      "Count": 0,
+      "Weight": 1
+    },
+    {
+      "Id": 11,
+      "Name": "周期攻击 III",
+      "Count": 46,
+      "Weight": 12
+    },
+    {
+      "Id": 12,
+      "Name": "回响攻击 III",
+      "Count": 0,
+      "Weight": 1
+    },
+    {
+      "Id": 15,
+      "Name": "余波攻击 III",
+      "Count": 0,
+      "Weight": 1
+    },
+    {
+      "Id": 16,
+      "Name": "内在压迫",
+      "Count": 1,
+      "Weight": 1
+    },
+    {
+      "Id": 18,
+      "Name": "内在削弱",
+      "Count": 1,
+      "Weight": 1
+    },
+    {
+      "Id": 19,
+      "Name": "范围内在削弱",
+      "Count": 55,
+      "Weight": 14
+    },
+    {
+      "Id": 20,
+      "Name": "内在眩惑",
+      "Count": 3,
+      "Weight": 1
+    },
+    {
+      "Id": 21,
+      "Name": "范围内在眩惑",
+      "Count": 45,
+      "Weight": 12
+    },
+    {
+      "Id": 24,
+      "Name": "开幕回复 III",
+      "Count": 0,
+      "Weight": 1
+    },
+    {
+      "Id": 27,
+      "Name": "终幕回复 III",
+      "Count": 0,
+      "Weight": 1
+    },
+    {
+      "Id": 30,
+      "Name": "突入回复 III",
+      "Count": 0,
+      "Weight": 1
+    },
+    {
+      "Id": 31,
+      "Name": "周期回复 III",
+      "Count": 0,
+      "Weight": 1
+    },
+    {
+      "Id": 32,
+      "Name": "回响回复 III",
+      "Count": 5,
+      "Weight": 2
+    },
+    {
+      "Id": 35,
+      "Name": "余波回复 III",
+      "Count": 0,
+      "Weight": 1
+    },
+    {
+      "Id": 36,
+      "Name": "内在增强 III",
+      "Count": 1,
+      "Weight": 1
+    },
+    {
+      "Id": 37,
+      "Name": "外部增强 III",
+      "Count": 0,
+      "Weight": 1
+    },
+    {
+      "Id": 38,
+      "Name": "外围增强 III",
+      "Count": 1,
+      "Weight": 1
+    },
+    {
+      "Id": 39,
+      "Name": "范围内在增强 III",
+      "Count": 47,
+      "Weight": 12
+    },
+    {
+      "Id": 42,
+      "Name": "精神强化 III",
+      "Count": 1,
+      "Weight": 1
+    },
+    {
+      "Id": 45,
+      "Name": "范围精神强化 III",
+      "Count": 24,
+      "Weight": 7
+    },
+    {
+      "Id": 48,
+      "Name": "集中强化 III",
+      "Count": 0,
+      "Weight": 1
+    },
+    {
+      "Id": 51,
+      "Name": "范围集中强化 III",
+      "Count": 39,
+      "Weight": 10
+    },
+    {
+      "Id": 63,
+      "Name": "极限攻击 III",
+      "Count": 0,
+      "Weight": 1
+    }
+  ],
+  "Cards": [
+    {
+      "recipe": 39,
+      "power": 31968,
+      "fortitude": 51948,
+      "slots": 3,
+      "left": 1,
+      "right": 1,
+      "strikes": 0,
+      "color": 4,
+      "traits": [
+        20,
+        21,
+        42
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 41,
+      "power": 20979,
+      "fortitude": 37962,
+      "slots": 3,
+      "left": 2,
+      "right": 2,
+      "strikes": 0,
+      "color": 2,
+      "traits": [
+        11,
+        19,
+        51
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 41,
+      "power": 20979,
+      "fortitude": 37962,
+      "slots": 3,
+      "left": 2,
+      "right": 2,
+      "strikes": 0,
+      "color": 4,
+      "traits": [
+        11,
+        19,
+        51
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 41,
+      "power": 20979,
+      "fortitude": 37962,
+      "slots": 3,
+      "left": 2,
+      "right": 2,
+      "strikes": 0,
+      "color": 4,
+      "traits": [
+        11,
+        21,
+        39
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 41,
+      "power": 20979,
+      "fortitude": 37962,
+      "slots": 3,
+      "left": 2,
+      "right": 2,
+      "strikes": 0,
+      "color": 4,
+      "traits": [
+        11,
+        21,
+        45
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 41,
+      "power": 20979,
+      "fortitude": 37962,
+      "slots": 3,
+      "left": 2,
+      "right": 2,
+      "strikes": 0,
+      "color": 4,
+      "traits": [
+        19,
+        39,
+        51
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 41,
+      "power": 20979,
+      "fortitude": 37962,
+      "slots": 3,
+      "left": 2,
+      "right": 2,
+      "strikes": 0,
+      "color": 4,
+      "traits": [
+        21,
+        32,
+        45
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 41,
+      "power": 20979,
+      "fortitude": 37962,
+      "slots": 3,
+      "left": 2,
+      "right": 2,
+      "strikes": 0,
+      "color": 4,
+      "traits": [
+        21,
+        39,
+        19
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 41,
+      "power": 20979,
+      "fortitude": 37962,
+      "slots": 3,
+      "left": 2,
+      "right": 2,
+      "strikes": 0,
+      "color": 4,
+      "traits": [
+        21,
+        39,
+        45
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 41,
+      "power": 20979,
+      "fortitude": 37962,
+      "slots": 3,
+      "left": 2,
+      "right": 2,
+      "strikes": 0,
+      "color": 4,
+      "traits": [
+        51,
+        21,
+        45
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 41,
+      "power": 20979,
+      "fortitude": 37962,
+      "slots": 3,
+      "left": 2,
+      "right": 2,
+      "strikes": 0,
+      "color": 5,
+      "traits": [
+        11,
+        19,
+        21
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 41,
+      "power": 20979,
+      "fortitude": 37962,
+      "slots": 3,
+      "left": 2,
+      "right": 2,
+      "strikes": 0,
+      "color": 5,
+      "traits": [
+        21,
+        32,
+        45
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 41,
+      "power": 28971,
+      "fortitude": 21978,
+      "slots": 3,
+      "left": 2,
+      "right": 2,
+      "strikes": 0,
+      "color": 4,
+      "traits": [
+        11,
+        19,
+        51
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 60,
+      "power": 93906,
+      "fortitude": 109890,
+      "slots": 1,
+      "left": 0,
+      "right": 0,
+      "strikes": 0,
+      "color": 5,
+      "traits": [
+        16
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 60,
+      "power": 93906,
+      "fortitude": 109890,
+      "slots": 1,
+      "left": 0,
+      "right": 0,
+      "strikes": 0,
+      "color": 5,
+      "traits": [
+        18
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 60,
+      "power": 93906,
+      "fortitude": 109890,
+      "slots": 1,
+      "left": 0,
+      "right": 0,
+      "strikes": 0,
+      "color": 5,
+      "traits": [
+        20
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 60,
+      "power": 93906,
+      "fortitude": 109890,
+      "slots": 1,
+      "left": 0,
+      "right": 0,
+      "strikes": 0,
+      "color": 5,
+      "traits": [
+        36
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 60,
+      "power": 93906,
+      "fortitude": 109890,
+      "slots": 1,
+      "left": 0,
+      "right": 0,
+      "strikes": 0,
+      "color": 5,
+      "traits": [
+        38
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 60,
+      "power": 111888,
+      "fortitude": 109890,
+      "slots": 0,
+      "left": 0,
+      "right": 0,
+      "strikes": 0,
+      "color": 2,
+      "traits": [],
+      "Copies": 1
+    },
+    {
+      "recipe": 66,
+      "power": 25974,
+      "fortitude": 51948,
+      "slots": 3,
+      "left": 4,
+      "right": 2,
+      "strikes": 0,
+      "color": 4,
+      "traits": [
+        11,
+        19,
+        51
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 66,
+      "power": 37296,
+      "fortitude": 40848,
+      "slots": 3,
+      "left": 0,
+      "right": 4,
+      "strikes": 1,
+      "color": 3,
+      "traits": [
+        21,
+        45,
+        39
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 66,
+      "power": 41958,
+      "fortitude": 39960,
+      "slots": 3,
+      "left": 4,
+      "right": 4,
+      "strikes": 0,
+      "color": 1,
+      "traits": [
+        11,
+        19,
+        51
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 66,
+      "power": 41958,
+      "fortitude": 39960,
+      "slots": 3,
+      "left": 4,
+      "right": 4,
+      "strikes": 0,
+      "color": 1,
+      "traits": [
+        11,
+        21,
+        45
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 66,
+      "power": 41958,
+      "fortitude": 39960,
+      "slots": 3,
+      "left": 4,
+      "right": 4,
+      "strikes": 0,
+      "color": 1,
+      "traits": [
+        11,
+        39,
+        51
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 66,
+      "power": 41958,
+      "fortitude": 39960,
+      "slots": 3,
+      "left": 4,
+      "right": 4,
+      "strikes": 0,
+      "color": 1,
+      "traits": [
+        19,
+        21,
+        45
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 66,
+      "power": 41958,
+      "fortitude": 39960,
+      "slots": 3,
+      "left": 4,
+      "right": 4,
+      "strikes": 0,
+      "color": 1,
+      "traits": [
+        19,
+        39,
+        51
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 66,
+      "power": 41958,
+      "fortitude": 39960,
+      "slots": 3,
+      "left": 4,
+      "right": 4,
+      "strikes": 0,
+      "color": 3,
+      "traits": [
+        11,
+        19,
+        21
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 66,
+      "power": 41958,
+      "fortitude": 39960,
+      "slots": 3,
+      "left": 4,
+      "right": 4,
+      "strikes": 0,
+      "color": 3,
+      "traits": [
+        11,
+        19,
+        39
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 66,
+      "power": 41958,
+      "fortitude": 39960,
+      "slots": 3,
+      "left": 4,
+      "right": 4,
+      "strikes": 0,
+      "color": 3,
+      "traits": [
+        11,
+        19,
+        51
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 66,
+      "power": 41958,
+      "fortitude": 39960,
+      "slots": 3,
+      "left": 4,
+      "right": 4,
+      "strikes": 0,
+      "color": 3,
+      "traits": [
+        11,
+        39,
+        51
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 66,
+      "power": 41958,
+      "fortitude": 39960,
+      "slots": 3,
+      "left": 4,
+      "right": 4,
+      "strikes": 0,
+      "color": 3,
+      "traits": [
+        19,
+        21,
+        39
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 66,
+      "power": 41958,
+      "fortitude": 39960,
+      "slots": 3,
+      "left": 4,
+      "right": 4,
+      "strikes": 0,
+      "color": 3,
+      "traits": [
+        19,
+        39,
+        11
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 66,
+      "power": 41958,
+      "fortitude": 39960,
+      "slots": 3,
+      "left": 4,
+      "right": 4,
+      "strikes": 0,
+      "color": 3,
+      "traits": [
+        19,
+        39,
+        51
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 66,
+      "power": 41958,
+      "fortitude": 39960,
+      "slots": 3,
+      "left": 4,
+      "right": 4,
+      "strikes": 0,
+      "color": 3,
+      "traits": [
+        19,
+        45,
+        21
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 66,
+      "power": 41958,
+      "fortitude": 39960,
+      "slots": 3,
+      "left": 4,
+      "right": 4,
+      "strikes": 0,
+      "color": 3,
+      "traits": [
+        19,
+        51,
+        39
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 66,
+      "power": 41958,
+      "fortitude": 39960,
+      "slots": 3,
+      "left": 4,
+      "right": 4,
+      "strikes": 0,
+      "color": 3,
+      "traits": [
+        21,
+        19,
+        51
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 66,
+      "power": 41958,
+      "fortitude": 39960,
+      "slots": 3,
+      "left": 4,
+      "right": 4,
+      "strikes": 0,
+      "color": 3,
+      "traits": [
+        21,
+        32,
+        45
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 66,
+      "power": 41958,
+      "fortitude": 39960,
+      "slots": 3,
+      "left": 4,
+      "right": 4,
+      "strikes": 0,
+      "color": 3,
+      "traits": [
+        21,
+        39,
+        51
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 67,
+      "power": 31968,
+      "fortitude": 27972,
+      "slots": 3,
+      "left": 2,
+      "right": 4,
+      "strikes": 0,
+      "color": 2,
+      "traits": [
+        11,
+        21,
+        45
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 67,
+      "power": 31968,
+      "fortitude": 27972,
+      "slots": 3,
+      "left": 2,
+      "right": 4,
+      "strikes": 0,
+      "color": 2,
+      "traits": [
+        19,
+        39,
+        51
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 67,
+      "power": 31968,
+      "fortitude": 27972,
+      "slots": 3,
+      "left": 2,
+      "right": 4,
+      "strikes": 0,
+      "color": 2,
+      "traits": [
+        21,
+        32,
+        45
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 67,
+      "power": 31968,
+      "fortitude": 27972,
+      "slots": 3,
+      "left": 2,
+      "right": 4,
+      "strikes": 0,
+      "color": 2,
+      "traits": [
+        21,
+        39,
+        19
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 67,
+      "power": 31968,
+      "fortitude": 27972,
+      "slots": 3,
+      "left": 2,
+      "right": 4,
+      "strikes": 0,
+      "color": 4,
+      "traits": [
+        11,
+        21,
+        39
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 67,
+      "power": 31968,
+      "fortitude": 27972,
+      "slots": 3,
+      "left": 2,
+      "right": 4,
+      "strikes": 0,
+      "color": 4,
+      "traits": [
+        11,
+        21,
+        45
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 67,
+      "power": 31968,
+      "fortitude": 27972,
+      "slots": 3,
+      "left": 2,
+      "right": 4,
+      "strikes": 0,
+      "color": 4,
+      "traits": [
+        11,
+        39,
+        51
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 67,
+      "power": 31968,
+      "fortitude": 27972,
+      "slots": 3,
+      "left": 2,
+      "right": 4,
+      "strikes": 0,
+      "color": 4,
+      "traits": [
+        11,
+        51,
+        21
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 67,
+      "power": 31968,
+      "fortitude": 27972,
+      "slots": 3,
+      "left": 2,
+      "right": 4,
+      "strikes": 0,
+      "color": 4,
+      "traits": [
+        19,
+        21,
+        45
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 67,
+      "power": 31968,
+      "fortitude": 27972,
+      "slots": 3,
+      "left": 2,
+      "right": 4,
+      "strikes": 0,
+      "color": 4,
+      "traits": [
+        19,
+        39,
+        51
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 67,
+      "power": 31968,
+      "fortitude": 27972,
+      "slots": 3,
+      "left": 2,
+      "right": 4,
+      "strikes": 0,
+      "color": 4,
+      "traits": [
+        21,
+        32,
+        45
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 67,
+      "power": 31968,
+      "fortitude": 27972,
+      "slots": 3,
+      "left": 2,
+      "right": 4,
+      "strikes": 0,
+      "color": 4,
+      "traits": [
+        21,
+        39,
+        45
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 67,
+      "power": 31968,
+      "fortitude": 27972,
+      "slots": 3,
+      "left": 3,
+      "right": 3,
+      "strikes": 0,
+      "color": 2,
+      "traits": [
+        11,
+        19,
+        21
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 67,
+      "power": 31968,
+      "fortitude": 27972,
+      "slots": 3,
+      "left": 3,
+      "right": 3,
+      "strikes": 0,
+      "color": 2,
+      "traits": [
+        11,
+        19,
+        51
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 67,
+      "power": 31968,
+      "fortitude": 27972,
+      "slots": 3,
+      "left": 3,
+      "right": 3,
+      "strikes": 0,
+      "color": 2,
+      "traits": [
+        11,
+        21,
+        39
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 67,
+      "power": 31968,
+      "fortitude": 27972,
+      "slots": 3,
+      "left": 3,
+      "right": 3,
+      "strikes": 0,
+      "color": 2,
+      "traits": [
+        19,
+        21,
+        39
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 67,
+      "power": 31968,
+      "fortitude": 27972,
+      "slots": 3,
+      "left": 3,
+      "right": 3,
+      "strikes": 0,
+      "color": 2,
+      "traits": [
+        19,
+        39,
+        51
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 67,
+      "power": 31968,
+      "fortitude": 27972,
+      "slots": 3,
+      "left": 3,
+      "right": 3,
+      "strikes": 0,
+      "color": 2,
+      "traits": [
+        45,
+        19,
+        39
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 67,
+      "power": 49950,
+      "fortitude": 9990,
+      "slots": 3,
+      "left": 3,
+      "right": 3,
+      "strikes": 0,
+      "color": 4,
+      "traits": [
+        11,
+        19,
+        51
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 67,
+      "power": 49950,
+      "fortitude": 9990,
+      "slots": 3,
+      "left": 3,
+      "right": 3,
+      "strikes": 0,
+      "color": 4,
+      "traits": [
+        19,
+        39,
+        51
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 68,
+      "power": 23088,
+      "fortitude": 21312,
+      "slots": 3,
+      "left": 3,
+      "right": 3,
+      "strikes": 1,
+      "color": 3,
+      "traits": [
+        11,
+        19,
+        39
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 68,
+      "power": 23088,
+      "fortitude": 31968,
+      "slots": 3,
+      "left": 1,
+      "right": 3,
+      "strikes": 1,
+      "color": 1,
+      "traits": [
+        19,
+        39,
+        45
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 68,
+      "power": 23088,
+      "fortitude": 31968,
+      "slots": 3,
+      "left": 1,
+      "right": 3,
+      "strikes": 1,
+      "color": 4,
+      "traits": [
+        19,
+        39,
+        51
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 68,
+      "power": 23088,
+      "fortitude": 31968,
+      "slots": 3,
+      "left": 3,
+      "right": 1,
+      "strikes": 1,
+      "color": 1,
+      "traits": [
+        11,
+        19,
+        39
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 68,
+      "power": 23088,
+      "fortitude": 31968,
+      "slots": 3,
+      "left": 3,
+      "right": 1,
+      "strikes": 1,
+      "color": 1,
+      "traits": [
+        11,
+        20,
+        39
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 68,
+      "power": 23088,
+      "fortitude": 31968,
+      "slots": 3,
+      "left": 3,
+      "right": 1,
+      "strikes": 1,
+      "color": 3,
+      "traits": [
+        19,
+        11,
+        39
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 68,
+      "power": 23088,
+      "fortitude": 31968,
+      "slots": 3,
+      "left": 3,
+      "right": 1,
+      "strikes": 1,
+      "color": 3,
+      "traits": [
+        19,
+        39,
+        51
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 68,
+      "power": 23088,
+      "fortitude": 31968,
+      "slots": 3,
+      "left": 3,
+      "right": 1,
+      "strikes": 1,
+      "color": 3,
+      "traits": [
+        21,
+        39,
+        51
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 68,
+      "power": 23088,
+      "fortitude": 31968,
+      "slots": 3,
+      "left": 3,
+      "right": 1,
+      "strikes": 1,
+      "color": 3,
+      "traits": [
+        21,
+        45,
+        19
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 68,
+      "power": 35964,
+      "fortitude": 11988,
+      "slots": 3,
+      "left": 1,
+      "right": 4,
+      "strikes": 0,
+      "color": 4,
+      "traits": [
+        11,
+        21,
+        45
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 68,
+      "power": 35964,
+      "fortitude": 11988,
+      "slots": 3,
+      "left": 1,
+      "right": 4,
+      "strikes": 0,
+      "color": 4,
+      "traits": [
+        51,
+        21,
+        39
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 68,
+      "power": 35964,
+      "fortitude": 11988,
+      "slots": 3,
+      "left": 4,
+      "right": 1,
+      "strikes": 0,
+      "color": 1,
+      "traits": [
+        11,
+        19,
+        51
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 68,
+      "power": 35964,
+      "fortitude": 11988,
+      "slots": 3,
+      "left": 4,
+      "right": 1,
+      "strikes": 0,
+      "color": 3,
+      "traits": [
+        11,
+        19,
+        51
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 70,
+      "power": 26973,
+      "fortitude": 30969,
+      "slots": 3,
+      "left": 4,
+      "right": 0,
+      "strikes": 0,
+      "color": 1,
+      "traits": [
+        11,
+        19,
+        39
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 70,
+      "power": 26973,
+      "fortitude": 30969,
+      "slots": 3,
+      "left": 4,
+      "right": 0,
+      "strikes": 0,
+      "color": 1,
+      "traits": [
+        11,
+        19,
+        51
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 70,
+      "power": 26973,
+      "fortitude": 30969,
+      "slots": 3,
+      "left": 4,
+      "right": 0,
+      "strikes": 0,
+      "color": 1,
+      "traits": [
+        19,
+        21,
+        11
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 70,
+      "power": 26973,
+      "fortitude": 30969,
+      "slots": 3,
+      "left": 4,
+      "right": 0,
+      "strikes": 0,
+      "color": 2,
+      "traits": [
+        11,
+        19,
+        39
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 70,
+      "power": 26973,
+      "fortitude": 30969,
+      "slots": 3,
+      "left": 4,
+      "right": 0,
+      "strikes": 0,
+      "color": 5,
+      "traits": [
+        11,
+        19,
+        51
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 70,
+      "power": 26973,
+      "fortitude": 30969,
+      "slots": 3,
+      "left": 4,
+      "right": 0,
+      "strikes": 0,
+      "color": 5,
+      "traits": [
+        19,
+        39,
+        51
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 70,
+      "power": 26973,
+      "fortitude": 30969,
+      "slots": 3,
+      "left": 4,
+      "right": 0,
+      "strikes": 0,
+      "color": 5,
+      "traits": [
+        39,
+        19,
+        51
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 70,
+      "power": 32967,
+      "fortitude": 24975,
+      "slots": 3,
+      "left": 2,
+      "right": 2,
+      "strikes": 0,
+      "color": 1,
+      "traits": [
+        11,
+        21,
+        45
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 70,
+      "power": 32967,
+      "fortitude": 24975,
+      "slots": 3,
+      "left": 2,
+      "right": 2,
+      "strikes": 0,
+      "color": 1,
+      "traits": [
+        21,
+        45,
+        39
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 70,
+      "power": 32967,
+      "fortitude": 24975,
+      "slots": 3,
+      "left": 3,
+      "right": 1,
+      "strikes": 0,
+      "color": 1,
+      "traits": [
+        11,
+        19,
+        51
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 70,
+      "power": 32967,
+      "fortitude": 24975,
+      "slots": 3,
+      "left": 3,
+      "right": 1,
+      "strikes": 0,
+      "color": 1,
+      "traits": [
+        19,
+        39,
+        51
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 70,
+      "power": 38961,
+      "fortitude": 18981,
+      "slots": 3,
+      "left": 1,
+      "right": 3,
+      "strikes": 0,
+      "color": 1,
+      "traits": [
+        11,
+        19,
+        51
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 70,
+      "power": 38961,
+      "fortitude": 18981,
+      "slots": 3,
+      "left": 1,
+      "right": 3,
+      "strikes": 0,
+      "color": 1,
+      "traits": [
+        11,
+        21,
+        19
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 70,
+      "power": 38961,
+      "fortitude": 18981,
+      "slots": 3,
+      "left": 1,
+      "right": 3,
+      "strikes": 0,
+      "color": 1,
+      "traits": [
+        11,
+        21,
+        39
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 70,
+      "power": 38961,
+      "fortitude": 18981,
+      "slots": 3,
+      "left": 1,
+      "right": 3,
+      "strikes": 0,
+      "color": 1,
+      "traits": [
+        11,
+        21,
+        45
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 70,
+      "power": 38961,
+      "fortitude": 18981,
+      "slots": 3,
+      "left": 1,
+      "right": 3,
+      "strikes": 0,
+      "color": 1,
+      "traits": [
+        19,
+        21,
+        39
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 70,
+      "power": 38961,
+      "fortitude": 18981,
+      "slots": 3,
+      "left": 1,
+      "right": 3,
+      "strikes": 0,
+      "color": 1,
+      "traits": [
+        19,
+        39,
+        51
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 70,
+      "power": 38961,
+      "fortitude": 18981,
+      "slots": 3,
+      "left": 1,
+      "right": 3,
+      "strikes": 0,
+      "color": 2,
+      "traits": [
+        11,
+        39,
+        21
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 70,
+      "power": 44955,
+      "fortitude": 12987,
+      "slots": 3,
+      "left": 0,
+      "right": 4,
+      "strikes": 0,
+      "color": 1,
+      "traits": [
+        11,
+        19,
+        51
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 70,
+      "power": 44955,
+      "fortitude": 12987,
+      "slots": 3,
+      "left": 0,
+      "right": 4,
+      "strikes": 0,
+      "color": 1,
+      "traits": [
+        11,
+        21,
+        39
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 70,
+      "power": 44955,
+      "fortitude": 12987,
+      "slots": 3,
+      "left": 0,
+      "right": 4,
+      "strikes": 0,
+      "color": 1,
+      "traits": [
+        21,
+        39,
+        45
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 70,
+      "power": 44955,
+      "fortitude": 12987,
+      "slots": 3,
+      "left": 0,
+      "right": 4,
+      "strikes": 0,
+      "color": 5,
+      "traits": [
+        11,
+        19,
+        51
+      ],
+      "Copies": 1
+    },
+    {
+      "recipe": 70,
+      "power": 44955,
+      "fortitude": 12987,
+      "slots": 3,
+      "left": 0,
+      "right": 4,
+      "strikes": 0,
+      "color": 5,
+      "traits": [
+        19,
+        21,
+        39
+      ],
+      "Copies": 1
+    }
+  ]
+}

@@ -1,0 +1,2589 @@
+{
+  "Conditions": {
+    "RunsPerEncounter": 20,
+    "Stars": 5,
+    "AdditionalQuantityMultiplier": 1,
+    "RetrievalBoost": 3,
+    "StackBoost": 5,
+    "PotencyMinimumRatio": 0.25,
+    "DirectMaximumChance": 0.05,
+    "InitialInventory": 0,
+    "InitialBalance": 0,
+    "FirstClearRewards": false,
+    "AllRepeatableEncountersUnlocked": true,
+    "InitialDropCycle": "每张回想掉落表从未排除任何行开始，状态跨20局保留",
+    "DropSeed": 20260923,
+    "RandomAlgorithm": "掉落使用 System.Random：同概率规则的可复现样本，不复现Unity某局随机序列；融合不含随机性"
+  },
+  "Evidence": {
+    "game_commit": "007d2f885f0fd931ce7621030ff08311fb74f13b",
+    "game_data_sha256": "1c8cc650b5dea68146b4804a4702c5dabdb78124c0111be000dd2847f6c7946f",
+    "catalog_sha256": "54e5d73e22b500fb98a97a8e427227e4d0480e4e7ec076a802ed7f9147873cbd"
+  },
+  "Farming": [
+    {
+      "Encounter": 83,
+      "Name": "无名之女",
+      "Runs": 20,
+      "DrawsPerRun": 11,
+      "Draws": 220,
+      "Inventory": {
+        "Total": {
+          "Count": 1289,
+          "MeanPotency": 830.95,
+          "MinimumPotency": 345,
+          "MaximumPotency": 999,
+          "At999": 103,
+          "AtLeast900": 552,
+          "AtLeast800": 833,
+          "SkillCounts": [
+            311,
+            616,
+            356,
+            6
+          ]
+        },
+        "Tiers": [
+          {
+            "Tier": 1,
+            "Metrics": {
+              "Count": 570,
+              "MeanPotency": 814.93,
+              "MinimumPotency": 382,
+              "MaximumPotency": 999,
+              "At999": 27,
+              "AtLeast900": 235,
+              "AtLeast800": 352,
+              "SkillCounts": [
+                130,
+                269,
+                171,
+                0
+              ]
+            }
+          },
+          {
+            "Tier": 2,
+            "Metrics": {
+              "Count": 579,
+              "MeanPotency": 845.14,
+              "MinimumPotency": 345,
+              "MaximumPotency": 999,
+              "At999": 62,
+              "AtLeast900": 258,
+              "AtLeast800": 401,
+              "SkillCounts": [
+                165,
+                289,
+                125,
+                0
+              ]
+            }
+          },
+          {
+            "Tier": 3,
+            "Metrics": {
+              "Count": 140,
+              "MeanPotency": 837.5,
+              "MinimumPotency": 534,
+              "MaximumPotency": 999,
+              "At999": 14,
+              "AtLeast900": 59,
+              "AtLeast800": 80,
+              "SkillCounts": [
+                16,
+                58,
+                60,
+                6
+              ]
+            }
+          }
+        ],
+        "Skills": [
+          {
+            "Id": 4,
+            "Name": "开幕攻击 III",
+            "Tier": 3,
+            "Copies": 154
+          },
+          {
+            "Id": 7,
+            "Name": "终幕攻击 III",
+            "Tier": 3,
+            "Copies": 101
+          },
+          {
+            "Id": 10,
+            "Name": "突入攻击 III",
+            "Tier": 3,
+            "Copies": 72
+          },
+          {
+            "Id": 15,
+            "Name": "余波攻击 III",
+            "Tier": 3,
+            "Copies": 122
+          },
+          {
+            "Id": 24,
+            "Name": "开幕回复 III",
+            "Tier": 3,
+            "Copies": 81
+          },
+          {
+            "Id": 27,
+            "Name": "终幕回复 III",
+            "Tier": 3,
+            "Copies": 61
+          },
+          {
+            "Id": 30,
+            "Name": "突入回复 III",
+            "Tier": 3,
+            "Copies": 90
+          },
+          {
+            "Id": 35,
+            "Name": "余波回复 III",
+            "Tier": 3,
+            "Copies": 148
+          },
+          {
+            "Id": 36,
+            "Name": "内在增强 III",
+            "Tier": 3,
+            "Copies": 75
+          },
+          {
+            "Id": 39,
+            "Name": "范围内在增强 III",
+            "Tier": 3,
+            "Copies": 90
+          },
+          {
+            "Id": 42,
+            "Name": "精神强化 III",
+            "Tier": 3,
+            "Copies": 70
+          },
+          {
+            "Id": 45,
+            "Name": "范围精神强化 III",
+            "Tier": 3,
+            "Copies": 73
+          },
+          {
+            "Id": 48,
+            "Name": "集中强化 III",
+            "Tier": 3,
+            "Copies": 63
+          },
+          {
+            "Id": 51,
+            "Name": "范围集中强化 III",
+            "Tier": 3,
+            "Copies": 146
+          }
+        ]
+      }
+    },
+    {
+      "Encounter": 84,
+      "Name": "断绝",
+      "Runs": 20,
+      "DrawsPerRun": 11,
+      "Draws": 220,
+      "Inventory": {
+        "Total": {
+          "Count": 1188,
+          "MeanPotency": 812.6,
+          "MinimumPotency": 356,
+          "MaximumPotency": 999,
+          "At999": 68,
+          "AtLeast900": 443,
+          "AtLeast800": 702,
+          "SkillCounts": [
+            279,
+            581,
+            310,
+            18
+          ]
+        },
+        "Tiers": [
+          {
+            "Tier": 1,
+            "Metrics": {
+              "Count": 533,
+              "MeanPotency": 787.53,
+              "MinimumPotency": 356,
+              "MaximumPotency": 999,
+              "At999": 25,
+              "AtLeast900": 164,
+              "AtLeast800": 278,
+              "SkillCounts": [
+                130,
+                271,
+                132,
+                0
+              ]
+            }
+          },
+          {
+            "Tier": 2,
+            "Metrics": {
+              "Count": 506,
+              "MeanPotency": 827.41,
+              "MinimumPotency": 375,
+              "MaximumPotency": 999,
+              "At999": 24,
+              "AtLeast900": 207,
+              "AtLeast800": 319,
+              "SkillCounts": [
+                134,
+                264,
+                108,
+                0
+              ]
+            }
+          },
+          {
+            "Tier": 3,
+            "Metrics": {
+              "Count": 149,
+              "MeanPotency": 852.01,
+              "MinimumPotency": 508,
+              "MaximumPotency": 999,
+              "At999": 19,
+              "AtLeast900": 72,
+              "AtLeast800": 105,
+              "SkillCounts": [
+                15,
+                46,
+                70,
+                18
+              ]
+            }
+          }
+        ],
+        "Skills": [
+          {
+            "Id": 4,
+            "Name": "开幕攻击 III",
+            "Tier": 3,
+            "Copies": 96
+          },
+          {
+            "Id": 7,
+            "Name": "终幕攻击 III",
+            "Tier": 3,
+            "Copies": 65
+          },
+          {
+            "Id": 10,
+            "Name": "突入攻击 III",
+            "Tier": 3,
+            "Copies": 107
+          },
+          {
+            "Id": 15,
+            "Name": "余波攻击 III",
+            "Tier": 3,
+            "Copies": 79
+          },
+          {
+            "Id": 24,
+            "Name": "开幕回复 III",
+            "Tier": 3,
+            "Copies": 114
+          },
+          {
+            "Id": 27,
+            "Name": "终幕回复 III",
+            "Tier": 3,
+            "Copies": 89
+          },
+          {
+            "Id": 30,
+            "Name": "突入回复 III",
+            "Tier": 3,
+            "Copies": 55
+          },
+          {
+            "Id": 35,
+            "Name": "余波回复 III",
+            "Tier": 3,
+            "Copies": 71
+          },
+          {
+            "Id": 36,
+            "Name": "内在增强 III",
+            "Tier": 3,
+            "Copies": 92
+          },
+          {
+            "Id": 39,
+            "Name": "范围内在增强 III",
+            "Tier": 3,
+            "Copies": 111
+          },
+          {
+            "Id": 42,
+            "Name": "精神强化 III",
+            "Tier": 3,
+            "Copies": 100
+          },
+          {
+            "Id": 45,
+            "Name": "范围精神强化 III",
+            "Tier": 3,
+            "Copies": 73
+          },
+          {
+            "Id": 48,
+            "Name": "集中强化 III",
+            "Tier": 3,
+            "Copies": 95
+          },
+          {
+            "Id": 51,
+            "Name": "范围集中强化 III",
+            "Tier": 3,
+            "Copies": 108
+          }
+        ]
+      }
+    },
+    {
+      "Encounter": 85,
+      "Name": "追忆：神明的手掌心",
+      "Runs": 20,
+      "DrawsPerRun": 7,
+      "Draws": 140,
+      "Inventory": {
+        "Total": {
+          "Count": 797,
+          "MeanPotency": 807.32,
+          "MinimumPotency": 387,
+          "MaximumPotency": 999,
+          "At999": 38,
+          "AtLeast900": 292,
+          "AtLeast800": 452,
+          "SkillCounts": [
+            396,
+            401,
+            0,
+            0
+          ]
+        },
+        "Tiers": [
+          {
+            "Tier": 1,
+            "Metrics": {
+              "Count": 797,
+              "MeanPotency": 807.32,
+              "MinimumPotency": 387,
+              "MaximumPotency": 999,
+              "At999": 38,
+              "AtLeast900": 292,
+              "AtLeast800": 452,
+              "SkillCounts": [
+                396,
+                401,
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "Tier": 2,
+            "Metrics": {
+              "Count": 0,
+              "MeanPotency": null,
+              "MinimumPotency": null,
+              "MaximumPotency": null,
+              "At999": 0,
+              "AtLeast900": 0,
+              "AtLeast800": 0,
+              "SkillCounts": [
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "Tier": 3,
+            "Metrics": {
+              "Count": 0,
+              "MeanPotency": null,
+              "MinimumPotency": null,
+              "MaximumPotency": null,
+              "At999": 0,
+              "AtLeast900": 0,
+              "AtLeast800": 0,
+              "SkillCounts": [
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        ],
+        "Skills": [
+          {
+            "Id": 11,
+            "Name": "周期攻击 III",
+            "Tier": 3,
+            "Copies": 10
+          },
+          {
+            "Id": 12,
+            "Name": "回响攻击 III",
+            "Tier": 3,
+            "Copies": 3
+          },
+          {
+            "Id": 16,
+            "Name": "内在压迫",
+            "Tier": 3,
+            "Copies": 35
+          },
+          {
+            "Id": 18,
+            "Name": "内在削弱",
+            "Tier": 3,
+            "Copies": 65
+          },
+          {
+            "Id": 19,
+            "Name": "范围内在削弱",
+            "Tier": 3,
+            "Copies": 35
+          },
+          {
+            "Id": 20,
+            "Name": "内在眩惑",
+            "Tier": 3,
+            "Copies": 28
+          },
+          {
+            "Id": 21,
+            "Name": "范围内在眩惑",
+            "Tier": 3,
+            "Copies": 52
+          },
+          {
+            "Id": 31,
+            "Name": "周期回复 III",
+            "Tier": 3,
+            "Copies": 33
+          },
+          {
+            "Id": 32,
+            "Name": "回响回复 III",
+            "Tier": 3,
+            "Copies": 5
+          },
+          {
+            "Id": 37,
+            "Name": "外部增强 III",
+            "Tier": 3,
+            "Copies": 14
+          },
+          {
+            "Id": 38,
+            "Name": "外围增强 III",
+            "Tier": 3,
+            "Copies": 11
+          },
+          {
+            "Id": 63,
+            "Name": "极限攻击 III",
+            "Tier": 3,
+            "Copies": 110
+          }
+        ]
+      }
+    },
+    {
+      "Encounter": 105,
+      "Name": "无常的风暴",
+      "Runs": 20,
+      "DrawsPerRun": 11,
+      "Draws": 220,
+      "Inventory": {
+        "Total": {
+          "Count": 1138,
+          "MeanPotency": 806.04,
+          "MinimumPotency": 331,
+          "MaximumPotency": 999,
+          "At999": 83,
+          "AtLeast900": 426,
+          "AtLeast800": 692,
+          "SkillCounts": [
+            206,
+            445,
+            394,
+            93
+          ]
+        },
+        "Tiers": [
+          {
+            "Tier": 1,
+            "Metrics": {
+              "Count": 1138,
+              "MeanPotency": 806.04,
+              "MinimumPotency": 331,
+              "MaximumPotency": 999,
+              "At999": 83,
+              "AtLeast900": 426,
+              "AtLeast800": 692,
+              "SkillCounts": [
+                206,
+                445,
+                394,
+                93
+              ]
+            }
+          },
+          {
+            "Tier": 2,
+            "Metrics": {
+              "Count": 0,
+              "MeanPotency": null,
+              "MinimumPotency": null,
+              "MaximumPotency": null,
+              "At999": 0,
+              "AtLeast900": 0,
+              "AtLeast800": 0,
+              "SkillCounts": [
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "Tier": 3,
+            "Metrics": {
+              "Count": 0,
+              "MeanPotency": null,
+              "MinimumPotency": null,
+              "MaximumPotency": null,
+              "At999": 0,
+              "AtLeast900": 0,
+              "AtLeast800": 0,
+              "SkillCounts": [
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        ],
+        "Skills": [
+          {
+            "Id": 11,
+            "Name": "周期攻击 III",
+            "Tier": 3,
+            "Copies": 154
+          },
+          {
+            "Id": 12,
+            "Name": "回响攻击 III",
+            "Tier": 3,
+            "Copies": 142
+          },
+          {
+            "Id": 16,
+            "Name": "内在压迫",
+            "Tier": 3,
+            "Copies": 148
+          },
+          {
+            "Id": 18,
+            "Name": "内在削弱",
+            "Tier": 3,
+            "Copies": 95
+          },
+          {
+            "Id": 19,
+            "Name": "范围内在削弱",
+            "Tier": 3,
+            "Copies": 73
+          },
+          {
+            "Id": 20,
+            "Name": "内在眩惑",
+            "Tier": 3,
+            "Copies": 98
+          },
+          {
+            "Id": 21,
+            "Name": "范围内在眩惑",
+            "Tier": 3,
+            "Copies": 107
+          },
+          {
+            "Id": 31,
+            "Name": "周期回复 III",
+            "Tier": 3,
+            "Copies": 166
+          },
+          {
+            "Id": 32,
+            "Name": "回响回复 III",
+            "Tier": 3,
+            "Copies": 133
+          },
+          {
+            "Id": 37,
+            "Name": "外部增强 III",
+            "Tier": 3,
+            "Copies": 157
+          },
+          {
+            "Id": 38,
+            "Name": "外围增强 III",
+            "Tier": 3,
+            "Copies": 176
+          },
+          {
+            "Id": 63,
+            "Name": "极限攻击 III",
+            "Tier": 3,
+            "Copies": 63
+          }
+        ]
+      }
+    }
+  ],
+  "Before": {
+    "Total": {
+      "Count": 4412,
+      "MeanPotency": 815.32,
+      "MinimumPotency": 331,
+      "MaximumPotency": 999,
+      "At999": 292,
+      "AtLeast900": 1713,
+      "AtLeast800": 2679,
+      "SkillCounts": [
+        1192,
+        2043,
+        1060,
+        117
+      ]
+    },
+    "Tiers": [
+      {
+        "Tier": 1,
+        "Metrics": {
+          "Count": 3038,
+          "MeanPotency": 804.8,
+          "MinimumPotency": 331,
+          "MaximumPotency": 999,
+          "At999": 173,
+          "AtLeast900": 1117,
+          "AtLeast800": 1774,
+          "SkillCounts": [
+            862,
+            1386,
+            697,
+            93
+          ]
+        }
+      },
+      {
+        "Tier": 2,
+        "Metrics": {
+          "Count": 1085,
+          "MeanPotency": 836.87,
+          "MinimumPotency": 345,
+          "MaximumPotency": 999,
+          "At999": 86,
+          "AtLeast900": 465,
+          "AtLeast800": 720,
+          "SkillCounts": [
+            299,
+            553,
+            233,
+            0
+          ]
+        }
+      },
+      {
+        "Tier": 3,
+        "Metrics": {
+          "Count": 289,
+          "MeanPotency": 844.98,
+          "MinimumPotency": 508,
+          "MaximumPotency": 999,
+          "At999": 33,
+          "AtLeast900": 131,
+          "AtLeast800": 185,
+          "SkillCounts": [
+            31,
+            104,
+            130,
+            24
+          ]
+        }
+      }
+    ],
+    "Skills": [
+      {
+        "Id": 4,
+        "Name": "开幕攻击 III",
+        "Tier": 3,
+        "Copies": 250
+      },
+      {
+        "Id": 7,
+        "Name": "终幕攻击 III",
+        "Tier": 3,
+        "Copies": 166
+      },
+      {
+        "Id": 10,
+        "Name": "突入攻击 III",
+        "Tier": 3,
+        "Copies": 179
+      },
+      {
+        "Id": 11,
+        "Name": "周期攻击 III",
+        "Tier": 3,
+        "Copies": 164
+      },
+      {
+        "Id": 12,
+        "Name": "回响攻击 III",
+        "Tier": 3,
+        "Copies": 145
+      },
+      {
+        "Id": 15,
+        "Name": "余波攻击 III",
+        "Tier": 3,
+        "Copies": 201
+      },
+      {
+        "Id": 16,
+        "Name": "内在压迫",
+        "Tier": 3,
+        "Copies": 183
+      },
+      {
+        "Id": 18,
+        "Name": "内在削弱",
+        "Tier": 3,
+        "Copies": 160
+      },
+      {
+        "Id": 19,
+        "Name": "范围内在削弱",
+        "Tier": 3,
+        "Copies": 108
+      },
+      {
+        "Id": 20,
+        "Name": "内在眩惑",
+        "Tier": 3,
+        "Copies": 126
+      },
+      {
+        "Id": 21,
+        "Name": "范围内在眩惑",
+        "Tier": 3,
+        "Copies": 159
+      },
+      {
+        "Id": 24,
+        "Name": "开幕回复 III",
+        "Tier": 3,
+        "Copies": 195
+      },
+      {
+        "Id": 27,
+        "Name": "终幕回复 III",
+        "Tier": 3,
+        "Copies": 150
+      },
+      {
+        "Id": 30,
+        "Name": "突入回复 III",
+        "Tier": 3,
+        "Copies": 145
+      },
+      {
+        "Id": 31,
+        "Name": "周期回复 III",
+        "Tier": 3,
+        "Copies": 199
+      },
+      {
+        "Id": 32,
+        "Name": "回响回复 III",
+        "Tier": 3,
+        "Copies": 138
+      },
+      {
+        "Id": 35,
+        "Name": "余波回复 III",
+        "Tier": 3,
+        "Copies": 219
+      },
+      {
+        "Id": 36,
+        "Name": "内在增强 III",
+        "Tier": 3,
+        "Copies": 167
+      },
+      {
+        "Id": 37,
+        "Name": "外部增强 III",
+        "Tier": 3,
+        "Copies": 171
+      },
+      {
+        "Id": 38,
+        "Name": "外围增强 III",
+        "Tier": 3,
+        "Copies": 187
+      },
+      {
+        "Id": 39,
+        "Name": "范围内在增强 III",
+        "Tier": 3,
+        "Copies": 201
+      },
+      {
+        "Id": 42,
+        "Name": "精神强化 III",
+        "Tier": 3,
+        "Copies": 170
+      },
+      {
+        "Id": 45,
+        "Name": "范围精神强化 III",
+        "Tier": 3,
+        "Copies": 146
+      },
+      {
+        "Id": 48,
+        "Name": "集中强化 III",
+        "Tier": 3,
+        "Copies": 158
+      },
+      {
+        "Id": 51,
+        "Name": "范围集中强化 III",
+        "Tier": 3,
+        "Copies": 254
+      },
+      {
+        "Id": 63,
+        "Name": "极限攻击 III",
+        "Tier": 3,
+        "Copies": 173
+      }
+    ]
+  },
+  "Operation": {
+    "Limit": 2619,
+    "Processed": 2616,
+    "Decomposed": 2615,
+    "Supplied": 1891025,
+    "Spent": 1890842,
+    "Remainder": 183,
+    "RemainderCount": 1,
+    "Strengthened": 1229,
+    "UpgradedBySkills": [
+      343,
+      598,
+      265,
+      23
+    ],
+    "DecomposedPerNew999": 2.13,
+    "Consolidated": false,
+    "PrepareMilliseconds": 37,
+    "ForecastMilliseconds": 23
+  },
+  "After": {
+    "Total": {
+      "Count": 1797,
+      "MeanPotency": 977.24,
+      "MinimumPotency": 183,
+      "MaximumPotency": 999,
+      "At999": 1521,
+      "AtLeast900": 1713,
+      "AtLeast800": 1742,
+      "SkillCounts": [
+        432,
+        811,
+        437,
+        117
+      ]
+    },
+    "Tiers": [
+      {
+        "Tier": 1,
+        "Metrics": {
+          "Count": 1188,
+          "MeanPotency": 972.64,
+          "MinimumPotency": 183,
+          "MaximumPotency": 999,
+          "At999": 974,
+          "AtLeast900": 1117,
+          "AtLeast800": 1139,
+          "SkillCounts": [
+            295,
+            527,
+            273,
+            93
+          ]
+        }
+      },
+      {
+        "Tier": 2,
+        "Metrics": {
+          "Count": 465,
+          "MeanPotency": 989.94,
+          "MinimumPotency": 901,
+          "MaximumPotency": 999,
+          "At999": 421,
+          "AtLeast900": 465,
+          "AtLeast800": 465,
+          "SkillCounts": [
+            131,
+            237,
+            97,
+            0
+          ]
+        }
+      },
+      {
+        "Tier": 3,
+        "Metrics": {
+          "Count": 144,
+          "MeanPotency": 974.18,
+          "MinimumPotency": 672,
+          "MaximumPotency": 999,
+          "At999": 126,
+          "AtLeast900": 131,
+          "AtLeast800": 138,
+          "SkillCounts": [
+            6,
+            47,
+            67,
+            24
+          ]
+        }
+      }
+    ],
+    "Skills": [
+      {
+        "Id": 4,
+        "Name": "开幕攻击 III",
+        "Tier": 3,
+        "Copies": 105
+      },
+      {
+        "Id": 7,
+        "Name": "终幕攻击 III",
+        "Tier": 3,
+        "Copies": 77
+      },
+      {
+        "Id": 10,
+        "Name": "突入攻击 III",
+        "Tier": 3,
+        "Copies": 76
+      },
+      {
+        "Id": 11,
+        "Name": "周期攻击 III",
+        "Tier": 3,
+        "Copies": 76
+      },
+      {
+        "Id": 12,
+        "Name": "回响攻击 III",
+        "Tier": 3,
+        "Copies": 65
+      },
+      {
+        "Id": 15,
+        "Name": "余波攻击 III",
+        "Tier": 3,
+        "Copies": 85
+      },
+      {
+        "Id": 16,
+        "Name": "内在压迫",
+        "Tier": 3,
+        "Copies": 118
+      },
+      {
+        "Id": 18,
+        "Name": "内在削弱",
+        "Tier": 3,
+        "Copies": 72
+      },
+      {
+        "Id": 19,
+        "Name": "范围内在削弱",
+        "Tier": 3,
+        "Copies": 31
+      },
+      {
+        "Id": 20,
+        "Name": "内在眩惑",
+        "Tier": 3,
+        "Copies": 60
+      },
+      {
+        "Id": 21,
+        "Name": "范围内在眩惑",
+        "Tier": 3,
+        "Copies": 89
+      },
+      {
+        "Id": 24,
+        "Name": "开幕回复 III",
+        "Tier": 3,
+        "Copies": 110
+      },
+      {
+        "Id": 27,
+        "Name": "终幕回复 III",
+        "Tier": 3,
+        "Copies": 83
+      },
+      {
+        "Id": 30,
+        "Name": "突入回复 III",
+        "Tier": 3,
+        "Copies": 40
+      },
+      {
+        "Id": 31,
+        "Name": "周期回复 III",
+        "Tier": 3,
+        "Copies": 64
+      },
+      {
+        "Id": 32,
+        "Name": "回响回复 III",
+        "Tier": 3,
+        "Copies": 45
+      },
+      {
+        "Id": 35,
+        "Name": "余波回复 III",
+        "Tier": 3,
+        "Copies": 139
+      },
+      {
+        "Id": 36,
+        "Name": "内在增强 III",
+        "Tier": 3,
+        "Copies": 76
+      },
+      {
+        "Id": 37,
+        "Name": "外部增强 III",
+        "Tier": 3,
+        "Copies": 64
+      },
+      {
+        "Id": 38,
+        "Name": "外围增强 III",
+        "Tier": 3,
+        "Copies": 97
+      },
+      {
+        "Id": 39,
+        "Name": "范围内在增强 III",
+        "Tier": 3,
+        "Copies": 92
+      },
+      {
+        "Id": 42,
+        "Name": "精神强化 III",
+        "Tier": 3,
+        "Copies": 61
+      },
+      {
+        "Id": 45,
+        "Name": "范围精神强化 III",
+        "Tier": 3,
+        "Copies": 43
+      },
+      {
+        "Id": 48,
+        "Name": "集中强化 III",
+        "Tier": 3,
+        "Copies": 73
+      },
+      {
+        "Id": 51,
+        "Name": "范围集中强化 III",
+        "Tier": 3,
+        "Copies": 109
+      },
+      {
+        "Id": 63,
+        "Name": "极限攻击 III",
+        "Tier": 3,
+        "Copies": 86
+      }
+    ]
+  },
+  "ByShape": [
+    {
+      "Id": 1,
+      "Name": "r-1-1",
+      "Tier": 1,
+      "Color": 1,
+      "Before": {
+        "Count": 255,
+        "MeanPotency": 816.93,
+        "MinimumPotency": 416,
+        "MaximumPotency": 999,
+        "At999": 24,
+        "AtLeast900": 107,
+        "AtLeast800": 159,
+        "SkillCounts": [
+          44,
+          112,
+          99,
+          0
+        ]
+      },
+      "After": {
+        "Count": 107,
+        "MeanPotency": 984.7,
+        "MinimumPotency": 901,
+        "MaximumPotency": 999,
+        "At999": 90,
+        "AtLeast900": 107,
+        "AtLeast800": 107,
+        "SkillCounts": [
+          0,
+          38,
+          69,
+          0
+        ]
+      }
+    },
+    {
+      "Id": 2,
+      "Name": "r-1-2",
+      "Tier": 1,
+      "Color": 1,
+      "Before": {
+        "Count": 223,
+        "MeanPotency": 795.35,
+        "MinimumPotency": 364,
+        "MaximumPotency": 999,
+        "At999": 10,
+        "AtLeast900": 72,
+        "AtLeast800": 125,
+        "SkillCounts": [
+          58,
+          100,
+          52,
+          13
+        ]
+      },
+      "After": {
+        "Count": 82,
+        "MeanPotency": 971.7,
+        "MinimumPotency": 843,
+        "MaximumPotency": 999,
+        "At999": 65,
+        "AtLeast900": 72,
+        "AtLeast800": 82,
+        "SkillCounts": [
+          14,
+          34,
+          21,
+          13
+        ]
+      }
+    },
+    {
+      "Id": 3,
+      "Name": "r-1-3",
+      "Tier": 1,
+      "Color": 1,
+      "Before": {
+        "Count": 191,
+        "MeanPotency": 803.57,
+        "MinimumPotency": 447,
+        "MaximumPotency": 999,
+        "At999": 16,
+        "AtLeast900": 76,
+        "AtLeast800": 107,
+        "SkillCounts": [
+          50,
+          83,
+          41,
+          17
+        ]
+      },
+      "After": {
+        "Count": 93,
+        "MeanPotency": 948.3,
+        "MinimumPotency": 634,
+        "MaximumPotency": 999,
+        "At999": 68,
+        "AtLeast900": 76,
+        "AtLeast800": 83,
+        "SkillCounts": [
+          18,
+          40,
+          18,
+          17
+        ]
+      }
+    },
+    {
+      "Id": 4,
+      "Name": "y-1-1",
+      "Tier": 1,
+      "Color": 2,
+      "Before": {
+        "Count": 202,
+        "MeanPotency": 815.64,
+        "MinimumPotency": 426,
+        "MaximumPotency": 999,
+        "At999": 20,
+        "AtLeast900": 77,
+        "AtLeast800": 116,
+        "SkillCounts": [
+          82,
+          68,
+          44,
+          8
+        ]
+      },
+      "After": {
+        "Count": 85,
+        "MeanPotency": 978.01,
+        "MinimumPotency": 776,
+        "MaximumPotency": 999,
+        "At999": 77,
+        "AtLeast900": 77,
+        "AtLeast800": 77,
+        "SkillCounts": [
+          37,
+          13,
+          27,
+          8
+        ]
+      }
+    },
+    {
+      "Id": 5,
+      "Name": "y-1-2",
+      "Tier": 1,
+      "Color": 2,
+      "Before": {
+        "Count": 192,
+        "MeanPotency": 844.79,
+        "MinimumPotency": 432,
+        "MaximumPotency": 999,
+        "At999": 13,
+        "AtLeast900": 89,
+        "AtLeast800": 125,
+        "SkillCounts": [
+          43,
+          79,
+          48,
+          22
+        ]
+      },
+      "After": {
+        "Count": 90,
+        "MeanPotency": 982.39,
+        "MinimumPotency": 183,
+        "MaximumPotency": 999,
+        "At999": 82,
+        "AtLeast900": 89,
+        "AtLeast800": 89,
+        "SkillCounts": [
+          22,
+          33,
+          13,
+          22
+        ]
+      }
+    },
+    {
+      "Id": 6,
+      "Name": "y-1-3",
+      "Tier": 1,
+      "Color": 2,
+      "Before": {
+        "Count": 178,
+        "MeanPotency": 782.84,
+        "MinimumPotency": 331,
+        "MaximumPotency": 999,
+        "At999": 10,
+        "AtLeast900": 58,
+        "AtLeast800": 102,
+        "SkillCounts": [
+          47,
+          102,
+          18,
+          11
+        ]
+      },
+      "After": {
+        "Count": 69,
+        "MeanPotency": 946.8,
+        "MinimumPotency": 690,
+        "MaximumPotency": 999,
+        "At999": 49,
+        "AtLeast900": 58,
+        "AtLeast800": 58,
+        "SkillCounts": [
+          26,
+          29,
+          3,
+          11
+        ]
+      }
+    },
+    {
+      "Id": 7,
+      "Name": "g-1-1",
+      "Tier": 1,
+      "Color": 3,
+      "Before": {
+        "Count": 178,
+        "MeanPotency": 818.69,
+        "MinimumPotency": 555,
+        "MaximumPotency": 999,
+        "At999": 12,
+        "AtLeast900": 91,
+        "AtLeast800": 105,
+        "SkillCounts": [
+          48,
+          91,
+          38,
+          1
+        ]
+      },
+      "After": {
+        "Count": 94,
+        "MeanPotency": 979.01,
+        "MinimumPotency": 585,
+        "MaximumPotency": 999,
+        "At999": 84,
+        "AtLeast900": 91,
+        "AtLeast800": 91,
+        "SkillCounts": [
+          20,
+          51,
+          22,
+          1
+        ]
+      }
+    },
+    {
+      "Id": 8,
+      "Name": "g-1-2",
+      "Tier": 1,
+      "Color": 3,
+      "Before": {
+        "Count": 161,
+        "MeanPotency": 778.2,
+        "MinimumPotency": 356,
+        "MaximumPotency": 999,
+        "At999": 11,
+        "AtLeast900": 52,
+        "AtLeast800": 91,
+        "SkillCounts": [
+          65,
+          74,
+          22,
+          0
+        ]
+      },
+      "After": {
+        "Count": 52,
+        "MeanPotency": 993.46,
+        "MinimumPotency": 903,
+        "MaximumPotency": 999,
+        "At999": 49,
+        "AtLeast900": 52,
+        "AtLeast800": 52,
+        "SkillCounts": [
+          25,
+          27,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "Id": 9,
+      "Name": "g-1-3",
+      "Tier": 1,
+      "Color": 3,
+      "Before": {
+        "Count": 185,
+        "MeanPotency": 770.51,
+        "MinimumPotency": 436,
+        "MaximumPotency": 997,
+        "At999": 0,
+        "AtLeast900": 45,
+        "AtLeast800": 102,
+        "SkillCounts": [
+          58,
+          66,
+          61,
+          0
+        ]
+      },
+      "After": {
+        "Count": 45,
+        "MeanPotency": 999,
+        "MinimumPotency": 999,
+        "MaximumPotency": 999,
+        "At999": 45,
+        "AtLeast900": 45,
+        "AtLeast800": 45,
+        "SkillCounts": [
+          19,
+          11,
+          15,
+          0
+        ]
+      }
+    },
+    {
+      "Id": 10,
+      "Name": "b-1-1",
+      "Tier": 1,
+      "Color": 4,
+      "Before": {
+        "Count": 204,
+        "MeanPotency": 758.36,
+        "MinimumPotency": 381,
+        "MaximumPotency": 988,
+        "At999": 0,
+        "AtLeast900": 51,
+        "AtLeast800": 88,
+        "SkillCounts": [
+          37,
+          112,
+          55,
+          0
+        ]
+      },
+      "After": {
+        "Count": 51,
+        "MeanPotency": 966.67,
+        "MinimumPotency": 902,
+        "MaximumPotency": 999,
+        "At999": 34,
+        "AtLeast900": 51,
+        "AtLeast800": 51,
+        "SkillCounts": [
+          13,
+          21,
+          17,
+          0
+        ]
+      }
+    },
+    {
+      "Id": 11,
+      "Name": "b-1-2",
+      "Tier": 1,
+      "Color": 4,
+      "Before": {
+        "Count": 226,
+        "MeanPotency": 797.31,
+        "MinimumPotency": 382,
+        "MaximumPotency": 999,
+        "At999": 14,
+        "AtLeast900": 81,
+        "AtLeast800": 140,
+        "SkillCounts": [
+          59,
+          114,
+          45,
+          8
+        ]
+      },
+      "After": {
+        "Count": 89,
+        "MeanPotency": 940.9,
+        "MinimumPotency": 633,
+        "MaximumPotency": 999,
+        "At999": 57,
+        "AtLeast900": 81,
+        "AtLeast800": 81,
+        "SkillCounts": [
+          6,
+          59,
+          16,
+          8
+        ]
+      }
+    },
+    {
+      "Id": 12,
+      "Name": "b-1-3",
+      "Tier": 1,
+      "Color": 4,
+      "Before": {
+        "Count": 197,
+        "MeanPotency": 853.1,
+        "MinimumPotency": 439,
+        "MaximumPotency": 999,
+        "At999": 21,
+        "AtLeast900": 83,
+        "AtLeast800": 137,
+        "SkillCounts": [
+          73,
+          92,
+          32,
+          0
+        ]
+      },
+      "After": {
+        "Count": 83,
+        "MeanPotency": 997.88,
+        "MinimumPotency": 906,
+        "MaximumPotency": 999,
+        "At999": 82,
+        "AtLeast900": 83,
+        "AtLeast800": 83,
+        "SkillCounts": [
+          32,
+          42,
+          9,
+          0
+        ]
+      }
+    },
+    {
+      "Id": 13,
+      "Name": "p-1-1",
+      "Tier": 1,
+      "Color": 5,
+      "Before": {
+        "Count": 229,
+        "MeanPotency": 806.78,
+        "MinimumPotency": 371,
+        "MaximumPotency": 999,
+        "At999": 9,
+        "AtLeast900": 75,
+        "AtLeast800": 134,
+        "SkillCounts": [
+          53,
+          121,
+          55,
+          0
+        ]
+      },
+      "After": {
+        "Count": 75,
+        "MeanPotency": 985.19,
+        "MinimumPotency": 901,
+        "MaximumPotency": 999,
+        "At999": 64,
+        "AtLeast900": 75,
+        "AtLeast800": 75,
+        "SkillCounts": [
+          13,
+          45,
+          17,
+          0
+        ]
+      }
+    },
+    {
+      "Id": 14,
+      "Name": "p-1-2",
+      "Tier": 1,
+      "Color": 5,
+      "Before": {
+        "Count": 230,
+        "MeanPotency": 822.87,
+        "MinimumPotency": 474,
+        "MaximumPotency": 999,
+        "At999": 10,
+        "AtLeast900": 91,
+        "AtLeast800": 139,
+        "SkillCounts": [
+          92,
+          87,
+          46,
+          5
+        ]
+      },
+      "After": {
+        "Count": 96,
+        "MeanPotency": 971.94,
+        "MinimumPotency": 890,
+        "MaximumPotency": 999,
+        "At999": 69,
+        "AtLeast900": 91,
+        "AtLeast800": 96,
+        "SkillCounts": [
+          37,
+          44,
+          10,
+          5
+        ]
+      }
+    },
+    {
+      "Id": 15,
+      "Name": "p-1-3",
+      "Tier": 1,
+      "Color": 5,
+      "Before": {
+        "Count": 187,
+        "MeanPotency": 796.61,
+        "MinimumPotency": 453,
+        "MaximumPotency": 999,
+        "At999": 3,
+        "AtLeast900": 69,
+        "AtLeast800": 104,
+        "SkillCounts": [
+          53,
+          85,
+          41,
+          8
+        ]
+      },
+      "After": {
+        "Count": 77,
+        "MeanPotency": 956.91,
+        "MinimumPotency": 698,
+        "MaximumPotency": 999,
+        "At999": 59,
+        "AtLeast900": 69,
+        "AtLeast800": 69,
+        "SkillCounts": [
+          13,
+          40,
+          16,
+          8
+        ]
+      }
+    },
+    {
+      "Id": 16,
+      "Name": "r-2-1",
+      "Tier": 2,
+      "Color": 1,
+      "Before": {
+        "Count": 109,
+        "MeanPotency": 862.01,
+        "MinimumPotency": 589,
+        "MaximumPotency": 999,
+        "At999": 5,
+        "AtLeast900": 58,
+        "AtLeast800": 93,
+        "SkillCounts": [
+          20,
+          55,
+          34,
+          0
+        ]
+      },
+      "After": {
+        "Count": 58,
+        "MeanPotency": 972.31,
+        "MinimumPotency": 901,
+        "MaximumPotency": 999,
+        "At999": 42,
+        "AtLeast900": 58,
+        "AtLeast800": 58,
+        "SkillCounts": [
+          13,
+          30,
+          15,
+          0
+        ]
+      }
+    },
+    {
+      "Id": 17,
+      "Name": "r-2-2",
+      "Tier": 2,
+      "Color": 1,
+      "Before": {
+        "Count": 106,
+        "MeanPotency": 846.1,
+        "MinimumPotency": 522,
+        "MaximumPotency": 999,
+        "At999": 14,
+        "AtLeast900": 49,
+        "AtLeast800": 66,
+        "SkillCounts": [
+          26,
+          54,
+          26,
+          0
+        ]
+      },
+      "After": {
+        "Count": 49,
+        "MeanPotency": 999,
+        "MinimumPotency": 999,
+        "MaximumPotency": 999,
+        "At999": 49,
+        "AtLeast900": 49,
+        "AtLeast800": 49,
+        "SkillCounts": [
+          15,
+          21,
+          13,
+          0
+        ]
+      }
+    },
+    {
+      "Id": 18,
+      "Name": "r-2-3",
+      "Tier": 2,
+      "Color": 1,
+      "Before": {
+        "Count": 98,
+        "MeanPotency": 840.32,
+        "MinimumPotency": 442,
+        "MaximumPotency": 999,
+        "At999": 5,
+        "AtLeast900": 43,
+        "AtLeast800": 69,
+        "SkillCounts": [
+          40,
+          44,
+          14,
+          0
+        ]
+      },
+      "After": {
+        "Count": 43,
+        "MeanPotency": 999,
+        "MinimumPotency": 999,
+        "MaximumPotency": 999,
+        "At999": 43,
+        "AtLeast900": 43,
+        "AtLeast800": 43,
+        "SkillCounts": [
+          16,
+          23,
+          4,
+          0
+        ]
+      }
+    },
+    {
+      "Id": 19,
+      "Name": "y-2-1",
+      "Tier": 2,
+      "Color": 2,
+      "Before": {
+        "Count": 67,
+        "MeanPotency": 876.3,
+        "MinimumPotency": 510,
+        "MaximumPotency": 976,
+        "At999": 0,
+        "AtLeast900": 57,
+        "AtLeast800": 57,
+        "SkillCounts": [
+          10,
+          49,
+          8,
+          0
+        ]
+      },
+      "After": {
+        "Count": 57,
+        "MeanPotency": 997.46,
+        "MinimumPotency": 911,
+        "MaximumPotency": 999,
+        "At999": 56,
+        "AtLeast900": 57,
+        "AtLeast800": 57,
+        "SkillCounts": [
+          10,
+          39,
+          8,
+          0
+        ]
+      }
+    },
+    {
+      "Id": 20,
+      "Name": "y-2-2",
+      "Tier": 2,
+      "Color": 2,
+      "Before": {
+        "Count": 55,
+        "MeanPotency": 840.96,
+        "MinimumPotency": 632,
+        "MaximumPotency": 999,
+        "At999": 7,
+        "AtLeast900": 18,
+        "AtLeast800": 29,
+        "SkillCounts": [
+          9,
+          20,
+          26,
+          0
+        ]
+      },
+      "After": {
+        "Count": 18,
+        "MeanPotency": 999,
+        "MinimumPotency": 999,
+        "MaximumPotency": 999,
+        "At999": 18,
+        "AtLeast900": 18,
+        "AtLeast800": 18,
+        "SkillCounts": [
+          0,
+          4,
+          14,
+          0
+        ]
+      }
+    },
+    {
+      "Id": 21,
+      "Name": "y-2-3",
+      "Tier": 2,
+      "Color": 2,
+      "Before": {
+        "Count": 56,
+        "MeanPotency": 770.02,
+        "MinimumPotency": 612,
+        "MaximumPotency": 907,
+        "At999": 0,
+        "AtLeast900": 17,
+        "AtLeast800": 29,
+        "SkillCounts": [
+          30,
+          25,
+          1,
+          0
+        ]
+      },
+      "After": {
+        "Count": 17,
+        "MeanPotency": 904.94,
+        "MinimumPotency": 902,
+        "MaximumPotency": 907,
+        "At999": 0,
+        "AtLeast900": 17,
+        "AtLeast800": 17,
+        "SkillCounts": [
+          14,
+          3,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "Id": 22,
+      "Name": "g-2-1",
+      "Tier": 2,
+      "Color": 3,
+      "Before": {
+        "Count": 49,
+        "MeanPotency": 792.16,
+        "MinimumPotency": 401,
+        "MaximumPotency": 997,
+        "At999": 0,
+        "AtLeast900": 20,
+        "AtLeast800": 22,
+        "SkillCounts": [
+          12,
+          18,
+          19,
+          0
+        ]
+      },
+      "After": {
+        "Count": 20,
+        "MeanPotency": 999,
+        "MinimumPotency": 999,
+        "MaximumPotency": 999,
+        "At999": 20,
+        "AtLeast900": 20,
+        "AtLeast800": 20,
+        "SkillCounts": [
+          7,
+          6,
+          7,
+          0
+        ]
+      }
+    },
+    {
+      "Id": 23,
+      "Name": "g-2-2",
+      "Tier": 2,
+      "Color": 3,
+      "Before": {
+        "Count": 45,
+        "MeanPotency": 768.73,
+        "MinimumPotency": 375,
+        "MaximumPotency": 999,
+        "At999": 1,
+        "AtLeast900": 15,
+        "AtLeast800": 24,
+        "SkillCounts": [
+          5,
+          32,
+          8,
+          0
+        ]
+      },
+      "After": {
+        "Count": 15,
+        "MeanPotency": 999,
+        "MinimumPotency": 999,
+        "MaximumPotency": 999,
+        "At999": 15,
+        "AtLeast900": 15,
+        "AtLeast800": 15,
+        "SkillCounts": [
+          5,
+          10,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "Id": 24,
+      "Name": "g-2-3",
+      "Tier": 2,
+      "Color": 3,
+      "Before": {
+        "Count": 46,
+        "MeanPotency": 828.72,
+        "MinimumPotency": 565,
+        "MaximumPotency": 980,
+        "At999": 0,
+        "AtLeast900": 18,
+        "AtLeast800": 27,
+        "SkillCounts": [
+          25,
+          17,
+          4,
+          0
+        ]
+      },
+      "After": {
+        "Count": 18,
+        "MeanPotency": 999,
+        "MinimumPotency": 999,
+        "MaximumPotency": 999,
+        "At999": 18,
+        "AtLeast900": 18,
+        "AtLeast800": 18,
+        "SkillCounts": [
+          14,
+          0,
+          4,
+          0
+        ]
+      }
+    },
+    {
+      "Id": 25,
+      "Name": "b-2-1",
+      "Tier": 2,
+      "Color": 4,
+      "Before": {
+        "Count": 94,
+        "MeanPotency": 845.13,
+        "MinimumPotency": 345,
+        "MaximumPotency": 999,
+        "At999": 10,
+        "AtLeast900": 48,
+        "AtLeast800": 59,
+        "SkillCounts": [
+          21,
+          61,
+          12,
+          0
+        ]
+      },
+      "After": {
+        "Count": 48,
+        "MeanPotency": 978.58,
+        "MinimumPotency": 901,
+        "MaximumPotency": 999,
+        "At999": 38,
+        "AtLeast900": 48,
+        "AtLeast800": 48,
+        "SkillCounts": [
+          6,
+          42,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "Id": 26,
+      "Name": "b-2-2",
+      "Tier": 2,
+      "Color": 4,
+      "Before": {
+        "Count": 86,
+        "MeanPotency": 819.42,
+        "MinimumPotency": 498,
+        "MaximumPotency": 999,
+        "At999": 9,
+        "AtLeast900": 21,
+        "AtLeast800": 50,
+        "SkillCounts": [
+          26,
+          43,
+          17,
+          0
+        ]
+      },
+      "After": {
+        "Count": 21,
+        "MeanPotency": 999,
+        "MinimumPotency": 999,
+        "MaximumPotency": 999,
+        "At999": 21,
+        "AtLeast900": 21,
+        "AtLeast800": 21,
+        "SkillCounts": [
+          6,
+          6,
+          9,
+          0
+        ]
+      }
+    },
+    {
+      "Id": 27,
+      "Name": "b-2-3",
+      "Tier": 2,
+      "Color": 4,
+      "Before": {
+        "Count": 86,
+        "MeanPotency": 853.81,
+        "MinimumPotency": 653,
+        "MaximumPotency": 999,
+        "At999": 19,
+        "AtLeast900": 39,
+        "AtLeast800": 64,
+        "SkillCounts": [
+          32,
+          32,
+          22,
+          0
+        ]
+      },
+      "After": {
+        "Count": 39,
+        "MeanPotency": 999,
+        "MinimumPotency": 999,
+        "MaximumPotency": 999,
+        "At999": 39,
+        "AtLeast900": 39,
+        "AtLeast800": 39,
+        "SkillCounts": [
+          14,
+          14,
+          11,
+          0
+        ]
+      }
+    },
+    {
+      "Id": 28,
+      "Name": "p-2-1",
+      "Tier": 2,
+      "Color": 5,
+      "Before": {
+        "Count": 44,
+        "MeanPotency": 831.86,
+        "MinimumPotency": 673,
+        "MaximumPotency": 999,
+        "At999": 5,
+        "AtLeast900": 9,
+        "AtLeast800": 29,
+        "SkillCounts": [
+          12,
+          29,
+          3,
+          0
+        ]
+      },
+      "After": {
+        "Count": 9,
+        "MeanPotency": 999,
+        "MinimumPotency": 999,
+        "MaximumPotency": 999,
+        "At999": 9,
+        "AtLeast900": 9,
+        "AtLeast800": 9,
+        "SkillCounts": [
+          4,
+          3,
+          2,
+          0
+        ]
+      }
+    },
+    {
+      "Id": 29,
+      "Name": "p-2-2",
+      "Tier": 2,
+      "Color": 5,
+      "Before": {
+        "Count": 69,
+        "MeanPotency": 861,
+        "MinimumPotency": 658,
+        "MaximumPotency": 999,
+        "At999": 2,
+        "AtLeast900": 29,
+        "AtLeast800": 55,
+        "SkillCounts": [
+          8,
+          31,
+          30,
+          0
+        ]
+      },
+      "After": {
+        "Count": 29,
+        "MeanPotency": 999,
+        "MinimumPotency": 999,
+        "MaximumPotency": 999,
+        "At999": 29,
+        "AtLeast900": 29,
+        "AtLeast800": 29,
+        "SkillCounts": [
+          0,
+          19,
+          10,
+          0
+        ]
+      }
+    },
+    {
+      "Id": 30,
+      "Name": "p-2-3",
+      "Tier": 2,
+      "Color": 5,
+      "Before": {
+        "Count": 75,
+        "MeanPotency": 840.59,
+        "MinimumPotency": 614,
+        "MaximumPotency": 999,
+        "At999": 9,
+        "AtLeast900": 24,
+        "AtLeast800": 47,
+        "SkillCounts": [
+          23,
+          43,
+          9,
+          0
+        ]
+      },
+      "After": {
+        "Count": 24,
+        "MeanPotency": 999,
+        "MinimumPotency": 999,
+        "MaximumPotency": 999,
+        "At999": 24,
+        "AtLeast900": 24,
+        "AtLeast800": 24,
+        "SkillCounts": [
+          7,
+          17,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "Id": 31,
+      "Name": "r-3-1",
+      "Tier": 3,
+      "Color": 1,
+      "Before": {
+        "Count": 35,
+        "MeanPotency": 825.26,
+        "MinimumPotency": 654,
+        "MaximumPotency": 988,
+        "At999": 0,
+        "AtLeast900": 8,
+        "AtLeast800": 19,
+        "SkillCounts": [
+          0,
+          14,
+          21,
+          0
+        ]
+      },
+      "After": {
+        "Count": 8,
+        "MeanPotency": 999,
+        "MinimumPotency": 999,
+        "MaximumPotency": 999,
+        "At999": 8,
+        "AtLeast900": 8,
+        "AtLeast800": 8,
+        "SkillCounts": [
+          0,
+          8,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "Id": 32,
+      "Name": "r-3-2",
+      "Tier": 3,
+      "Color": 1,
+      "Before": {
+        "Count": 34,
+        "MeanPotency": 872.85,
+        "MinimumPotency": 534,
+        "MaximumPotency": 999,
+        "At999": 14,
+        "AtLeast900": 21,
+        "AtLeast800": 21,
+        "SkillCounts": [
+          0,
+          23,
+          11,
+          0
+        ]
+      },
+      "After": {
+        "Count": 21,
+        "MeanPotency": 999,
+        "MinimumPotency": 999,
+        "MaximumPotency": 999,
+        "At999": 21,
+        "AtLeast900": 21,
+        "AtLeast800": 21,
+        "SkillCounts": [
+          0,
+          11,
+          10,
+          0
+        ]
+      }
+    },
+    {
+      "Id": 33,
+      "Name": "y-3-1",
+      "Tier": 3,
+      "Color": 2,
+      "Before": {
+        "Count": 30,
+        "MeanPotency": 834.17,
+        "MinimumPotency": 596,
+        "MaximumPotency": 980,
+        "At999": 0,
+        "AtLeast900": 11,
+        "AtLeast800": 21,
+        "SkillCounts": [
+          0,
+          20,
+          10,
+          0
+        ]
+      },
+      "After": {
+        "Count": 11,
+        "MeanPotency": 999,
+        "MinimumPotency": 999,
+        "MaximumPotency": 999,
+        "At999": 11,
+        "AtLeast900": 11,
+        "AtLeast800": 11,
+        "SkillCounts": [
+          0,
+          1,
+          10,
+          0
+        ]
+      }
+    },
+    {
+      "Id": 34,
+      "Name": "y-3-2",
+      "Tier": 3,
+      "Color": 2,
+      "Before": {
+        "Count": 22,
+        "MeanPotency": 877.95,
+        "MinimumPotency": 807,
+        "MaximumPotency": 949,
+        "At999": 0,
+        "AtLeast900": 6,
+        "AtLeast800": 22,
+        "SkillCounts": [
+          0,
+          9,
+          0,
+          13
+        ]
+      },
+      "After": {
+        "Count": 13,
+        "MeanPotency": 912.31,
+        "MinimumPotency": 838,
+        "MaximumPotency": 999,
+        "At999": 6,
+        "AtLeast900": 6,
+        "AtLeast800": 13,
+        "SkillCounts": [
+          0,
+          0,
+          0,
+          13
+        ]
+      }
+    },
+    {
+      "Id": 35,
+      "Name": "g-3-1",
+      "Tier": 3,
+      "Color": 3,
+      "Before": {
+        "Count": 23,
+        "MeanPotency": 800.04,
+        "MinimumPotency": 694,
+        "MaximumPotency": 959,
+        "At999": 0,
+        "AtLeast900": 6,
+        "AtLeast800": 7,
+        "SkillCounts": [
+          1,
+          0,
+          22,
+          0
+        ]
+      },
+      "After": {
+        "Count": 6,
+        "MeanPotency": 999,
+        "MinimumPotency": 999,
+        "MaximumPotency": 999,
+        "At999": 6,
+        "AtLeast900": 6,
+        "AtLeast800": 6,
+        "SkillCounts": [
+          0,
+          0,
+          6,
+          0
+        ]
+      }
+    },
+    {
+      "Id": 36,
+      "Name": "g-3-2",
+      "Tier": 3,
+      "Color": 3,
+      "Before": {
+        "Count": 19,
+        "MeanPotency": 917.74,
+        "MinimumPotency": 508,
+        "MaximumPotency": 999,
+        "At999": 10,
+        "AtLeast900": 13,
+        "AtLeast800": 18,
+        "SkillCounts": [
+          0,
+          5,
+          14,
+          0
+        ]
+      },
+      "After": {
+        "Count": 13,
+        "MeanPotency": 999,
+        "MinimumPotency": 999,
+        "MaximumPotency": 999,
+        "At999": 13,
+        "AtLeast900": 13,
+        "AtLeast800": 13,
+        "SkillCounts": [
+          0,
+          0,
+          13,
+          0
+        ]
+      }
+    },
+    {
+      "Id": 37,
+      "Name": "b-3-1",
+      "Tier": 3,
+      "Color": 4,
+      "Before": {
+        "Count": 34,
+        "MeanPotency": 846.65,
+        "MinimumPotency": 672,
+        "MaximumPotency": 951,
+        "At999": 0,
+        "AtLeast900": 19,
+        "AtLeast800": 19,
+        "SkillCounts": [
+          9,
+          14,
+          5,
+          6
+        ]
+      },
+      "After": {
+        "Count": 25,
+        "MeanPotency": 920.52,
+        "MinimumPotency": 672,
+        "MaximumPotency": 999,
+        "At999": 19,
+        "AtLeast900": 19,
+        "AtLeast800": 19,
+        "SkillCounts": [
+          0,
+          14,
+          5,
+          6
+        ]
+      }
+    },
+    {
+      "Id": 38,
+      "Name": "b-3-2",
+      "Tier": 3,
+      "Color": 4,
+      "Before": {
+        "Count": 37,
+        "MeanPotency": 808.19,
+        "MinimumPotency": 674,
+        "MaximumPotency": 979,
+        "At999": 0,
+        "AtLeast900": 11,
+        "AtLeast800": 21,
+        "SkillCounts": [
+          7,
+          7,
+          23,
+          0
+        ]
+      },
+      "After": {
+        "Count": 11,
+        "MeanPotency": 954.91,
+        "MinimumPotency": 902,
+        "MaximumPotency": 999,
+        "At999": 6,
+        "AtLeast900": 11,
+        "AtLeast800": 11,
+        "SkillCounts": [
+          0,
+          7,
+          4,
+          0
+        ]
+      }
+    },
+    {
+      "Id": 39,
+      "Name": "p-3-1",
+      "Tier": 3,
+      "Color": 5,
+      "Before": {
+        "Count": 30,
+        "MeanPotency": 939.37,
+        "MinimumPotency": 727,
+        "MaximumPotency": 999,
+        "At999": 9,
+        "AtLeast900": 25,
+        "AtLeast800": 26,
+        "SkillCounts": [
+          6,
+          1,
+          23,
+          0
+        ]
+      },
+      "After": {
+        "Count": 25,
+        "MeanPotency": 999,
+        "MinimumPotency": 999,
+        "MaximumPotency": 999,
+        "At999": 25,
+        "AtLeast900": 25,
+        "AtLeast800": 25,
+        "SkillCounts": [
+          6,
+          0,
+          19,
+          0
+        ]
+      }
+    },
+    {
+      "Id": 40,
+      "Name": "p-3-2",
+      "Tier": 3,
+      "Color": 5,
+      "Before": {
+        "Count": 25,
+        "MeanPotency": 743.6,
+        "MinimumPotency": 555,
+        "MaximumPotency": 964,
+        "At999": 0,
+        "AtLeast900": 11,
+        "AtLeast800": 11,
+        "SkillCounts": [
+          8,
+          11,
+          1,
+          5
+        ]
+      },
+      "After": {
+        "Count": 11,
+        "MeanPotency": 999,
+        "MinimumPotency": 999,
+        "MaximumPotency": 999,
+        "At999": 11,
+        "AtLeast900": 11,
+        "AtLeast800": 11,
+        "SkillCounts": [
+          0,
+          6,
+          0,
+          5
+        ]
+      }
+    }
+  ]
+}

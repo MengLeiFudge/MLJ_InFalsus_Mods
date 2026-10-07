@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <PropertyGroup Label="DefaultPath">
+    <!-- AfterBuildEvent 会把 Steam 直启绑定到这个 profile。 -->
+    <ProfileDir>C:\Users\YourName\AppData\Roaming\r2modmanPlus-local\InFalsus\profiles\Default</ProfileDir>
+    <!-- 游戏根目录只保留 winhttp.dll 和 doorstop_config.ini，不需要复制 BepInEx/dotnet。 -->
+    <GameDir>D:\Steam\steamapps\common\In Falsus</GameDir>
+    <!-- 可选：显式指定现有 interop；省略时依次使用 profile、游戏目录和仓库 .dependencies 快照。 -->
+    <!-- <InteropDir>D:\Path\To\BepInEx\interop</InteropDir> -->
+  </PropertyGroup>
+</Project>

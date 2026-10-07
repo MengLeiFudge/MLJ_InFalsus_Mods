@@ -1,0 +1,10 @@
+{
+  "namespace": "MengLei",
+  "name": "MouseKeyBindings",
+  "version_number": "1.0.1",
+  "website_url": "https://github.com/MengLeiFudge/MLJ_InFalsus_Mods",
+  "description": "让六轨操作键位支持 Unity Input System 公开的全部鼠标按钮，并沿用原版显示、保存和判定流程。",
+  "dependencies": [
+    "BepInEx-BepInExPack_IL2CPP-6.0.755"
+  ]
+}

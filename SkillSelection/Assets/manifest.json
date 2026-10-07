@@ -1,0 +1,10 @@
+{
+  "namespace": "MengLei",
+  "name": "SkillSelection",
+  "version_number": "1.0.1",
+  "website_url": "https://github.com/MengLeiFudge/MLJ_InFalsus_Mods",
+  "description": "在制卡界面按粒子实际携带的技能、最低等级及任意或全部条件筛选材料。",
+  "dependencies": [
+    "BepInEx-BepInExPack_IL2CPP-6.0.755"
+  ]
+}

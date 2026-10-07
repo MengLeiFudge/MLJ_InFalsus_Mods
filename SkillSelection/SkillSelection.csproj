@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <OutputType>Library</OutputType>
+    <RootNamespace>InFalsusMod</RootNamespace>
+    <AssemblyName>SkillSelection</AssemblyName>
+    <PackageId>SkillSelection</PackageId>
+    <Version>1.0.1</Version>
+    <Description>在制卡界面按实际携带的技能筛选粒子。</Description>
+    <IsModProject>true</IsModProject>
+    <BepInExPluginGuid>menglei.infalsus.skillselection</BepInExPluginGuid>
+    <ThunderstoreNamespace>MengLei</ThunderstoreNamespace>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="src/**/*.cs" />
+    <Compile Include="../Shared/src/*.cs" Link="Shared/%(Filename)%(Extension)" />
+    <EmbeddedResource Include="../Shared/Data/traits.json" LogicalName="InFalsusMod.Data.traits.json" />
+    <EmbeddedResource Include="../Shared/Data/ui-text.json" LogicalName="InFalsusMod.Data.ui-text.json" />
+    <EmbeddedResource Include="Assets/trait-filter-button.png" LogicalName="InFalsusMod.Assets.trait-filter-button.png" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,44 @@
+<Project>
+  <Import Project="DefaultPath.props" Condition="Exists('DefaultPath.props')" />
+
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Deterministic>true</Deterministic>
+    <DebugType>portable</DebugType>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+    <BaseIntermediateOutputPath Condition="'$(OS)' == 'Windows_NT'">obj/</BaseIntermediateOutputPath>
+    <BaseIntermediateOutputPath Condition="'$(OS)' != 'Windows_NT'">obj/linux/</BaseIntermediateOutputPath>
+    <MSBuildProjectExtensionsPath Condition="'$(OS)' != 'Windows_NT'">$(MSBuildProjectDirectory)/obj/linux/</MSBuildProjectExtensionsPath>
+    <BaseOutputPath>bin/</BaseOutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <DefaultItemExcludes>$(DefaultItemExcludes);obj/**;bin/**</DefaultItemExcludes>
+
+    <GameDir Condition="'$(GameDir)' == ''">D:\Steam\steamapps\common\In Falsus</GameDir>
+    <BepInExDir Condition="'$(BepInExDir)' == '' and Exists('$(ProfileDir)\BepInEx\core\BepInEx.Core.dll')">$(ProfileDir)\BepInEx\core</BepInExDir>
+    <BepInExDir Condition="'$(BepInExDir)' == ''">$(MSBuildThisFileDirectory).dependencies\BepInEx\BepInEx\core</BepInExDir>
+    <InteropDir Condition="'$(InteropDir)' == '' and Exists('$(ProfileDir)\BepInEx\interop\Game.Data.dll')">$(ProfileDir)\BepInEx\interop</InteropDir>
+    <InteropDir Condition="'$(InteropDir)' == '' and Exists('$(GameDir)\BepInEx\interop\Game.Data.dll')">$(GameDir)\BepInEx\interop</InteropDir>
+    <InteropDir Condition="'$(InteropDir)' == ''">$(MSBuildThisFileDirectory).dependencies\interop</InteropDir>
+    <LocalPluginsDir Condition="'$(LocalPluginsDir)' == '' and '$(ProfileDir)' != ''">$(ProfileDir)\BepInEx\plugins</LocalPluginsDir>
+    <LocalPluginsDir Condition="'$(LocalPluginsDir)' == ''">$(GameDir)\BepInEx\plugins</LocalPluginsDir>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(IsModProject)' == 'true'">
+    <Reference Include="0Harmony" HintPath="$(BepInExDir)\0Harmony.dll" Private="false" />
+    <Reference Include="BepInEx.Core" HintPath="$(BepInExDir)\BepInEx.Core.dll" Private="false" />
+    <Reference Include="BepInEx.Unity.IL2CPP" HintPath="$(BepInExDir)\BepInEx.Unity.IL2CPP.dll" Private="false" />
+    <Reference Include="Il2CppInterop.Runtime" HintPath="$(BepInExDir)\Il2CppInterop.Runtime.dll" Private="false" />
+    <Reference Include="Il2CppInterop.Common" HintPath="$(BepInExDir)\Il2CppInterop.Common.dll" Private="false" />
+    <Reference Include="MonoMod.RuntimeDetour" HintPath="$(BepInExDir)\MonoMod.RuntimeDetour.dll" Private="false" />
+    <Reference Include="$(InteropDir)\*.dll" Exclude="$(InteropDir)\Game.Data.dll" Private="false" />
+    <Reference Include="Game.Data" HintPath="$(InteropDir)\Game.Data.dll" Aliases="global,GameData" Private="false" />
+  </ItemGroup>
+
+  <Target Name="CheckModReferences" BeforeTargets="ResolveReferences" Condition="'$(IsModProject)' == 'true'">
+    <Error Condition="!Exists('$(BepInExDir)\BepInEx.Core.dll')" Text="找不到 BepInEx 编译引用。请检查 DefaultPath.props 中的 ProfileDir 或 BepInExDir。" />
+    <Error Condition="!Exists('$(InteropDir)\Game.Data.dll')" Text="找不到游戏互操作引用。请检查 DefaultPath.props 中的 GameDir 或 InteropDir。" />
+  </Target>
+</Project>

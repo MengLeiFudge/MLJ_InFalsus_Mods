@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <OutputType>Library</OutputType>
+    <RootNamespace>InFalsusMod</RootNamespace>
+    <AssemblyName>ParticleFusion</AssemblyName>
+    <PackageId>ParticleFusion</PackageId>
+    <Version>1.0.1</Version>
+    <Description>将粒子库存自动融合为更多效能 999 的成品。</Description>
+    <IsModProject>true</IsModProject>
+    <BepInExPluginGuid>menglei.infalsus.potency999</BepInExPluginGuid>
+    <ThunderstoreNamespace>MengLei</ThunderstoreNamespace>
+    <LegacyDllName>InFalsus.Potency999.dll</LegacyDllName>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="src/**/*.cs" />
+    <Compile Include="../Shared/src/*.cs" Link="Shared/%(Filename)%(Extension)" />
+    <EmbeddedResource Include="../Shared/Data/traits.json" LogicalName="InFalsusMod.Data.traits.json" />
+    <EmbeddedResource Include="../Shared/Data/ui-text.json" LogicalName="InFalsusMod.Data.ui-text.json" />
+    <EmbeddedResource Include="Data/trait-demand.json" LogicalName="InFalsusMod.Data.trait-demand.json" />
+  </ItemGroup>
+</Project>

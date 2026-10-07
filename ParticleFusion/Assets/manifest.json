@@ -1,0 +1,10 @@
+{
+  "namespace": "MengLei",
+  "name": "ParticleFusion",
+  "version_number": "1.0.1",
+  "website_url": "https://github.com/MengLeiFudge/MLJ_InFalsus_Mods",
+  "description": "自动选择粒子供体，将合法目标完整强化至其在已解锁回想中的最高效能，并保留实体余料。",
+  "dependencies": [
+    "BepInEx-BepInExPack_IL2CPP-6.0.755"
+  ]
+}

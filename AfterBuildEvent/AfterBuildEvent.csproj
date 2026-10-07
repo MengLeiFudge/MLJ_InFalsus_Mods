@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>AfterBuildEvent</RootNamespace>
+    <AssemblyName>AfterBuildEvent</AssemblyName>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../ParticleFusion/ParticleFusion.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../SkillSelection/SkillSelection.csproj" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+</Project>

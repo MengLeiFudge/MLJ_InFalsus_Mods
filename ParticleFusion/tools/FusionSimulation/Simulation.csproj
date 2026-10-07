@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>InFalsusMod</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="*.cs" />
+    <!-- 正式融合算法与其纯托管依赖；原生界面、存档写入与 Modal 不参与离线场景。 -->
+    <Compile Include="../../src/FusionRules.cs" Link="Production/FusionRules.cs" />
+    <Compile Include="../../src/FusionEngine.cs" Link="Production/FusionEngine.cs" />
+    <Compile Include="../../src/AvailableParticles.cs" Link="Production/AvailableParticles.cs" />
+    <Compile Include="../../src/InventorySelection.cs" Link="Production/InventorySelection.cs" />
+    <Compile Include="../../src/TraitConsolidator.cs" Link="Production/TraitConsolidator.cs" />
+    <Compile Include="../../src/TraitDemand.cs" Link="Production/TraitDemand.cs" />
+    <Compile Include="../../src/TraitStock.cs" Link="Production/TraitStock.cs" />
+    <Compile Include="../../../Shared/src/ParticleData.cs" Link="Production/ParticleData.cs" />
+    <Compile Include="../../../Shared/src/TraitCatalog.cs" Link="Production/TraitCatalog.cs" />
+    <EmbeddedResource Include="../../../Shared/Data/traits.json" LogicalName="InFalsusMod.Data.traits.json" />
+    <EmbeddedResource Include="../../Data/trait-demand.json" LogicalName="InFalsusMod.Data.trait-demand.json" />
+    <ProjectReference Include="GameModel/GameModel.csproj" Aliases="global,GameData" />
+  </ItemGroup>
+</Project>

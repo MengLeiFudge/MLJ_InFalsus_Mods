@@ -1,0 +1,8 @@
+bin/
+obj/
+.dependencies/
+dist/
+Plugins/
+DefaultPath.props
+ModZips/
+.codex/

@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <OutputType>Library</OutputType>
+    <RootNamespace>InFalsusMod</RootNamespace>
+    <AssemblyName>MouseKeyBindings</AssemblyName>
+    <PackageId>MouseKeyBindings</PackageId>
+    <Version>1.0.1</Version>
+    <Description>让六轨操作键位支持 Unity Input System 报告的全部鼠标按钮。</Description>
+    <IsModProject>true</IsModProject>
+    <BepInExPluginGuid>menglei.infalsus.mousekeybindings</BepInExPluginGuid>
+    <ThunderstoreNamespace>MengLei</ThunderstoreNamespace>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="src/**/*.cs" />
+    <Compile Include="../Shared/src/WindowsConsoleEncoding.cs" Link="Shared/WindowsConsoleEncoding.cs" />
+  </ItemGroup>
+</Project>

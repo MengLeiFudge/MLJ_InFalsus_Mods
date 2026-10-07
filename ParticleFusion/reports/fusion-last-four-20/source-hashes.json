@@ -1,0 +1,17 @@
+{
+  "src/FusionRules.cs": "e6a9171a2fde4f120104dac88e9635eebea6a17e2fb9541e0b27ab5acec2b48e",
+  "src/FusionEngine.cs": "1f08afaa50b969056c7a59479f70b5a0496d87e4ad1e3f6850597880d1fe73e6",
+  "src/AvailableParticles.cs": "1123466e4a69be8113f8f7c1eda1c556c60a39c19177c639af9bea42dc39c9af",
+  "src/InventorySelection.cs": "bd459a3ee60e702bb781f8dc468c2b7cdbfd3996916c8d0cdf5c7ff9eca59aa1",
+  "src/TraitConsolidator.cs": "b84ab006c1cf5c80724eca301d3ebca5d576630c82203e7b837b62860314dfd1",
+  "src/TraitDemand.cs": "a05f15ecc6326c4af23290d3f8a29ebff57c1a67eaac6f1fda244c6db7f5d6f3",
+  "src/TraitStock.cs": "c170f4f6206ce7d736480e38561fd87823d310ff1d6ddd28aacb32da64f9e66f",
+  "Data/trait-demand.json": "fc2b19d772331c82430dbea6460a51bb70a444042e9980d08a1ed15ebac821a5",
+  "../Shared/src/ParticleData.cs": "469193690507fb7c417f80525becc0c9e2befad403c99e407427f4022ee9c617",
+  "../Shared/src/TraitCatalog.cs": "16aff0f42eac3a662fda1af5b7224a16ae1fd3116d2505d554ef970ab1a514d1",
+  "../Shared/Data/traits.json": "5eb24eed5ca8aea429e179f6a7e7558b2a9174604a0a973eceafc88638f2e8c7",
+  "tools/FusionSimulation/Program.cs": "2f7d2eebce275720f79184ed505a5665168ba5eebfc8cab5493c5e58a8caf9e1",
+  "tools/FusionSimulation/Simulation.csproj": "b70b2ae9190dece62efef4f85d4b3e25603c64bcf0959936bda0025edaeeaac6",
+  "tools/FusionSimulation/GameModel/GameModel.cs": "85ae51c3ae7bc79061a9b6191c4b914c7c490082783f8601debe022fb2d365f8",
+  "tools/FusionSimulation/input.json": "dcebc658fb787d46ced7ca3e130f32b7b14bc2ff72f77e396d497bc5e174bf1b"
+}
