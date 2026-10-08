@@ -5,8 +5,10 @@
     <RootNamespace>InFalsusMod</RootNamespace>
     <AssemblyName>MouseKeyBindings</AssemblyName>
     <PackageId>MouseKeyBindings</PackageId>
-    <Version>1.0.1</Version>
-    <Description>让六轨操作键位支持 Unity Input System 报告的全部鼠标按钮。</Description>
+    <AssemblyTitle>KeyBindingExtensions</AssemblyTitle>
+    <Product>KeyBindingExtensions</Product>
+    <Version>1.1.0</Version>
+    <Description>扩展 In Falsus 的六轨按键绑定，支持鼠标按键和同键多轨道绑定，沿用游戏内设置与保存方式。</Description>
     <IsModProject>true</IsModProject>
     <BepInExPluginGuid>menglei.infalsus.mousekeybindings</BepInExPluginGuid>
     <ThunderstoreNamespace>MengLei</ThunderstoreNamespace>

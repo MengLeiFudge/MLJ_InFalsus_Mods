@@ -1,23 +1,25 @@
-# MouseKeyBindings
+# KeyBindingExtensions（按键绑定扩展）
 
-为 In Falsus 的六轨操作设置增加鼠标按键绑定，同时保留原有键盘绑定行为。
+扩展 In Falsus 的六轨按键绑定，支持鼠标按键，以及同一个键盘键或鼠标按钮绑定多个轨道。通过游戏内操作设置配置，保留原有的应用、保存和恢复默认功能。
 
 ## 使用
 
 1. 打开“设置”中的操作设置页。
 2. 点击任意一个轨道键位槽。
-3. 按下要绑定的鼠标按钮；槽位会显示为 `Mouse0`、`Mouse1` 等。
+3. 按下要绑定的键盘键或鼠标按钮；鼠标按钮会显示为 `Mouse0`、`Mouse1` 等。
 4. 点击原版“应用”按钮保存。
 
 `Mouse0`、`Mouse1`、`Mouse2` 分别是左键、右键和中键，`Mouse3`、`Mouse4` 是 Input System 的前进键和后退键。模组优先通过这些标准 `ButtonControl` 读取每个原始事件，并同时保留 `MouseState.buttons` 的完整 16 位状态读取，因此同一路径可处理 `Mouse0` 至 `Mouse15`；如果自定义鼠标布局还在 `allControls` 中公开其他 `ButtonControl`，这些控件也会获得稳定的 `MouseN` 并可绑定。实际可用按钮取决于鼠标、驱动和 Unity 所公开的控件。
 
-选择槽位所用的首次点击不会立即成为绑定。再次点击同一个槽位可以绑定 `Mouse0`；也可以在选择槽位后按侧键。原版的重复绑定检查、应用按钮、恢复默认和键盘重新绑定继续生效。
+选择槽位所用的首次点击不会立即成为绑定。再次点击同一个槽位可以绑定 `Mouse0`；也可以在选择槽位后按侧键。应用按钮、恢复默认和键盘重新绑定继续生效。
+
+同一个键盘键或鼠标按钮可以绑定任意多个轨道。依次选中要共用键位的槽位，逐一绑定同一个按键，再点击“应用”；设置其他槽位时不会替换已有绑定。游玩时按下、保持和松开会同时作用于全部对应轨道。
 
 绑定写入游戏原有的 `keybind_BottomLane0` 至 `keybind_BottomLane5` 偏好项，不创建第二份配置。重新打开设置、进入歌曲或重启游戏后，设置槽位和轨道按键提示器都会显示并使用已保存的 `MouseN`。这些保留值需要本模组才能显示和触发；停用模组前可先在操作设置中恢复默认。
 
 ## 安装
 
-建议通过 In Falsus 的 Thunderstore/r2modman 安装。依赖中的 BepInExPack_IL2CPP 会由模组管理器处理，本包不携带 BepInEx、Doorstop 或 .NET 运行时。插件 DLL 名为 `MouseKeyBindings.dll`，可与 ParticleFusion 和 SkillSelection 分别启用或停用。
+建议通过 In Falsus 的 Thunderstore/r2modman 安装。依赖中的 BepInExPack_IL2CPP 会由模组管理器处理，本包不携带 BepInEx、Doorstop 或 .NET 运行时。Thunderstore 包标识为 `MengLei-MouseKeyBindings`，插件 DLL 名为 `MouseKeyBindings.dll`，可与 ParticleFusion 和 SkillSelection 分别启用或停用。
 
 ## 输入行为
 

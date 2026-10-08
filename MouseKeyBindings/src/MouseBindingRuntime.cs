@@ -108,7 +108,7 @@ internal static class MouseBindingRuntime
             Plugin.Logger.LogDebug($"轨道 {currentLane + 1} 正在等待鼠标按键。");
     }
 
-    /// <summary>在设置页等待键位时，把合格的鼠标按下交给原版重复检查和临时绑定流程。</summary>
+    /// <summary>在设置页等待键位时，把合格的鼠标按下交给原版弹窗和同键多轨道绑定流程。</summary>
     /// <param name="transition">当前鼠标按钮变化。</param>
     /// <returns>该变化是否已作为设置页绑定被消费。</returns>
     private static bool TryCaptureBinding(MouseTransition transition)
@@ -120,7 +120,7 @@ internal static class MouseBindingRuntime
         int lane = waitingLane;
         Key key = MouseKeyCodec.Encode(transition.Button);
         var modifiers = default(CurrentKeyboardModifiersState);
-        // 原版键盘路径由 _iE 先关闭等待键位的 Modal，再交给 _HE 做重复检查和写入。
+        // _iE 先关闭等待键位的 Modal，_HE 的补丁只写入当前轨道，允许多个轨道共用按键。
         settingsContainer._iE(key, transition.Time, ref modifiers);
         var keys = settingsContainer._hh;
         bool stored = keys != null && lane < keys.Length && keys[lane] == key;
@@ -130,7 +130,7 @@ internal static class MouseBindingRuntime
         if (stored)
             Plugin.Logger.LogDebug($"轨道 {lane + 1} 已绑定 Mouse{transition.Button}。");
         else
-            Plugin.Logger.LogDebug($"Mouse{transition.Button} 未写入轨道 {lane + 1}，原版绑定检查已拒绝本次设置。");
+            Plugin.Logger.LogDebug($"Mouse{transition.Button} 未写入轨道 {lane + 1}。");
         return true;
     }
 

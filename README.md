@@ -2,19 +2,19 @@
 
 In Falsus 多模组解决方案。当前包含三个可独立安装的 BepInEx 6 IL2CPP 插件：
 
-| 项目 | DLL | 功能 |
+| 模组 | DLL | 功能 |
 | --- | --- | --- |
 | `ParticleFusion` | `ParticleFusion.dll` | 智能融合、选中供体融合与免费技能整理 |
 | `SkillSelection` | `SkillSelection.dll` | 制卡界面的技能多选与附加材料筛选 |
-| `MouseKeyBindings` | `MouseKeyBindings.dll` | 六轨操作设置的全部可识别鼠标按钮绑定 |
+| `KeyBindingExtensions`（按键绑定扩展） | `MouseKeyBindings.dll` | 鼠标按键绑定、同键多轨道绑定 |
 
-三个模组当前版本均为 1.0.1，适配游戏 1.0.6，互不依赖。所需共享源码会分别编入各 DLL，不发布公共运行时程序集。
+KeyBindingExtensions 当前版本为 1.1.0，ParticleFusion 和 SkillSelection 为 1.0.1；三个模组均适配游戏 1.0.6，互不依赖。所需共享源码会分别编入各 DLL，不发布公共运行时程序集。
 
 ## 目录
 
 - `ParticleFusion/`：融合代码、数据、离线模拟器、样本报告及发布素材。模拟器链接当前正式融合源码，单独构建运行，不参与主解决方案构建。
 - `SkillSelection/`：技能选择代码及发布素材。
-- `MouseKeyBindings/`：鼠标轨道绑定代码及发布素材。
+- `MouseKeyBindings/`：KeyBindingExtensions 的按键绑定扩展代码及发布素材。
 - `Shared/`：各项目按需共同编译的粒子字段访问、本地化、技能目录、原生 UI 和控制台工具。
 - `AfterBuildEvent/`：发现模组项目、更新本地 r2modman profile、生成 Thunderstore ZIP，并把 Steam 直启绑定到该 profile。
 - `tools/prepare-icons.py`：将 CPA 生图接口返回的高分辨率方图归一化为 1024×1024 母图，再用 Lanczos 转换为 256×256 发布图标。

@@ -5,8 +5,8 @@ using HarmonyLib;
 
 namespace InFalsusMod;
 
-/// <summary>为 Windows IL2CPP 版 In Falsus 注册鼠标轨道绑定。</summary>
-[BepInPlugin(PluginGuid, "In Falsus Mouse Key Bindings", PluginVersion)]
+/// <summary>为 Windows IL2CPP 版 In Falsus 注册按键绑定扩展。</summary>
+[BepInPlugin(PluginGuid, "KeyBindingExtensions", PluginVersion)]
 [BepInProcess("infalsus.exe")]
 public sealed class Plugin : BasePlugin
 {
@@ -14,7 +14,7 @@ public sealed class Plugin : BasePlugin
     internal const string PluginGuid = "menglei.infalsus.mousekeybindings";
 
     /// <summary>插件及 Thunderstore 包版本。</summary>
-    internal const string PluginVersion = "1.0.1";
+    internal const string PluginVersion = "1.1.0";
 
     /// <summary>供输入补丁记录初始化和运行错误。</summary>
     internal static ManualLogSource Logger { get; private set; } = null!;
