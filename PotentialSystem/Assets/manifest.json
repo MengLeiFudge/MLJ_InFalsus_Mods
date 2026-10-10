@@ -1,0 +1,10 @@
+{
+  "namespace": "MengLei",
+  "name": "PotentialSystem",
+  "version_number": "1.0.0",
+  "website_url": "https://github.com/MengLeiFudge/MLJ_InFalsus_Mods",
+  "description": "潜力值系统：动态读取谱面等级，提供只升不降的 PTT、Arcaea 徽章、完整成绩浏览、潜力值排序、B50 剪贴板图片与结算动画。",
+  "dependencies": [
+    "BepInEx-BepInExPack_IL2CPP-6.0.755"
+  ]
+}

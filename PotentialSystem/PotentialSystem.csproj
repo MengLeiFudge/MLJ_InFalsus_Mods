@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <OutputType>Library</OutputType>
+    <RootNamespace>InFalsusMod.Potential</RootNamespace>
+    <AssemblyName>PotentialSystem</AssemblyName>
+    <PackageId>PotentialSystem</PackageId>
+    <Version>1.0.0</Version>
+    <Description>动态读取谱面等级，提供 PTT 徽章、完整成绩浏览、潜力值排序、B50 图片导出与结算动画。</Description>
+    <IsModProject>true</IsModProject>
+    <BepInExPluginGuid>menglei.infalsus.potentialsystem</BepInExPluginGuid>
+    <ThunderstoreNamespace>MengLei</ThunderstoreNamespace>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="src/**/*.cs" />
+    <Compile Include="../Shared/src/WindowsConsoleEncoding.cs" Link="Shared/WindowsConsoleEncoding.cs" />
+    <Compile Include="../Shared/src/NativeButtons.cs" Link="Shared/NativeButtons.cs" />
+    <Compile Include="../SkillSelection/src/PngRgba.cs" Link="Shared/PngRgba.cs" />
+    <EmbeddedResource Include="Assets/PotentialBadges/*.png">
+      <LogicalName>PotentialSystem.Badges.%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>
