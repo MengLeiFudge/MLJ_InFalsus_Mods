@@ -5,7 +5,7 @@ using BepInEx.Unity.IL2CPP;
 namespace InFalsusMod;
 
 /// <summary>为 Windows IL2CPP 版 In Falsus 注册粒子融合。</summary>
-[BepInPlugin("menglei.infalsus.potency999", "In Falsus Particle Fusion", "1.0.1")]
+[BepInPlugin("menglei.infalsus.potency999", "In Falsus Particle Fusion", "1.0.2")]
 [BepInProcess("infalsus.exe")]
 public sealed class Plugin : BasePlugin
 {

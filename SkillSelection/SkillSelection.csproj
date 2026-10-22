@@ -5,7 +5,7 @@
     <RootNamespace>InFalsusMod</RootNamespace>
     <AssemblyName>SkillSelection</AssemblyName>
     <PackageId>SkillSelection</PackageId>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <Description>在制卡界面按实际携带的技能筛选粒子。</Description>
     <IsModProject>true</IsModProject>
     <BepInExPluginGuid>menglei.infalsus.skillselection</BepInExPluginGuid>

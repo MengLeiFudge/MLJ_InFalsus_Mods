@@ -47,9 +47,9 @@ internal static class InventoryEditor
     private static InventorySelection CaptureSelection(IotaInventoryLayer layer, IReadOnlyList<IotaInstance> items)
     {
         var selected = new Dictionary<IotaKey, int>();
-        // 1.0.6：_Kw切换_fBA；_mw以格子的完整堆叠数据（cell._B）增删_OcA。原生批量删除按每项Count消耗整堆。
-        if (layer._fBA && layer._OcA != null)
-            foreach (var item in layer._OcA)
+        // 1.0.7：_mw以格子的完整堆叠数据增删_clb；原生批量删除按每项Count消耗整堆。
+        if (layer._fBA && layer._clb != null)
+            foreach (var item in layer._clb)
             {
                 var key = IotaKey.Of(item);
                 selected[key] = checked(selected.GetValueOrDefault(key) + item.Count);
@@ -179,8 +179,9 @@ internal static class InventoryEditor
                     // 原生批量删除也结束选择模式；使用原生退出路径清理格子高亮和旧选择集合。
                     if (inventoryLayer._fBA)
                         inventoryLayer._Kw();
-                    // 1.0.6：_ww是带筛选参数的完整重建（选择模式时先_Kw退出，再_kw/_ow/_Iw）。
-                    inventoryLayer._ww(ref filter);
+                    // 1.0.7重建入口同时接收属性筛选和技能筛选，保留当前技能选择。
+                    var traits = inventoryLayer._Clb;
+                    inventoryLayer._gVA(ref filter, ref traits);
                 }
         }
         catch (Exception ex)

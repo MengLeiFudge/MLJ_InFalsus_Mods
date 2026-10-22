@@ -156,7 +156,7 @@ public sealed class InventoryButtonBehaviour : MonoBehaviour
             if (!visible)
                 continue;
 
-            bool enabled = !binding.Owner._fBA || (binding.Owner._OcA?.Count ?? 0) > 0;
+            bool enabled = !binding.Owner._fBA || (binding.Owner._clb?.Count ?? 0) > 0;
             if (binding.Enabled != enabled)
             {
                 NativeButtons.SetState(binding.Button, enabled);
@@ -237,7 +237,7 @@ public sealed class InventoryButtonBehaviour : MonoBehaviour
             || Time.frameCount == releaseInputFrame || binding == null || binding.Owner == null
             || !binding.Owner.isActiveAndEnabled || binding.Owner.DisableInputEvents
             || !button.gameObject.activeInHierarchy
-            || (binding.Owner._fBA && (binding.Owner._OcA?.Count ?? 0) == 0))
+            || (binding.Owner._fBA && (binding.Owner._clb?.Count ?? 0) == 0))
             return;
 
         dialogOwner = binding.Owner;

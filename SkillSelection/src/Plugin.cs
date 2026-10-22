@@ -5,7 +5,7 @@ using BepInEx.Unity.IL2CPP;
 namespace InFalsusMod;
 
 /// <summary>为 Windows IL2CPP 版 In Falsus 注册制卡技能选择。</summary>
-[BepInPlugin("menglei.infalsus.skillselection", "In Falsus Skill Selection", "1.0.1")]
+[BepInPlugin("menglei.infalsus.skillselection", "In Falsus Skill Selection", "1.0.2")]
 [BepInProcess("infalsus.exe")]
 public sealed class Plugin : BasePlugin
 {
