@@ -1,6 +1,6 @@
 # MLJ_InFalsus_Mods
 
-In Falsus 多模组解决方案。当前包含五个可独立安装的 BepInEx 6 IL2CPP 插件：
+In Falsus 多模组解决方案。当前包含四个可独立安装的 BepInEx 6 IL2CPP 插件：
 
 | 模组 | DLL | 功能 |
 | --- | --- | --- |
@@ -8,9 +8,8 @@ In Falsus 多模组解决方案。当前包含五个可独立安装的 BepInEx 6
 | `SkillSelection` | `SkillSelection.dll` | 制卡界面的技能多选与附加材料筛选 |
 | `KeyBindingExtensions`（按键绑定扩展） | `KeyBindingExtensions.dll` | 鼠标按键绑定、同键多轨道绑定 |
 | `PotentialSystem`（潜力值系统） | `PotentialSystem.dll` | 动态定数的 B50/B10 PTT、徽章与完整成绩页、潜力值排序、B50 剪贴板图片及结算动画 |
-| `ParticleCapacity`（粒子容量扩展） | `ParticleCapacity.dll` | 解除9999颗获得门槛，将库存容量提高至65535颗 |
 
-KeyBindingExtensions 当前版本为1.1.2，ParticleFusion 和 SkillSelection 为1.0.2，PotentialSystem 和 ParticleCapacity 为1.0.0。五个模组均使用游戏1.0.7离线生成的互操作引用通过 Release 编译，ParticleFusion 和 PotentialSystem 已适配新版接口；实际游戏行为尚待用户确认。五个模组互不依赖，所需共享源码分别编入各 DLL，不发布公共运行时程序集。
+KeyBindingExtensions 当前版本为1.1.2，ParticleFusion 和 SkillSelection 为1.0.2，PotentialSystem 为1.0.0。四个模组均使用游戏1.0.7离线生成的互操作引用通过 Release 编译，ParticleFusion 和 PotentialSystem 已适配新版接口；实际游戏行为尚待用户确认。四个模组互不依赖，所需共享源码分别编入各 DLL，不发布公共运行时程序集。
 
 ## 目录
 
@@ -18,7 +17,6 @@ KeyBindingExtensions 当前版本为1.1.2，ParticleFusion 和 SkillSelection �
 - `SkillSelection/`：技能选择代码及发布素材。
 - `KeyBindingExtensions/`：KeyBindingExtensions 的按键绑定扩展代码及发布素材。
 - `PotentialSystem/`：整数定数潜力值、独立成绩保存、原生选歌展示、完整成绩浏览与 B50 图片导出。
-- `ParticleCapacity/`：粒子容量扩展代码及发布素材。
 - `docs/chart-constant-estimation-handoff.md`：独立会话研究小数定数估算的交接资料。
 - `Shared/`：各项目按需共同编译的粒子字段访问、本地化、技能目录、原生 UI 和控制台工具。
 - `AfterBuildEvent/`：关闭游戏、更新本地 r2modman 模组、生成 ZIP、修正 Steam 直启路径，并通过本机 qqbot 推送群文件。
@@ -82,7 +80,6 @@ dotnet build MLJ_InFalsus_Mods.sln -c Release
 .\AfterBuildEvent\bin\Release\AfterBuildEvent.exe 1 SkillSelection
 .\AfterBuildEvent\bin\Release\AfterBuildEvent.exe 1 KeyBindingExtensions
 .\AfterBuildEvent\bin\Release\AfterBuildEvent.exe 1 PotentialSystem
-.\AfterBuildEvent\bin\Release\AfterBuildEvent.exe 1 ParticleCapacity
 ```
 
 工具会：
