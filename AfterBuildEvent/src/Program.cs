@@ -2,7 +2,8 @@ using System.Text;
 
 namespace AfterBuildEvent;
 
-/// <summary>解析发布范围并串行执行本地部署与 Thunderstore 打包。</summary>
+/// <summary>提供本地模组交付和独立的角色立绘提取命令。</summary>
+/// <remarks>交付流程串行关闭游戏、更新模组、修正引导路径并推送 QQ 群文件；不发布 Thunderstore。</remarks>
 internal static class Program
 {
 #if DEBUG
@@ -11,14 +12,17 @@ internal static class Program
     private const string DefaultConfiguration = "Release";
 #endif
 
-    /// <summary>发布工具入口；返回非零表示至少一个必需输入或输出失败。</summary>
-    /// <param name="args">可选的模式 1、构建配置及一个或多个 PackageId。</param>
+    /// <summary>工具入口；返回非零表示至少一个必需输入或输出失败。</summary>
+    /// <param name="args">extract-characters 提取选项，或模式 1、构建配置、PackageId 和 --message-file 发布说明。</param>
     /// <returns>进程退出码。</returns>
-    private static int Main(string[] args)
+    private static async Task<int> Main(string[] args)
     {
         Console.OutputEncoding = new UTF8Encoding(false);
         try
         {
+            if (args.Length > 0 && args[0].Equals("extract-characters", StringComparison.OrdinalIgnoreCase))
+                return await CharacterExtractor.RunAsync(args[1..]);
+
             var invocation = PublishInvocation.Parse(args, DefaultConfiguration);
             var context = RepositoryContext.Load();
             var allProjects = ModProject.Discover(context.RootDirectory);
@@ -26,16 +30,19 @@ internal static class Program
 
             Console.WriteLine($"构建配置：{invocation.Configuration}");
             Console.WriteLine($"本地模组目录：{context.LocalPluginsDirectory}");
+            GameProcess.Stop(context);
+            var packages = new List<ModPackage>();
             foreach (var project in projects)
-                ModPublisher.Publish(context, project, invocation.Configuration);
+                packages.Add(ModPublisher.Publish(context, project, invocation.Configuration));
             DoorstopConfigurator.Configure(context);
+            await QqPublisher.PublishAsync(context, packages, invocation.MessageFile);
 
-            Console.WriteLine($"完成：已部署并打包 {projects.Count} 个模组，Steam 直启已绑定 Default profile。");
+            Console.WriteLine($"完成：已更新并打包 {projects.Count} 个本地模组，修正 Doorstop 路径并完成群文件推送或去重跳过；未发布 Thunderstore。");
             return 0;
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine($"发布失败：{ex.Message}");
+            Console.Error.WriteLine($"执行中断：{ex.Message}");
             return 1;
         }
     }
@@ -50,10 +57,14 @@ internal sealed class PublishInvocation
     /// <summary>为空时处理所有模组，否则只处理这些 PackageId。</summary>
     private HashSet<string> PackageIds { get; }
 
-    private PublishInvocation(string configuration, HashSet<string> packageIds)
+    /// <summary>可选的发布说明文件；省略时由工作区状态决定使用提交正文或自动生成构建说明。</summary>
+    internal string? MessageFile { get; }
+
+    private PublishInvocation(string configuration, HashSet<string> packageIds, string? messageFile)
     {
         Configuration = configuration;
         PackageIds = packageIds;
+        MessageFile = messageFile;
     }
 
     /// <summary>兼容参考仓库的模式 1，并读取可选配置与项目筛选。</summary>
@@ -77,10 +88,22 @@ internal sealed class PublishInvocation
         }
 
         var packageIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        string? messageFile = null;
         for (; index < args.Count; index++)
+        {
+            if (args[index] == "--message-file")
+            {
+                if (messageFile != null || ++index >= args.Count || string.IsNullOrWhiteSpace(args[index]))
+                    throw new ArgumentException("--message-file 必须且只能提供一个 UTF-8 文件路径。");
+                messageFile = args[index];
+                continue;
+            }
+            if (args[index].StartsWith("--", StringComparison.Ordinal))
+                throw new ArgumentException($"未知选项：{args[index]}");
             foreach (string value in args[index].Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries))
                 packageIds.Add(value.Trim());
-        return new PublishInvocation(configuration, packageIds);
+        }
+        return new PublishInvocation(configuration, packageIds, messageFile);
     }
 
     /// <summary>按 PackageId 选择项目，并拒绝静默忽略拼错的名称。</summary>

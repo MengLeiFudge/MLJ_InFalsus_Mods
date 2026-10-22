@@ -2,10 +2,10 @@ using System.Text;
 
 namespace AfterBuildEvent;
 
-/// <summary>让 Steam 直接启动通过游戏根目录的 Doorstop 加载指定 r2modman profile。</summary>
+/// <summary>本地模组更新完成后，修正游戏目录的 Doorstop 引导路径以支持 Steam 直启。</summary>
 internal static class DoorstopConfigurator
 {
-    /// <summary>从 profile 配置中必须解析并重写的 IL2CPP Doorstop 项。</summary>
+    /// <summary>IL2CPP 引导必须具备的配置项；CoreCLR 项只验证目标，不改写其相对路径。</summary>
     private static readonly string[] RequiredKeys =
     {
         "enabled",
@@ -15,8 +15,8 @@ internal static class DoorstopConfigurator
         "corlib_dir",
     };
 
-    /// <summary>复制 profile 的 Doorstop 入口，并把所有运行时路径改为 profile 的绝对路径。</summary>
-    /// <param name="context">已验证的游戏和 Default profile 路径。</param>
+    /// <summary>复制 profile 的 Doorstop 入口，将目标程序集指向 profile，保留游戏本地运行时路径。</summary>
+    /// <param name="context">已验证且游戏进程已经关闭的游戏和 profile 路径。</param>
     internal static void Configure(RepositoryContext context)
     {
         string sourceProxy = Path.Combine(context.ProfileDirectory, "winhttp.dll");
@@ -39,15 +39,24 @@ internal static class DoorstopConfigurator
                 throw new InvalidDataException($"Default profile 的 doorstop_config.ini 重复定义 {key}。");
 
             string value = lines[index][(separator + 1)..].Trim();
-            lines[index] = key.ToLowerInvariant() switch
+            switch (key.ToLowerInvariant())
             {
-                "enabled" => "enabled = true",
-                "ignore_disable_switch" => "ignore_disable_switch = false",
-                "target_assembly" => $"target_assembly = {ResolveRequiredPath(context.ProfileDirectory, value, false, key)}",
-                "coreclr_path" => $"coreclr_path = {ResolveRequiredPath(context.ProfileDirectory, value, false, key)}",
-                "corlib_dir" => $"corlib_dir = {ResolveRequiredPath(context.ProfileDirectory, value, true, key)}",
-                _ => throw new InvalidOperationException($"未处理 Doorstop 配置项：{key}"),
-            };
+                case "enabled":
+                    lines[index] = "enabled = true";
+                    break;
+                case "ignore_disable_switch":
+                    lines[index] = "ignore_disable_switch = false";
+                    break;
+                case "target_assembly":
+                    lines[index] = $"target_assembly = {ResolveRequiredPath(context.ProfileDirectory, value, false, key)}";
+                    break;
+                case "coreclr_path":
+                    ResolveRequiredPath(context.GameDirectory, value, false, key);
+                    break;
+                case "corlib_dir":
+                    ResolveRequiredPath(context.GameDirectory, value, true, key);
+                    break;
+            }
         }
 
         string[] missing = RequiredKeys.Where(key => !found.Contains(key)).ToArray();
@@ -73,23 +82,23 @@ internal static class DoorstopConfigurator
                 File.Delete(configTemporary);
         }
 
-        Console.WriteLine($"Steam 直启已绑定 r2 profile：{context.ProfileDirectory}");
+        Console.WriteLine($"Doorstop 路径已修正：目标程序集位于 {context.ProfileDirectory}，CoreCLR 路径保持原配置。");
     }
 
-    /// <summary>把 profile 内的相对路径解析为绝对路径，并确认运行时目标存在。</summary>
-    /// <param name="profileDirectory">相对路径的基准 profile。</param>
+    /// <summary>按配置项实际使用的根目录解析路径，并确认运行时目标存在。</summary>
+    /// <param name="baseDirectory">目标程序集使用 profile，CoreCLR 使用游戏目录。</param>
     /// <param name="configured">Doorstop 配置中的原值。</param>
     /// <param name="directory">目标是否必须为目录。</param>
     /// <param name="key">用于错误信息的配置项名称。</param>
     /// <returns>经过规范化的现有绝对路径。</returns>
-    private static string ResolveRequiredPath(string profileDirectory, string configured, bool directory, string key)
+    private static string ResolveRequiredPath(string baseDirectory, string configured, bool directory, string key)
     {
         if (string.IsNullOrWhiteSpace(configured))
             throw new InvalidDataException($"Default profile 的 doorstop_config.ini 未设置 {key}。");
 
         string path = Path.IsPathFullyQualified(configured)
             ? Path.GetFullPath(configured)
-            : Path.GetFullPath(configured, profileDirectory);
+            : Path.GetFullPath(configured, baseDirectory);
         if (directory)
         {
             if (!Directory.Exists(path))
@@ -102,7 +111,7 @@ internal static class DoorstopConfigurator
         return path;
     }
 
-    /// <summary>确认发布所需文件存在。</summary>
+    /// <summary>确认部署所需的 profile 引导文件存在。</summary>
     /// <param name="path">待检查的文件。</param>
     /// <param name="message">文件缺失时的上下文。</param>
     private static void RequireFile(string path, string message)

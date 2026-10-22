@@ -12,7 +12,8 @@ internal static class ModPublisher
     /// <param name="context">仓库及本地 profile 路径。</param>
     /// <param name="project">模组发布合同。</param>
     /// <param name="configuration">要读取的构建配置。</param>
-    internal static void Publish(RepositoryContext context, ModProject project, string configuration)
+    /// <returns>已完成本地更新和打包的文件及内容哈希。</returns>
+    internal static ModPackage Publish(RepositoryContext context, ModProject project, string configuration)
     {
         project.ValidateAssets();
         ValidateIcon(project.IconPath, project.PackageId);
@@ -46,6 +47,7 @@ internal static class ModPublisher
             $"{project.ThunderstoreNamespace}-{project.PackageId}-{project.Version}.zip");
         CreatePackage(files, zipPath);
         Console.WriteLine($"创建包：{zipPath}");
+        return ModPackage.Read(project.PackageId, zipPath);
     }
 
     private static void ValidateIcon(string path, string packageId)
