@@ -2,28 +2,33 @@ using System.Globalization;
 
 namespace InFalsusMod.Potential;
 
-/// <summary>从冻结的最佳成绩快照生成固定宽度分享图，完全独立于屏幕分辨率和浏览页滚动位置。</summary>
+/// <summary>从冻结的最佳成绩快照生成分享图，独立于屏幕分辨率和浏览页滚动位置。</summary>
 internal static class B50Image
 {
-    /// <summary>五列成绩卡片，只有现有成绩参与；不伪造缺少的 B50 空位。</summary>
+    /// <summary>浏览页和导出图共用五列、卡片宽高及间距；浏览页按可用宽度等比缩放。</summary>
+    internal const int Columns = 5, CardWidth = 833, CardHeight = 278, Gap = 20;
+
+    /// <summary>五列横向成绩卡参考 Player Bests 布局，以曲绘印象色作底，不补造缺少的成绩。</summary>
     internal static byte[] Render(PotentialSnapshot snapshot, IReadOnlyDictionary<ChartKey, PixelImage> covers, PixelImage badge)
     {
-        const int width = 2400, margin = 48, gap = 18, columns = 5, cardHeight = 300, header = 300;
-        int cardWidth = (width - margin * 2 - gap * (columns - 1)) / columns;
+        const int margin = 80, gap = Gap, columns = Columns, cardHeight = CardHeight, header = 360;
+        const int cardWidth = CardWidth, width = margin * 2 + columns * cardWidth + (columns - 1) * gap;
         int rows = Math.Max(1, (snapshot.B50.Count + columns - 1) / columns);
-        int height = header + rows * (cardHeight + gap) + 96;
+        int height = header + rows * (cardHeight + gap) - gap + 140;
         using var image = new WindowsBitmap(width, height);
-        image.Fill(0, 0, width, height, 0x0d1220);
-        image.Fill(0, 0, width, 250, 0x171f33);
-        image.Image(badge, margin, 28, 200, 200);
-        image.Text(PotentialCalculator.Format(snapshot.Potential), margin + 34, 102, 134, 70, 43, 0xffffff, true);
-        image.Text("IN FALSUS · B50", 285, 30, 1500, 80, 62, 0xffffff, true);
-        image.Text($"PTT {PotentialCalculator.Format(snapshot.Potential)}    MAX {PotentialCalculator.Format(snapshot.Maximum)}",
-            285, 112, 1500, 54, 33, 0xa6f0d6);
-        image.Text($"B50 {PotentialCalculator.Format(snapshot.B50Average)}    B10 {PotentialCalculator.Format(snapshot.B10Average)}    已游玩 {snapshot.Plays.Count} 谱面",
-            285, 174, 1740, 50, 29, 0xc4cede);
-        image.Text($"{snapshot.B50.Count}/50", width - 300, 65, 250, 65, 44, 0xffffff, true, true);
-        image.Text(DateTime.Now.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture), width - 510, 168, 460, 42, 24, 0xc4cede, right: true);
+        image.Fill(0, 0, width, height, 0x252a34);
+        image.Fill(0, 0, width, 305, 0x202630);
+        image.Image(badge, margin, 40, 220, 220);
+        image.Text(PotentialCalculator.Format(snapshot.Potential), margin + 38, 130, 150, 70, 43, 0xffffff, true);
+        image.Text("IN FALSUS", 350, 35, 1200, 70, 48, 0xffffff, true);
+        image.Text("PLAYER BESTS · B50", 350, 104, 1500, 100, 72, 0xffffff, true);
+        image.Text($"B50 {PotentialCalculator.Format(snapshot.B50Average)}    B10 {PotentialCalculator.Format(snapshot.B10Average)}    {snapshot.B50.Count}/50",
+            350, 225, 1440, 46, 30, 0xc4cede);
+        image.Text("UNOFFICIAL POTENTIAL", width - margin - 750, 58, 750, 48, 32, 0xa6f0d6, true, true);
+        image.Text(PotentialCalculator.Format(snapshot.Potential), width - margin - 700, 115, 700, 115, 98, 0xffffff, true, true);
+        image.Text($"MAX {PotentialCalculator.Format(snapshot.Maximum)}    已游玩 {snapshot.Plays.Count} 谱面",
+            width - margin - 750, 238, 750, 42, 28, 0xc4cede, right: true);
+        image.Fill(margin, 317, width - margin * 2, 3, 0xa6f0d6);
         for (int i = 0; i < snapshot.B50.Count; i++)
         {
             var play = snapshot.B50[i];
@@ -32,23 +37,39 @@ internal static class B50Image
                 throw new InvalidDataException($"缺少分享图封面：{chart.Title}。");
             int x = margin + i % columns * (cardWidth + gap);
             int y = header + i / columns * (cardHeight + gap);
-            uint accent = PotentialPresentation.DifficultyRgb(play.Play.Difficulty);
-            image.Fill(x, y, cardWidth, cardHeight, 0x1c263b);
-            image.Fill(x, y, cardWidth, 5, accent);
-            image.Text($"#{play.Rank}", x + 16, y + 10, 120, 52, 34, 0xcbd5e9, true);
-            image.Text(PotentialCalculator.Format(play.Potential!.Value), x + 150, y + 7, cardWidth - 168, 59, 42, 0xa6f0d6, true, true);
-            image.Image(cover, x + 16, y + 70, 152, 152);
-            image.Text(PotentialPresentation.Difficulty(play.Play.Difficulty), x + 184, y + 70, cardWidth - 200, 38, 23, accent, true);
-            image.Text($"定数 {chart.Constant.ToString("F1", CultureInfo.InvariantCulture)}", x + 184, y + 114, cardWidth - 200, 38, 23, 0xdce4f3);
-            image.Text(PotentialPresentation.Lamp(play.Play.Lamp), x + 184, y + 160, cardWidth - 200, 42, 27, play.Play.Lamp == 2 ? 0xa6f0d6u : 0xcbd5e9u, true);
-            image.Text(PotentialPresentation.Score(play.Play.Score), x + 184, y + 199, cardWidth - 200, 38, 24, 0xffffff, true);
-            image.Text(chart.Title, x + 16, y + 236, cardWidth - 32, 34, 23, 0xffffff, true);
-            image.Text(chart.Artist, x + 16, y + 272, cardWidth - 32, 22, 16, 0xaab7d0);
+            DrawCard(image, play, cover, (x, y, cardWidth, cardHeight));
         }
         if (snapshot.B50.Count == 0)
-            image.Text("还没有已游玩的谱面", margin, header + 70, width - margin * 2, 80, 44, 0xc4cede);
-        image.Text("PotentialSystem · 整数定数读取自当前游戏 · PTT = (B50 总和 + B10 总和) / 60 · 缺项贡献零",
-            margin, height - 74, width - margin * 2, 48, 25, 0x91a0bc);
+            image.Text("还没有已游玩的谱面", margin, header + 90, width - margin * 2, 80, 44, 0xc4cede);
+        image.Fill(margin, height - 92, width - margin * 2, 2, 0xa6f0d6);
+        string constants = $"谱面定数来源：{CommunityConstants.DisplayName(snapshot.Catalog.Source)}";
+        image.Text($"PotentialSystem · PTT = (B50 总和 + B10 总和) / 60 · {constants}",
+            margin, height - 69, width - margin * 2 - 450, 44, 25, 0xb2bdcd);
+        image.Text(DateTime.Now.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture), width - margin - 430,
+            height - 69, 430, 44, 25, 0xb2bdcd, right: true);
         return image.ToClipboardDib();
+    }
+
+    /// <summary>封面在左，难度/定数、歌名、作者及大号分数在右，潜力值与排名靠右对齐。</summary>
+    private static void DrawCard(WindowsBitmap image, RankedPlay play, PixelImage cover,
+        (int X, int Y, int Width, int Height) bounds)
+    {
+        var chart = play.Chart!;
+        var palette = CoverPalette.From(cover);
+        int x = bounds.X, y = bounds.Y, width = bounds.Width;
+        image.RoundedFill(bounds, 16, palette.Border);
+        image.RoundedFill((x + 2, y + 2, width - 4, bounds.Height - 4), 14, palette.Background);
+        image.Image(cover, x + 18, y + 21, 236, 236);
+        int left = x + 274, infoWidth = width - 298;
+        uint accent = PotentialPresentation.DifficultyRgb(play.Play.Difficulty);
+        image.Text($"{PotentialPresentation.Difficulty(play.Play.Difficulty)}  {PotentialCalculator.FormatConstant(chart.Constant)}",
+            left, y + 20, infoWidth - 188, 40, 25, accent, true);
+        image.Text(PotentialCalculator.Format(play.Potential!.Value), x + width - 197, y + 15, 173, 51, 42, accent, true, true);
+        image.Text(chart.Title, left, y + 73, infoWidth, 42, 33, 0xffffff, true);
+        image.Text(chart.Artist, left, y + 116, infoWidth, 30, 22, 0xc9d4df);
+        image.Text(PotentialPresentation.Score(play.Play.Score), left, y + 153, infoWidth, 68, 56, 0xf0faff, true);
+        image.Text(PotentialPresentation.Lamp(play.Play.Lamp), left, y + 231, infoWidth - 100, 32, 25,
+            play.Play.Lamp == 2 ? 0xa6f0d6U : 0xd2dce7U, true);
+        image.Text($"#{play.Rank}", x + width - 130, y + 222, 106, 41, 33, 0xffffff, true, true);
     }
 }

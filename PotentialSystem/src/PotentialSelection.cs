@@ -1,42 +1,53 @@
 extern alias GameData;
 
-using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using ifapp.Game.Input;
 using ifapp.Game.Scenes;
 using ifapp.Game.Scenes.SongSelect;
 using ifapp.Game.UI.Common;
 using UnityEngine;
-using Object = UnityEngine.Object;
 using SongRow = GameData::_K._SH;
+using SaveOwner = GameData::_K._NH;
+using SortType = ifapp.Game.SongSelectSortType;
+using Text = FastText.FastText;
 
 namespace InFalsusMod.Potential;
 
-/// <summary>选歌场景的徽章入口、卡片排名和潜力值排序；原版歌曲列表与输入仍由游戏管理。</summary>
+/// <summary>选歌场景的徽章入口、卡片排名和原生排序扩展；游戏继续管理歌曲列表与输入。</summary>
 internal sealed class PotentialSelection : IDisposable
 {
+    /// <summary>原版排序选项按枚举顺序排列，扩展选项只保存在本视图中。</summary>
+    private static readonly SortType[] NativeSortTypes = Enum.GetValues<SortType>();
+    /// <summary>原版选项后的双向循环顺序，以及各项使用的数值和方向。</summary>
+    private static readonly (string Label, bool ByConstant, bool Descending)[] CustomSortTypes =
+    {
+        ("歌曲定数 升序", true, false),
+        ("歌曲定数 降序", true, true),
+        ("歌曲潜力值 升序", false, false),
+        ("歌曲潜力值 降序", false, true)
+    };
     /// <summary>本视图绑定的原生场景与共享页面。</summary>
     private readonly SongSelectScene scene;
     private readonly PotentialBrowser browser;
     private PotentialView? account;
-    private UIButton? entry, sortButton;
-    private NativeLabel? selectedRank, sortLabel;
-    /// <summary>透明材质仅覆盖入口副本的图形，原版状态动画仍可正常驱动碰撞体。</summary>
-    private Texture2D? transparent;
-    private readonly List<Material> transparentMaterials = new();
-    private bool? buttonsEnabled;
-    private int buttonsSortMode = -1;
+    /// <summary>头像和 PTT 各有独立菱形碰撞体；委托在注销前保持有效。</summary>
+    private readonly List<UIButton> entries = new();
+    private readonly List<UIButton._EI> openResults = new();
+    private NativeLabel? selectedRank;
+    private bool? entryEnabled;
     /// <summary>池化小卡按对象身份复用文字，歌曲切换时更新内容。</summary>
-    private readonly Dictionary<IntPtr, NativeLabel> ranks = new();
-    /// <summary>当前排名快照及排序模式；零为原版，一为降序，二为升序。</summary>
+    private readonly Dictionary<IntPtr, NativeScoreLine> ranks = new();
+    /// <summary>当前数据与上次排序使用的数据，用于在成绩或定数来源变化后刷新顺序。</summary>
     private PotentialSnapshot? snapshot, sortedSnapshot;
+    /// <summary>零为原版，其余为 CustomSortTypes 的下标加一；原生枚举始终保留合法值。</summary>
     private int sortMode;
+    private Str.Strings.Localization sortLanguage;
     private byte sortedDifficulty;
     private IntPtr sortedList;
     private int sortedCount;
     /// <summary>避免关闭恢复过程中再次参与排序。</summary>
     private bool disposed;
 
-    /// <summary>建立独立控件，全部使用原版按钮输入与原生字体。</summary>
+    /// <summary>建立独立入口和排名文字，排序沿用游戏已有控件。</summary>
     internal PotentialSelection(SongSelectScene scene, PotentialBadges badges, PotentialBrowser browser)
     {
         this.scene = scene;
@@ -45,67 +56,142 @@ internal sealed class PotentialSelection : IDisposable
         {
             var graphic = scene.leftSongCardContainer.songCardPrefab.jacket;
             account = new PotentialView(scene.topBar.text, scene.scene.transform, graphic, badges);
-            entry = NativeButtons.Create(scene.backButton, scene, "PotentialSystem.OpenResults", " ", _ => browser.RequestOpen(scene, snapshot));
-            NativeButtons.Place(entry, scene.scene.transform, Vector2.zero, new Vector2(220f, 220f));
-            var layout = entry.constrained2D.constrained2DTransform;
-            layout.anchor = new Vector2(0.5f, 0.5f);
-            layout.parentAlignment = Constrained2DAlignment.Top;
-            layout.offset = new Vector2(0f, -115f);
-            entry.constrained2D.constrained2DTransform = layout;
-            HideButtonGraphics(entry);
-            if (entry.ButtonCollider.TryCast<BoxCollider>() is { } collider)
-            {
-                collider.center = Vector3.zero;
-                collider.size = new Vector3(220f, 220f, collider.size.z);
-            }
-            entry.constrained2D._PQA(0x3f);
-            sortButton = NativeButtons.Create(scene.backButton, scene, "PotentialSystem.Sort", " ", _ => CycleSort());
-            HideButtonGraphics(sortButton);
-            var original = scene.songSelectSortingButton.button.constrained2D.constrained2DTransform;
-            // anchor 是控件自身的枢轴；先还原原按钮中心，再在其右侧留出 20 像素间距。
-            var originalCenter = original.offset + Vector2.Scale(new Vector2(0.5f, 0.5f) - original.anchor, original.sizeInPixels);
-            NativeButtons.Place(sortButton, scene.songSelectSortingButton.button.transform.parent,
-                originalCenter + new Vector2(original.sizeInPixels.x / 2f + 145f, 0f), new Vector2(250f, 64f));
-            layout = sortButton.constrained2D.constrained2DTransform;
-            layout.parentAlignment = original.parentAlignment;
-            sortButton.constrained2D.constrained2DTransform = layout;
-            sortButton.constrained2D._PQA(0x3f);
-            if (sortButton.ButtonCollider.TryCast<BoxCollider>() is { } sortCollider)
-            {
-                sortCollider.center = Vector3.zero;
-                sortCollider.size = new Vector3(250f, 64f, sortCollider.size.z);
-            }
-            sortLabel = new NativeLabel(scene.topBar.text, sortButton.transform, "PotentialSort",
-                new Vector2(0.5f, 0.5f), Constrained2DAlignment.Center, Vector2.zero, 3.6f);
-            UpdateSortText();
-            selectedRank = new NativeLabel(scene.topBar.text, scene.largeSongCard.self.transform,
-                "SelectedRank", new Vector2(0.5f, 0.5f), Constrained2DAlignment.Bottom, new Vector2(0f, -35f), 4.4f);
+            var saved = SaveOwner._CEb?._DEb?._iEb?.GeneralSaveState
+                ?? throw new InvalidOperationException("当前选歌角色尚未载入。");
+            var icons = scene.songSelectRemembranceContainer?.characterUniversalIconMapping
+                ?? throw new InvalidOperationException("选歌场景缺少原生角色头像映射。");
+            account.SetPortrait(icons._wI(saved.SelectedCharacter, default));
+            CreateEntry("Portrait", PotentialView.PortraitCenter, PotentialView.FrameSize);
+            CreateEntry("PTT", PotentialView.BadgeCenter, PotentialView.BadgeSize);
+            selectedRank = new NativeLabel(scene.topBar.text, scene.scene.transform, "SelectedChart",
+                new Vector2(0.5f, 0.5f), Constrained2DAlignment.BottomLeft, new Vector2(380f, 180f), 3f);
         }
         catch { Dispose(); throw; }
     }
 
-    /// <summary>按当前难度刷新可见卡片排名，并在曲包、难度或成绩变化后重新应用自选排序。</summary>
+    /// <summary>建立旋转 45 度的正方形碰撞体，与显示菱形共用中心和对角线长度。</summary>
+    /// <param name="name">入口名称。</param>
+    /// <param name="center">相对头像容器中心的设计像素偏移。</param>
+    /// <param name="size">菱形水平及垂直对角线长度。</param>
+    private void CreateEntry(string name, Vector2 center, float size)
+    {
+        var entry = NativeButtons.Create(scene.backButton, scene, "PotentialSystem." + name, "", OpenResults);
+        entries.Add(entry);
+        openResults.Add(entry._Gjb);
+        UIManager._A._ktA(entry);
+        entry.transform.SetParent(account!.Entry.transform, false);
+        foreach (var sideCar in entry.GetComponentsInChildren<UIButtonSideCar>(true))
+            sideCar.enabled = false;
+        entry.sideCar = null;
+        for (int index = 0; index < entry.transform.childCount; index++)
+            entry.transform.GetChild(index).gameObject.SetActive(false);
+        foreach (var collider in entry.GetComponentsInChildren<Collider>(true))
+            collider.enabled = false;
+        var renderer = entry.GetComponent<MeshRenderer>();
+        if (renderer != null) renderer.enabled = false;
+        var hit = new GameObject("DiamondHitArea");
+        hit.layer = entry.gameObject.layer;
+        hit.transform.SetParent(entry.transform, false);
+        hit.transform.localRotation = Quaternion.Euler(0f, 0f, 45f);
+        entry.ButtonCollider = hit.AddComponent<BoxCollider>();
+        entry.ButtonCollider.enabled = false;
+        entry.constrained2D = entry.GetComponent<Constrained2D>();
+        entry.flags = UIButton.Flags.DoesConsumeTouchOnPress | UIButton.Flags.DoesHoverBlockOtherHover
+            | UIButton.Flags.CanCauseCursorHover;
+        var layout = entry.constrained2D.constrained2DTransform;
+        layout.transform = entry.transform;
+        layout.meshRenderer = null;
+        layout.meshFilter = null;
+        layout.fastText = null;
+        layout.type = Constrained2DType.Container;
+        layout.anchor = new Vector2(0.5f, 0.5f);
+        layout.parentAlignment = Constrained2DAlignment.Center;
+        layout.offset = center;
+        layout.sizeInPixels = Vector2.zero;
+        layout.sizeInParentNormalized = Vector2.zero;
+        layout.renderableScale = Vector2.one;
+        layout.color = Color.white;
+        layout.zPosition = -0.02f;
+        layout.overrideMaterialRenderQueueOffset = 0;
+        entry.constrained2D.constrained2DTransform = layout;
+        NativeButtons.SetState(entry, false);
+        entry.gameObject.SetActive(true);
+        entry.constrained2D._rQA();
+        entry.constrained2D._RQA();
+        entry.constrained2D._PQA(0x3f);
+        BrowserWidgets.Place(entry.constrained2D, center, Vector2.one * size);
+    }
+
+    /// <summary>原生菱形碰撞体完成点击判定；顶部被裁切部分及选歌输入失效时不打开。</summary>
+    private void OpenResults(UIButton button)
+    {
+        var input = InputManager.Instance;
+        if (entries.Contains(button) && account != null && input?.IsHeadOfStack(scene) == true
+            && BrowserWidgets.ContainsPoint(account.Entry, input.GetCurrentMousePositionNormalizedInUISpace()))
+            browser.RequestOpen(scene, snapshot);
+    }
+
+    /// <summary>刷新当前难度排名，并在曲包、难度、定数来源或成绩变化后重新应用自选排序。</summary>
     internal void Render(PotentialSnapshot? data, string status)
     {
         snapshot = data;
-        account?.Render(data, data?.Potential ?? 0m, "", status);
-        if (buttonsEnabled != (data != null) || buttonsSortMode != sortMode)
+        account?.Render(data, status);
+        var input = InputManager.Instance;
+        bool enabled = data != null && scene.isActiveAndEnabled && !scene.DisableInputEvents
+            && input?.IsHeadOfStack(scene) == true;
+        bool inputChanged = entryEnabled != enabled;
+        bool hitAreaChanged = false;
+        _m._wi._ERA(false);
+        foreach (var entry in entries)
         {
-            NativeButtons.SetState(entry!, data != null);
-            NativeButtons.SetState(sortButton!, data != null, sortMode != 0);
-            buttonsEnabled = data != null;
-            buttonsSortMode = sortMode;
+            if (inputChanged) NativeButtons.SetState(entry, enabled);
+            var container = entry.constrained2D;
+            var layout = container.constrained2DTransform;
+            BrowserWidgets.Place(container, layout.offset, layout.sizeInPixels);
+            // 只前移自有命中区域；不禁用覆盖顶部的原生 blocker 或改动其输入归属。
+            float depth = BrowserWidgets.ReadLayout(container).CalculatedZFromCamera;
+            float front = depth;
+            if (scene.topBar.topbarBlockers != null)
+                foreach (var blocker in scene.topBar.topbarBlockers)
+                    if (blocker != null && blocker.isActiveAndEnabled && blocker.constrained2D != null)
+                        front = Math.Min(front, BrowserWidgets.ReadLayout(blocker.constrained2D).CalculatedZFromCamera - 0.02f);
+            if (front < depth)
+            {
+                layout = container.constrained2DTransform;
+                layout.zPosition += front - depth;
+                container.constrained2DTransform = layout;
+                container._PQA(0x3f);
+            }
+            _m._wi._ERA(false);
+            bool wasEnabled = entry.ButtonCollider.enabled;
+            BrowserWidgets.SyncHitArea(container, entry.ButtonCollider);
+            var hitSize = entry.ButtonCollider.size;
+            entry.ButtonCollider.size = new Vector3(hitSize.x * 0.70710678f, hitSize.y * 0.70710678f, hitSize.z);
+            entry.ButtonCollider.enabled &= enabled && BrowserWidgets.ContainsPoint(account!.Entry,
+                input!.GetCurrentMousePositionNormalizedInUISpace());
+            hitAreaChanged |= wasEnabled != entry.ButtonCollider.enabled;
+            if (inputChanged && enabled)
+            {
+                UIManager._A._ktA(entry);
+                UIManager._A._mtA(entry, scene);
+            }
         }
+        entryEnabled = enabled;
+        // 越过游戏裁切边界后，即使鼠标停下，也要让原生输入重新命中新启用的碰撞体。
+        if (enabled && (inputChanged || hitAreaChanged)) input?.RequestLastMouseMoveReplay();
+        if (sortMode != 0 && sortLanguage != NativeLabel.CurrentLanguage())
+            UpdateSortText();
         if (sortMode != 0 && data != null && InputManager.Instance?.IsHeadOfStack(scene) == true
             && (sortedSnapshot != data || sortedDifficulty != (byte)scene._Sr
                 || sortedList != scene._rr?.Pointer || sortedCount != scene._rr?.Count))
             RefreshOrder();
         UpdateCards(scene.leftSongCardContainer);
         UpdateCards(scene.rightSongCardContainer);
-        selectedRank?.Set(PotentialPresentation.RankLine(data?.Find(new ChartKey(scene._sr.Value, (byte)scene._Sr))), new Color(0.7f, 1f, 0.85f));
+        if (selectedRank?.Set(PotentialPresentation.RankLine(data, new ChartKey(scene._sr.Value, (byte)scene._Sr)), Color.white) == true)
+            NativePotentialPage.PlaceLabel(selectedRank, new Vector2(380f, 180f), 700f, 3f);
     }
 
-    /// <summary>小卡数据会被原版反复绑定，文字依据当前实际 SongId 更新而不依赖位置。</summary>
+    /// <summary>池化小卡按歌曲行实际绑定的 SongId 和难度更新，保持与原生等级、分数一致。</summary>
     private void UpdateCards(SongSelectSmallCardScrollContainer container)
     {
         if (container?.leftToRightOrderedContainers == null)
@@ -114,48 +200,65 @@ internal sealed class PotentialSelection : IDisposable
         {
             if (card == null || card.self == null)
                 continue;
-            if (!ranks.TryGetValue(card.Pointer, out var label) || label.Text == null)
+            if (!ranks.TryGetValue(card.Pointer, out var label) || !label.Alive)
             {
-                label = new NativeLabel(scene.topBar.text, card.self.transform, "ChartRank",
-                    new Vector2(0.5f, 0.5f), Constrained2DAlignment.Bottom, new Vector2(0f, -27f), 3.6f);
+                label = new NativeScoreLine(card.self.transform, card.highscore);
                 ranks[card.Pointer] = label;
             }
             var row = card._py;
-            var play = row == null ? null : snapshot?.Find(new ChartKey(row._A.Value, (byte)scene._Sr));
-            label.Set(PotentialPresentation.RankLine(play), new Color(0.7f, 1f, 0.85f));
+            label.Set(row == null ? "" : PotentialPresentation.RankLine(snapshot, new ChartKey(row._A.Value, (byte)row._e)));
         }
     }
 
-    /// <summary>额外按钮在降序、升序、原版之间切换；不把非法值写入原生排序枚举。</summary>
-    private void CycleSort()
+    /// <summary>扩展原按钮的双向循环；原生 _cO 参数是目标枚举下标，方向由当前合法值推得。</summary>
+    /// <returns>是否已处理当前切换；其他场景和非循环调用交还原版。</returns>
+    internal bool TryCycleSort(SongSelectSortingButton button, int requested)
     {
-        if (snapshot == null || InputManager.Instance?.IsHeadOfStack(scene) != true)
-            return;
+        if (disposed || button != scene.songSelectSortingButton || snapshot == null
+            || InputManager.Instance?.IsHeadOfStack(scene) != true)
+            return false;
+        int direction = requested - (int)button._Bs;
+        if (direction != 1 && direction != -1)
+            return false;
+        int current = sortMode == 0 ? Array.IndexOf(NativeSortTypes, button._Bs)
+            : NativeSortTypes.Length + sortMode - 1;
+        if (current < 0)
+            return false;
+        int count = NativeSortTypes.Length + CustomSortTypes.Length;
+        int next = (current + direction + count) % count;
         try
         {
-            sortMode = (sortMode + 1) % 3;
-            UpdateSortText();
-            RefreshOrder();
+            if (next < NativeSortTypes.Length)
+            {
+                sortMode = 0;
+                button._Bs = NativeSortTypes[next];
+                // BO 同时更新原生名称并调用原版 OnValueChanged，不能再次手工调用该回调。
+                button._BO();
+            }
+            else
+            {
+                sortMode = next - NativeSortTypes.Length + 1;
+                UpdateSortText();
+                RefreshOrder();
+            }
         }
         catch (Exception ex)
         {
             sortMode = 0;
-            UpdateSortText();
-            Plugin.Logger.LogError($"潜力值排序失败，已退出该模式：{ex}");
+            Plugin.Logger.LogError($"潜力值排序切换失败，已退出该模式：{ex}");
             RestoreOrder();
         }
+        return true;
     }
 
-    /// <summary>原版排序按钮被点击时退出潜力值模式，让原版完整处理其十个排序选项。</summary>
+    /// <summary>原版主动设置排序时退出自有模式，名称与后续刷新均由原生回调维护。</summary>
     internal void NativeSortRequested(SongSelectScene current)
     {
-        if (scene != current || sortMode == 0)
-            return;
-        sortMode = 0;
-        UpdateSortText();
+        if (scene == current)
+            sortMode = 0;
     }
 
-    /// <summary>原版已建立/排序好当前曲包列表后，只调整现有行的顺序，不增加歌曲或改变解锁状态。</summary>
+    /// <summary>原版建立当前曲包列表后只调整现有行，不增加歌曲或改变解锁状态。</summary>
     internal void NativeSortCompleted(SongSelectScene current)
     {
         if (disposed || scene != current || sortMode == 0 || snapshot == null || scene._rr == null)
@@ -163,13 +266,21 @@ internal sealed class PotentialSelection : IDisposable
         try
         {
             byte difficulty = (byte)scene._Sr;
-            var rows = new List<(SongRow Row, RankedPlay? Best)>();
+            var sort = CustomSortTypes[sortMode - 1];
+            var rows = new List<(SongRow Row, decimal? Value)>();
             foreach (var row in scene._rr)
-                rows.Add((row, snapshot.Find(new ChartKey(row._A.Value, difficulty))));
-            var playedFirst = rows.OrderByDescending(row => row.Best != null);
-            var ordered = sortMode == 1
-                ? playedFirst.ThenByDescending(row => row.Best?.Potential).ThenBy(row => row.Row._A.Value)
-                : playedFirst.ThenBy(row => row.Best?.Potential).ThenBy(row => row.Row._A.Value);
+            {
+                var key = new ChartKey(row._A.Value, (byte)row._e);
+                decimal? value = sort.ByConstant
+                    ? snapshot.Catalog.TryGet(key, out var chart) ? chart.Constant : null
+                    : snapshot.Find(key)?.Potential;
+                rows.Add((row, value));
+            }
+            // 定数排序包含未游玩谱面；单曲 PTT 缺少成绩时，两种方向均置于末尾。
+            var availableFirst = rows.OrderByDescending(row => row.Value.HasValue);
+            var ordered = sort.Descending
+                ? availableFirst.ThenByDescending(row => row.Value).ThenBy(row => row.Row._A.Value)
+                : availableFirst.ThenBy(row => row.Value).ThenBy(row => row.Row._A.Value);
             var result = ordered.Select(row => row.Row).ToArray();
             for (int i = 0; i < result.Length; i++)
                 scene._rr[i] = result[i];
@@ -181,61 +292,43 @@ internal sealed class PotentialSelection : IDisposable
         catch
         {
             sortMode = 0;
-            UpdateSortText();
             throw;
         }
     }
 
-    /// <summary>复用原版排序回调的 Ao→ON→ZN 流程，保留当前歌曲身份并刷新左右滚动容器。</summary>
+    /// <summary>复用原版 Ao→ON→ZN 流程，保留当前歌曲身份并刷新两侧滚动容器。</summary>
     private void RefreshOrder()
     {
         var selected = scene._sr;
         scene._Ao(scene._Tr);
-        // 原生 Ao 的后置补丁在这里已经把当前曲包列表按潜力值重排。
         scene._ON(selected);
         scene.StartCoroutine(scene._ZN());
     }
 
-    /// <summary>恢复原版顺序失败只记录日志，不影响其他自有 UI 的销毁。</summary>
+    /// <summary>恢复原生名称和排序；失败只记录，不影响自有控件的回收。</summary>
     private void RestoreOrder()
     {
         if (scene == null || !scene.isActiveAndEnabled)
             return;
-        try { RefreshOrder(); }
+        try { scene.songSelectSortingButton._BO(); }
         catch (Exception ex) { Plugin.Logger.LogError($"恢复原版选歌排序失败：{ex}"); }
     }
 
-    /// <summary>模式变化时更新入口文案；原版排序名称与枚举保持由游戏维护。</summary>
+    /// <summary>定数与单曲潜力值名称使用原按钮的文字组件及当前语言字体。</summary>
     private void UpdateSortText()
     {
-        sortLabel?.Set(sortMode == 1 ? "潜力值 ↓" : sortMode == 2 ? "潜力值 ↑" : "潜力值排序",
-            sortMode == 0 ? Color.white : new Color(0.7f, 1f, 0.85f));
+        if (sortMode == 0)
+            return;
+        var text = scene.songSelectSortingButton.sortText;
+        text.SetTextNonLocalized(CustomSortTypes[sortMode - 1].Label, Text.UpdateType.DontUpdateMesh);
+        sortLanguage = NativeLabel.CurrentLanguage();
+        text.targetLocalization = sortLanguage;
+        text.dirtyFlags |= Text.DirtyFlags.FontChanged | Text.DirtyFlags.TextChanged;
+        text.EnsureDirtyFlagsProcessed();
+        text.GetComponent<Constrained2D>()._PQA(0x3f);
     }
 
-    /// <summary>用完全透明的自有纹理隐藏原版按钮装饰，避免悬停动画重新启用 renderer 时露出返回图案。</summary>
-    private void HideButtonGraphics(UIButton button)
-    {
-        if (transparent == null)
-        {
-            transparent = new Texture2D(1, 1, TextureFormat.RGBA32, false)
-            { name = "PotentialSystem.Transparent", hideFlags = HideFlags.HideAndDontSave };
-            transparent.LoadRawTextureData(new Il2CppStructArray<byte>(new byte[4]));
-            transparent.Apply(false, true);
-        }
-        foreach (var graphic in button.GetComponentsInChildren<Constrained2D>(true))
-        {
-            var layout = graphic.constrained2DTransform;
-            if (layout.type is not (Constrained2DType.Sprite or Constrained2DType.Sprite9Slice)
-                || layout.renderableTargetMaterial == null)
-                continue;
-            var material = new Material(layout.renderableTargetMaterial)
-            { name = "PotentialSystem.HitArea", hideFlags = HideFlags.HideAndDontSave, mainTexture = transparent };
-            transparentMaterials.Add(material);
-            graphic._irA(material);
-        }
-    }
-
-    /// <summary>退出排序并释放自有对象；原版 UIButton.OnDestroy 会注销相应输入登记。</summary>
+    /// <summary>退出自有排序，先注销入口再释放文字和图形。</summary>
     public void Dispose()
     {
         if (disposed)
@@ -245,25 +338,21 @@ internal sealed class PotentialSelection : IDisposable
         sortMode = 0;
         if (restore)
             RestoreOrder();
+        foreach (var entry in entries)
+        {
+            if (entry.ButtonCollider != null)
+                entry.ButtonCollider.enabled = false;
+            try { UIManager._A?._ktA(entry); }
+            catch (Exception ex) { Plugin.Logger.LogError($"注销潜力值徽章入口失败：{ex}"); }
+        }
+        entries.Clear();
+        openResults.Clear();
         account?.Dispose();
         account = null;
         selectedRank?.Dispose();
-        sortLabel?.Dispose();
-        selectedRank = sortLabel = null;
+        selectedRank = null;
         foreach (var label in ranks.Values)
             label.Dispose();
         ranks.Clear();
-        if (entry != null)
-            Object.Destroy(entry.gameObject);
-        if (sortButton != null)
-            Object.Destroy(sortButton.gameObject);
-        entry = sortButton = null;
-        foreach (var material in transparentMaterials)
-            if (material != null)
-                Object.Destroy(material);
-        transparentMaterials.Clear();
-        if (transparent != null)
-            Object.Destroy(transparent);
-        transparent = null;
     }
 }

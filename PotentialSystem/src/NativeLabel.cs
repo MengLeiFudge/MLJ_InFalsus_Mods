@@ -17,7 +17,7 @@ internal sealed class NativeLabel : IDisposable
     private Color color;
     private Strings.Localization language;
 
-    /// <summary>复制原版字体，重新绑定副本的渲染引用，并按父容器定位。</summary>
+    /// <summary>复制原生文字并重新绑定渲染引用，使用模组的完整简中字形。</summary>
     internal NativeLabel(Text template, Transform parent, string name, Vector2 anchor,
         Constrained2DAlignment alignment, Vector2 offset, float fontSize)
     {
@@ -32,6 +32,7 @@ internal sealed class NativeLabel : IDisposable
                 collider.enabled = false;
             Text.meshRenderer = root.GetComponent<MeshRenderer>();
             Text.meshFilter = root.GetComponent<MeshFilter>();
+            PotentialFonts.Apply(Text);
             // 渲染及 OnDestroy 都依赖原生初始化的缓存；不清空 charBuffer 或材质数组。
             var layout = constrained.constrained2DTransform;
             layout.transform = root.transform;
@@ -44,6 +45,8 @@ internal sealed class NativeLabel : IDisposable
             layout.zPosition = -0.25f;
             layout.renderableScale = Vector2.one;
             layout.color = Color.white;
+            layout.sizeInParentNormalized = Vector2.zero;
+            layout.overrideMaterialRenderQueueOffset = 0;
             constrained.constrained2DTransform = layout;
             Text.SetFontSize(fontSize, Text.UpdateType.DontUpdateMesh);
             Text.SetAlignment(AlignmentOptions.Center, Text.UpdateType.DontUpdateMesh);
@@ -62,13 +65,13 @@ internal sealed class NativeLabel : IDisposable
     }
 
     /// <summary>只在文本、颜色或语言改变时刷新字形；空字符串用于隐藏未游玩的排名。</summary>
-    internal void Set(string text, Color tint)
+    internal bool Set(string text, Color tint)
     {
         if (Text == null)
-            return;
+            return false;
         var current = CurrentLanguage();
         if (value == text && color == tint && language == current)
-            return;
+            return false;
         Text.SetTextNonLocalized(text, Text.UpdateType.DontUpdateMesh);
         // 字符串入口会选择日文；必须在调用后恢复当前语言，而不能在调用前设置。
         Text.targetLocalization = current;
@@ -79,6 +82,7 @@ internal sealed class NativeLabel : IDisposable
         value = text;
         color = tint;
         language = current;
+        return true;
     }
 
     /// <summary>仅销毁本对象的文字副本。</summary>

@@ -13,13 +13,13 @@ namespace InFalsusMod.Potential;
 /// <param name="Difficulty">原生单个难度位标记。</param>
 internal readonly record struct ChartKey(ushort SongId, byte Difficulty);
 
-/// <summary>当前游戏中的谱面定义与展示素材；定数始终读取原生 Rating。</summary>
+/// <summary>当前游戏中的谱面定义与展示素材；定数由当前来源统一解析。</summary>
 /// <param name="Id">原生谱面 Id，用于校验保存成绩的身份。</param>
-/// <param name="Constant">从原生 Rating 直接读取的等级。</param>
+/// <param name="Constant">当前来源定数或作为回退的原生等级。</param>
 /// <param name="Title">原版当前语言下的歌名。</param>
 /// <param name="Artist">原版当前语言下的作者。</param>
 /// <param name="Jacket">按谱面、歌曲、默认封面的优先级选出的原生素材引用。</param>
-internal sealed record ChartDefinition(string Id, int Constant, string Title, string Artist,
+internal sealed record ChartDefinition(string Id, decimal Constant, string Title, string Artist,
     AssetReferenceT<Material>? Jacket);
 
 /// <summary>从游戏当前 SongData 构建索引，并用当前全部可用谱面计算理论上限。</summary>
@@ -34,16 +34,20 @@ internal sealed class ChartCatalog
     /// <summary>读取展示名称时的原生语言，语言切换后重建元数据。</summary>
     internal Strings.Localization Language { get; }
 
-    /// <summary>接收已校验的运行时定义，不携带任何内置歌曲表。</summary>
-    private ChartCatalog(Dictionary<ChartKey, ChartDefinition> charts, Strings.Localization language)
+    /// <summary>当前快照使用的定数来源；配置切换后重建曲库与完整排名。</summary>
+    internal ChartConstantSource Source { get; }
+
+    /// <summary>接收已校验的运行时定义与本次选择的定数来源。</summary>
+    private ChartCatalog(Dictionary<ChartKey, ChartDefinition> charts, Strings.Localization language, ChartConstantSource source)
     {
         this.charts = charts;
         Language = language;
+        Source = source;
         Maximum = PotentialCalculator.Overall(charts.Values.Select(chart => chart.Constant + PotentialCalculator.MaximumPerformance));
     }
 
     /// <summary>读取实际加载的谱面；展示名称或封面故障不阻止等级计算与成绩保存。</summary>
-    internal static ChartCatalog Read(SongData data)
+    internal static ChartCatalog Read(SongData data, ChartConstantSource source)
     {
         var songs = data.allSongInfo ?? throw new InvalidOperationException("歌曲数据尚未载入。");
         var charts = new Dictionary<ChartKey, ChartDefinition>();
@@ -95,13 +99,14 @@ internal sealed class ChartCatalog
                     && !songJackets.TryGetValue(song.Id.Value, out jacket))
                     jacket = data.FallbackJacketLargeMaterial;
                 var key = new ChartKey(song.Id.Value, difficulty);
-                if (!charts.TryAdd(key, new ChartDefinition(entry.Id, entry.Rating, title, artist, jacket)) || !ids.Add(entry.Id))
+                decimal constant = CommunityConstants.Resolve(entry.Id, entry.Rating, source);
+                if (!charts.TryAdd(key, new ChartDefinition(entry.Id, constant, title, artist, jacket)) || !ids.Add(entry.Id))
                     throw new InvalidDataException($"游戏存在重复谱面身份：{entry.Id}。");
             }
         }
         if (charts.Count == 0)
             throw new InvalidOperationException("游戏尚未提供可用谱面。");
-        return new ChartCatalog(charts, language);
+        return new ChartCatalog(charts, language, source);
     }
 
     /// <summary>匹配当前可用谱面；未知身份不猜测等级。</summary>

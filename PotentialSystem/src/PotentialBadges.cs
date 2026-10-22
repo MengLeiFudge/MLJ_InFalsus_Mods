@@ -14,11 +14,15 @@ internal sealed record PixelImage(int Width, int Height, byte[] Rgba);
 /// <summary>拥有嵌入的 Arcaea 徽章及其 Unity 纹理，按固定潜力值门槛选择档位。</summary>
 internal sealed class PotentialBadges : IDisposable
 {
-    /// <summary>八档徽章的潜力值下界；13、13.5、14 分别对应 Arcaea 的一星、二星、三星。</summary>
+    /// <summary>八档潜力值徽章的下界；13、13.5、14 分别对应 Arcaea 的一星、二星、三星。</summary>
     private static readonly decimal[] thresholds = { 0m, 4m, 8m, 11m, 12m, 13m, 13.5m, 14m };
-    /// <summary>徽章像素与按需创建的纹理，编号 8 为不可用状态。</summary>
-    private readonly PixelImage?[] pixels = new PixelImage[9];
-    private readonly Texture2D?[] textures = new Texture2D[9];
+    /// <summary>徽章像素与按需创建的纹理；8 为不可用状态，9、10 为角色边框和深色底。</summary>
+    private readonly PixelImage?[] pixels = new PixelImage[11];
+    private readonly Texture2D?[] textures = new Texture2D[11];
+    /// <summary>APK 中的白色角色菱形框，与头像独立布局；上角按游戏边界裁切。</summary>
+    internal Texture2D AvatarFrame => Texture(9);
+    /// <summary>与边框轮廓一致的深色菱形底，保证角色头像不透出曲绘。</summary>
+    internal Texture2D AvatarBacking => Texture(10);
 
     /// <summary>按潜力值选择固定档位，选歌、结算、成绩浏览和 B50 导出共用。</summary>
     /// <param name="potential">当前显示或导出快照的账号潜力值。</param>
@@ -37,7 +41,10 @@ internal sealed class PotentialBadges : IDisposable
     {
         if (pixels[tier] != null)
             return pixels[tier]!;
-        string file = tier == 8 ? "rating_off.png" : $"rating_{tier}.png";
+        string file = tier switch
+        {
+            8 => "rating_off.png", 9 => "avatar_frame.png", 10 => "avatar_backing.png", _ => $"rating_{tier}.png"
+        };
         using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("PotentialSystem.Badges." + file)
             ?? throw new InvalidDataException($"缺少潜力值徽章：{file}。");
         var decoded = PngRgba.Decode(stream);

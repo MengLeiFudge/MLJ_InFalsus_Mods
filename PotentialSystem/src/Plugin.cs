@@ -17,7 +17,9 @@ public sealed class Plugin : BasePlugin
     internal static ManualLogSource Logger { get; private set; } = null!;
     /// <summary>当前插件持有的唯一主线程控制器。</summary>
     internal static PotentialController? Controller { get; private set; }
-    /// <summary>仅拦截本模组的场景观察与选歌排序通知。</summary>
+    /// <summary>本模组的社区定数配置及原生设置视图。</summary>
+    internal static PotentialSettings? Settings { get; private set; }
+    /// <summary>仅拦截本模组的场景观察、设置接入与选歌排序通知。</summary>
     private Harmony? harmony;
 
     /// <inheritdoc />
@@ -29,6 +31,7 @@ public sealed class Plugin : BasePlugin
         {
             if (!ClassInjector.IsTypeRegisteredInIl2Cpp<PotentialInputReceiver>())
                 ClassInjector.RegisterTypeInIl2Cpp<PotentialInputReceiver>();
+            Settings = new PotentialSettings(Config);
             Controller = AddComponent<PotentialController>();
             harmony = new Harmony("menglei.infalsus.potentialsystem");
             harmony.PatchAll(typeof(Plugin).Assembly);
@@ -36,6 +39,8 @@ public sealed class Plugin : BasePlugin
         catch
         {
             harmony?.UnpatchSelf();
+            Settings?.Dispose();
+            Settings = null;
             if (Controller != null)
                 Object.Destroy(Controller);
             Controller = null;
@@ -49,6 +54,8 @@ public sealed class Plugin : BasePlugin
     {
         harmony?.UnpatchSelf();
         harmony = null;
+        Settings?.Dispose();
+        Settings = null;
         if (Controller != null)
             Object.Destroy(Controller);
         Controller = null;
@@ -90,8 +97,25 @@ internal static class ResultsStartPatch
     }
 }
 
-/// <summary>原版排序按钮的回调先退出潜力值排序，保留全部原版选项。</summary>
-[HarmonyPatch(typeof(SongSelectScene._Jc), nameof(SongSelectScene._Jc._po))]
+/// <summary>在原版排序按钮的双向循环中加入歌曲定数与单曲潜力值的升降序选项。</summary>
+[HarmonyPatch(typeof(SongSelectSortingButton), nameof(SongSelectSortingButton._cO))]
+internal static class NativeSortCyclePatch
+{
+    /// <summary>未绑定的场景由原版处理；模组异常不逃回原生按钮回调。</summary>
+    [HarmonyPrefix]
+    private static bool Prefix(SongSelectSortingButton __instance, int __0)
+    {
+        try { return Plugin.Controller?.TryCycleSort(__instance, __0) != true; }
+        catch (Exception ex)
+        {
+            Plugin.Logger.LogError($"潜力值排序循环接入失败：{ex}");
+            return true;
+        }
+    }
+}
+
+/// <summary>原版排序按钮的回调先退出扩展排序，保留全部原版选项。</summary>
+[HarmonyPatch(typeof(SongSelectScene._Jc), nameof(SongSelectScene._Jc._vp))]
 internal static class NativeSortRequestedPatch
 {
     /// <summary>只通知当前选歌视图，异常不阻止原版回调。</summary>

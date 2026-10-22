@@ -1,6 +1,5 @@
 extern alias GameData;
 
-using System.Globalization;
 using Il2CppInterop.Runtime.Attributes;
 using ifapp.Game.Data;
 using ifapp.Game.Scenes;
@@ -14,8 +13,6 @@ namespace InFalsusMod.Potential;
 /// <summary>在 Unity 主线程维护当前存档成绩、选歌展示、浏览输入生命周期与结算动画。</summary>
 public sealed class PotentialController : MonoBehaviour
 {
-    /// <summary>结算数字从旧值过渡到新值的非缩放秒数。</summary>
-    private const float AnimationSeconds = 1.2f;
     /// <summary>当前原版存档完整路径，同时作为账号隔离身份。</summary>
     private string? savePath;
     /// <summary>读取失败的存档身份；保留原文件并避免逐帧重读坏数据。</summary>
@@ -56,10 +53,8 @@ public sealed class PotentialController : MonoBehaviour
     private decimal before, after;
     /// <summary>结算动画开始的非缩放时间。</summary>
     private float animationStart;
-    /// <summary>当前结算对应的单曲展示行。</summary>
-    private string resultChartLine = "";
-    /// <summary>当前结算提升值或 Keep 文案。</summary>
-    private string resultStatus = "Keep";
+    /// <summary>当前结算谱面的旧单曲值、max(旧, 本次)、本次值与定数；不在曲库中为 null。</summary>
+    private ResultSummary? resultSummary;
     /// <summary>写入失败时保留内存成绩并在界面明确提示未保存。</summary>
     private bool saveFailed;
     /// <summary>新导入或新结算申请的一次保存；失败后不会逐帧重复尝试。</summary>
@@ -89,12 +84,11 @@ public sealed class PotentialController : MonoBehaviour
                     TrySave();
                 }
                 EnsureResultsView();
-                float progress = Mathf.Clamp01((Time.realtimeSinceStartup - animationStart) / AnimationSeconds);
-                decimal blend = (decimal)(1f - Mathf.Pow(1f - progress, 3f));
                 try
                 {
-                    resultsView?.Render(available ? snapshot : null, before + (after - before) * blend,
-                        available ? resultChartLine : "", Status(resultStatus));
+                    string status = Status("");
+                    resultsView?.RenderResult(available ? snapshot : null, before, after, available ? resultSummary : null,
+                        Time.realtimeSinceStartup - animationStart, status.Length == 0 ? null : status);
                 }
                 catch (Exception ex)
                 {
@@ -230,7 +224,7 @@ public sealed class PotentialController : MonoBehaviour
                 browser?.Close();
                 var nextStorage = new PotentialStorage(path);
                 var nextProfile = nextStorage.Load() ?? PotentialProfile.Create();
-                var nextCatalog = ChartCatalog.Read(data);
+                var nextCatalog = ChartCatalog.Read(data, Plugin.Settings?.Source ?? ChartConstantSource.AnXiaoLi);
                 nextProfile.SynchronizeHistory(container._iEb.GameResults, nextCatalog);
                 savePath = path;
                 blockedPath = null;
@@ -246,10 +240,20 @@ public sealed class PotentialController : MonoBehaviour
                 saveRequested = profile.Dirty;
                 Plugin.Logger.LogInfo($"潜力值已载入：{catalog.Count} 个动态谱面，上限 {PotentialCalculator.Format(catalog.Maximum)}。");
             }
-            else if (refreshCatalog || catalog?.Language != NativeLabel.CurrentLanguage())
+            else if (refreshCatalog || catalog == null || catalog.Language != NativeLabel.CurrentLanguage()
+                || catalog.Source != (Plugin.Settings?.Source ?? ChartConstantSource.AnXiaoLi))
             {
-                catalog = ChartCatalog.Read(data);
+                bool sourceChanged = catalog?.Source != (Plugin.Settings?.Source ?? ChartConstantSource.AnXiaoLi);
+                catalog = ChartCatalog.Read(data, Plugin.Settings?.Source ?? ChartConstantSource.AnXiaoLi);
                 snapshot = profile!.Calculate(catalog);
+                if (sourceChanged && resultsScene != null && resultsScene.isActiveAndEnabled && observedResult.HasValue)
+                {
+                    var result = observedResult.Value;
+                    var key = new ChartKey(result.Song, result.Difficulty);
+                    resultSummary = Summary(key, result.Score, result.Clear, snapshot.Find(key)?.Potential);
+                    before = after = snapshot.Potential;
+                    animationStart = Time.realtimeSinceStartup - 60f;
+                }
                 syncedUpdateId = long.MinValue;
                 saveRequested |= profile.Dirty;
             }
@@ -299,27 +303,32 @@ public sealed class PotentialController : MonoBehaviour
             return;
         before = snapshot.Potential;
         var key = new ChartKey(result.SongId.Value, (byte)result.Difficulty);
-        if (catalog.TryGet(key, out var chart))
+        decimal? previous = snapshot.Find(key)?.Potential;
+        if (catalog.TryGet(key, out _))
         {
-            decimal play = PotentialCalculator.Play(chart.Constant, result.PlayerScore,
-                PotentialCalculator.CompletionLamp((byte)result.CalculatedResultClear));
             profile.Observe(result, catalog, DateTimeOffset.UtcNow);
             snapshot = profile.Calculate(catalog);
-            resultChartLine = $"本次 {PotentialCalculator.Format(play)} / 定数 {chart.Constant.ToString("F1", CultureInfo.InvariantCulture)}";
         }
         else
-        {
-            resultChartLine = "Unrated chart";
             Plugin.Logger.LogWarning($"结算谱面不在当前可用曲库中，未猜测定数：{key}。");
-        }
+        resultSummary = Summary(key, result.PlayerScore, (byte)result.CalculatedResultClear, previous);
         SynchronizeHistory();
         after = snapshot.Potential;
         animationStart = Time.realtimeSinceStartup;
-        decimal visibleDelta = (decimal.Floor(after * 1000m) - decimal.Floor(before * 1000m)) / 1000m;
-        resultStatus = visibleDelta == 0m ? "Keep" : "+" + PotentialCalculator.Format(visibleDelta);
         observedResult = identity;
         saveRequested |= profile.Dirty;
         TrySave();
+    }
+
+    /// <summary>使用当前定数来源计算本次单曲值，更新后最佳取快照中的 max(旧, 本次)。</summary>
+    [HideFromIl2Cpp]
+    private ResultSummary? Summary(ChartKey key, ulong score, byte clear, decimal? previous)
+    {
+        if (catalog == null || !catalog.TryGet(key, out var chart))
+            return null;
+        decimal play = PotentialCalculator.Play(chart.Constant, score, PotentialCalculator.CompletionLamp(clear));
+        decimal best = Math.Max(play, snapshot?.Find(key)?.Potential ?? play);
+        return new ResultSummary(previous, best, play, chart.Constant);
     }
 
     /// <summary>保存失败时保留待保存成绩；在场景刷新、历史更新或新结算事件到来时再次保存。</summary>
@@ -420,22 +429,16 @@ public sealed class PotentialController : MonoBehaviour
         }
     }
 
-    /// <summary>绘制完整成绩页面；Unity 的 GUI 生命周期独立于原生选歌文字。</summary>
-    public void OnGUI()
-    {
-        try { browser?.Draw(); }
-        catch (Exception ex)
-        {
-            browser?.Close();
-            Plugin.Logger.LogError($"潜力值成绩浏览页绘制失败，已关闭页面：{ex}");
-        }
-    }
+    /// <summary>只为当前选歌场景扩展原生排序按钮的循环。</summary>
+    [HideFromIl2Cpp]
+    internal bool TryCycleSort(SongSelectSortingButton button, int requested)
+        => selectionView?.TryCycleSort(button, requested) == true;
 
     /// <summary>原生排序入口通知，交给选歌视图退出自选模式。</summary>
     [HideFromIl2Cpp]
     internal void NativeSortRequested(SongSelectScene scene) => selectionView?.NativeSortRequested(scene);
 
-    /// <summary>原版建立好排序列表后按自选潜力值模式重排现有歌曲。</summary>
+    /// <summary>原版建立好排序列表后按自选定数或单曲潜力值模式重排现有歌曲。</summary>
     [HideFromIl2Cpp]
     internal void NativeSortCompleted(SongSelectScene scene) => selectionView?.NativeSortCompleted(scene);
 

@@ -22,7 +22,14 @@ internal static class PotentialPresentation
     internal static string Score(ulong score) => score.ToString("N0", CultureInfo.InvariantCulture);
     /// <summary>与该最佳表现同一次游玩的通关状态。</summary>
     internal static string Lamp(byte lamp) => lamp switch { 2 => "CLEAR", 1 => "DIVE", _ => "FAILED" };
-    /// <summary>选歌卡片所需的严格单行格式；尚未游玩的谱面没有排名。</summary>
-    internal static string RankLine(RankedPlay? play) => play?.Rank != null && play.Potential.HasValue
-        ? $"#{play.Rank.Value} {PotentialCalculator.Format(play.Potential.Value)}" : "";
+    /// <summary>未游玩显示一位小数定数；已游玩显示完整排名、定数与三位小数单曲值。</summary>
+    internal static string RankLine(PotentialSnapshot? snapshot, ChartKey key)
+    {
+        if (snapshot == null || !snapshot.Catalog.TryGet(key, out var chart))
+            return "";
+        var play = snapshot.Find(key);
+        string constant = PotentialCalculator.FormatConstant(chart.Constant);
+        return play?.Rank != null && play.Potential.HasValue
+            ? $"#{play.Rank.Value} {constant} -> {PotentialCalculator.Format(play.Potential.Value)}" : constant;
+    }
 }

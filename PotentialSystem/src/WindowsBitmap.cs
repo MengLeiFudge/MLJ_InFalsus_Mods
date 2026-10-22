@@ -57,6 +57,32 @@ internal sealed class WindowsBitmap : IDisposable
         finally { DeleteObject(brush); }
     }
 
+    /// <summary>绘制圆角卡片底板；临时画刷从 DC 移出后回收，空画笔只借用系统对象。</summary>
+    /// <param name="bounds">左上角位置及卡片像素尺寸。</param>
+    /// <param name="radius">圆角的像素半径。</param>
+    /// <param name="rgb">填充颜色。</param>
+    internal void RoundedFill((int X, int Y, int Width, int Height) bounds, int radius, uint rgb)
+    {
+        var brush = CreateSolidBrush(ColorRef(rgb));
+        Check(brush != IntPtr.Zero, "建立圆角画刷");
+        IntPtr oldBrush = IntPtr.Zero, oldPen = IntPtr.Zero;
+        try
+        {
+            oldBrush = SelectObject(dc, brush);
+            Check(oldBrush != IntPtr.Zero && oldBrush != new IntPtr(-1), "选择圆角画刷");
+            oldPen = SelectObject(dc, GetStockObject(8));
+            Check(oldPen != IntPtr.Zero && oldPen != new IntPtr(-1), "选择圆角画笔");
+            Check(RoundRect(dc, bounds.X, bounds.Y, bounds.X + bounds.Width, bounds.Y + bounds.Height,
+                radius * 2, radius * 2), "绘制圆角卡片");
+        }
+        finally
+        {
+            if (oldPen != IntPtr.Zero && oldPen != new IntPtr(-1)) SelectObject(dc, oldPen);
+            if (oldBrush != IntPtr.Zero && oldBrush != new IntPtr(-1)) SelectObject(dc, oldBrush);
+            DeleteObject(brush);
+        }
+    }
+
     /// <summary>使用系统中英文字体绘制单行，过长时在矩形内省略，不解析歌曲名中的 &amp;。</summary>
     internal void Text(string text, int x, int y, int width, int height, int size, uint rgb, bool bold = false, bool right = false)
     {
@@ -183,6 +209,8 @@ internal sealed class WindowsBitmap : IDisposable
     [DllImport("gdi32.dll")] [return: MarshalAs(UnmanagedType.Bool)] private static extern bool DeleteObject(IntPtr obj);
     [DllImport("gdi32.dll")] [return: MarshalAs(UnmanagedType.Bool)] private static extern bool DeleteDC(IntPtr hdc);
     [DllImport("gdi32.dll", SetLastError = true)] private static extern IntPtr CreateSolidBrush(uint color);
+    [DllImport("gdi32.dll")] private static extern IntPtr GetStockObject(int objectType);
+    [DllImport("gdi32.dll", SetLastError = true)] [return: MarshalAs(UnmanagedType.Bool)] private static extern bool RoundRect(IntPtr hdc, int left, int top, int right, int bottom, int width, int height);
     [DllImport("gdi32.dll", SetLastError = true)] private static extern int SetBkMode(IntPtr hdc, int mode);
     [DllImport("gdi32.dll")] private static extern uint SetTextColor(IntPtr hdc, uint color);
     [DllImport("gdi32.dll", CharSet = CharSet.Unicode, SetLastError = true)] private static extern IntPtr CreateFontW(int height, int width, int escapement, int orientation, int weight, uint italic, uint underline, uint strikeOut, uint charSet, uint outputPrecision, uint clipPrecision, uint quality, uint pitchAndFamily, string face);

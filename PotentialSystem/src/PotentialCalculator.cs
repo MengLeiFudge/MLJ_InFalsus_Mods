@@ -34,12 +34,12 @@ internal static class PotentialCalculator
         return (score - 95_000_000m) / 3_000_000m + bonus;
     }
 
-    /// <summary>使用当前游戏等级与同一次成绩计算不小于零的单曲潜力值。</summary>
-    /// <param name="constant">游戏读取的非负整数 Rating。</param>
+    /// <summary>使用当前谱面定数与同一次成绩计算不小于零的单曲潜力值。</summary>
+    /// <param name="constant">当前来源解析的非负谱面定数。</param>
     /// <param name="score">原始打击分数。</param>
     /// <param name="lamp">与分数属于同一条成绩的通关状态。</param>
     /// <returns>用于 B50 排序的单曲潜力值。</returns>
-    internal static decimal Play(int constant, ulong score, byte lamp)
+    internal static decimal Play(decimal constant, ulong score, byte lamp)
     {
         if (constant < 0)
             throw new ArgumentOutOfRangeException(nameof(constant));
@@ -54,6 +54,9 @@ internal static class PotentialCalculator
         var best = ratings.OrderByDescending(value => value).Take(50).ToArray();
         return (best.Sum() + best.Take(10).Sum()) / 60m;
     }
+
+    /// <summary>定数始终显示一位小数，整数等级也保留 .0。</summary>
+    internal static string FormatConstant(decimal constant) => constant.ToString("F1", CultureInfo.InvariantCulture);
 
     /// <summary>按 Wiki 的口径截断到三位小数；只用于显示，不影响排名或保存。</summary>
     /// <param name="value">非负潜力值或非负增加值。</param>

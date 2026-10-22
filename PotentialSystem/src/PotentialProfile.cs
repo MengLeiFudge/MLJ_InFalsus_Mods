@@ -21,9 +21,9 @@ internal sealed record BestPlay
     public byte Lamp { get; init; }
     /// <summary>原生完成等级：None、DiveFailed、DiveCleared、FullLink、PerfectDive。</summary>
     public byte ResultClear { get; init; }
-    /// <summary>计算并保存 Potential 时使用的游戏整数定数。</summary>
-    public int Constant { get; init; }
-    /// <summary>未截断的单曲潜力值，供独立网页与模组使用同一计算依据。</summary>
+    /// <summary>计算并保存 Potential 时使用的谱面定数；兼容旧文件中的整数。</summary>
+    public decimal Constant { get; init; }
+    /// <summary>未截断的单曲潜力值，供独立读取者与模组使用同一计算依据。</summary>
     public decimal Potential { get; init; }
     /// <summary>取得该纪录的 UTC 时间；原生历史未保存有效时间时为 null。</summary>
     public DateTimeOffset? AchievedAt { get; init; }
@@ -53,7 +53,7 @@ internal sealed class PotentialDocument
 /// <param name="Rank">有效谱面按未截断单曲潜力值降序排列的从 1 开始的序号。</param>
 /// <param name="Play">该谱面保留的最佳原始表现。</param>
 /// <param name="Chart">能匹配身份时的当前原生谱面定义。</param>
-/// <param name="Potential">按当前等级计算的单曲值，未知谱面为空。</param>
+/// <param name="Potential">按当前定数计算的单曲值，未知谱面为空。</param>
 internal sealed record RankedPlay(int? Rank, BestPlay Play, ChartDefinition? Chart, decimal? Potential);
 
 /// <summary>只读的完整成绩快照，统一供徽章、卡片、排序、浏览与导出使用。</summary>
@@ -63,6 +63,8 @@ internal sealed class PotentialSnapshot
     internal decimal Potential { get; }
     /// <summary>当前动态曲库理论上限。</summary>
     internal decimal Maximum { get; }
+    /// <summary>本次计算冻结的可用谱面与定数来源，未游玩卡片也由此读取定数。</summary>
+    internal ChartCatalog Catalog { get; }
     /// <summary>全部已游玩谱面的最佳成绩，包括超过 B50 或暂时失去定义的成绩。</summary>
     internal IReadOnlyList<RankedPlay> Plays { get; }
     /// <summary>前 50 项可计算成绩；没有成绩的空位贡献零。</summary>
@@ -77,9 +79,10 @@ internal sealed class PotentialSnapshot
     internal decimal B10Average { get; }
 
     /// <summary>冻结一次计算的完整排名，避免 UI 每帧重新排序或只保留前 50 项。</summary>
-    internal PotentialSnapshot(decimal maximum, IEnumerable<RankedPlay> plays)
+    internal PotentialSnapshot(ChartCatalog catalog, IEnumerable<RankedPlay> plays)
     {
-        Maximum = maximum;
+        Catalog = catalog;
+        Maximum = catalog.Maximum;
         Plays = Array.AsReadOnly(plays.ToArray());
         B50 = Array.AsReadOnly(Plays.Where(play => play.Potential.HasValue).Take(50).ToArray());
         decimal sum50 = B50.Sum(play => play.Potential!.Value);
@@ -101,6 +104,8 @@ internal sealed class PotentialProfile
     private readonly Dictionary<ChartKey, BestPlay> best = new();
     /// <summary>首次创建独立文件的时间，后续同步保留。</summary>
     private readonly DateTimeOffset importedAt;
+    /// <summary>当前保存数值的定数来源；切换来源即使空账号也需更新规则身份。</summary>
+    private string rule;
     /// <summary>存在尚未成功写入磁盘的成绩变更。</summary>
     internal bool Dirty { get; set; }
 
@@ -108,11 +113,13 @@ internal sealed class PotentialProfile
     /// <param name="document">当前账号的独立 PTT 文档。</param>
     internal PotentialProfile(PotentialDocument document)
     {
-        if (document.SchemaVersion != 1 || document.Rule != "integer-rating-v1"
+        if (document.SchemaVersion != 1 || document.Rule is not (CommunityConstants.NativeRule or CommunityConstants.CommunityRule
+            or CommunityConstants.AnXiaoLiRule or CommunityConstants.MengLeiRule)
             || document.ImportedAt == null || document.ImportedAt.Value.Offset != TimeSpan.Zero
             || document.BestPlays == null || document.BestPlays.Count > 10_000)
             throw new InvalidDataException("潜力值文件格式或定数规则不受支持。");
         importedAt = document.ImportedAt.Value;
+        rule = document.Rule;
         var keys = new HashSet<ChartKey>();
         foreach (var play in document.BestPlays)
         {
@@ -138,7 +145,7 @@ internal sealed class PotentialProfile
     internal static PotentialProfile Create() => new(new PotentialDocument
     {
         SchemaVersion = 1,
-        Rule = "integer-rating-v1",
+        Rule = CommunityConstants.NativeRule,
         ImportedAt = DateTimeOffset.UtcNow,
         BestPlays = new List<BestPlay>()
     }) { Dirty = true };
@@ -188,6 +195,12 @@ internal sealed class PotentialProfile
     /// <returns>固定分母 60 的账号潜力值和当前理论上限。</returns>
     internal PotentialSnapshot Calculate(ChartCatalog catalog)
     {
+        string nextRule = CommunityConstants.Rule(catalog.Source);
+        if (rule != nextRule)
+        {
+            rule = nextRule;
+            Dirty = true;
+        }
         var values = new List<RankedPlay>();
         foreach (var original in best.Values.ToArray())
         {
@@ -208,7 +221,7 @@ internal sealed class PotentialProfile
         for (int i = 0; i < ordered.Length; i++)
             if (ordered[i].Potential.HasValue)
                 ordered[i] = ordered[i] with { Rank = i + 1 };
-        return new PotentialSnapshot(catalog.Maximum, ordered);
+        return new PotentialSnapshot(catalog, ordered);
     }
 
     /// <summary>捕获真实结算及 UTC 时间，让接下来的历史同步保留该局的时间。</summary>
@@ -284,12 +297,12 @@ internal sealed class PotentialProfile
         return PotentialCalculator.Play(chart.Constant, play.Score, play.Lamp);
     }
 
-    /// <summary>输出稳定排序的真实最佳纪录及时间，供模组和网页读取。</summary>
-    /// <returns>包含来源与时间的整数规则最佳成绩文档。</returns>
+    /// <summary>输出稳定排序的真实最佳纪录及时间，供模组和独立读取者使用。</summary>
+    /// <returns>包含当前定数规则、来源与时间的最佳成绩文档。</returns>
     internal PotentialDocument ToDocument() => new()
     {
         SchemaVersion = 1,
-        Rule = "integer-rating-v1",
+        Rule = rule,
         ImportedAt = importedAt,
         BestPlays = best.Values.OrderBy(play => play.SongId).ThenBy(play => play.Difficulty).ToList()
     };
