@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <OutputType>Library</OutputType>
+    <RootNamespace>InFalsusMod.ParticleCapacity</RootNamespace>
+    <AssemblyName>ParticleCapacity</AssemblyName>
+    <PackageId>ParticleCapacity</PackageId>
+    <Version>1.0.0</Version>
+    <Description>解除粒子库存9999颗的获得门槛，将容量扩展至65535颗。</Description>
+    <IsModProject>true</IsModProject>
+    <BepInExPluginGuid>menglei.infalsus.particlecapacity</BepInExPluginGuid>
+    <ThunderstoreNamespace>MengLei</ThunderstoreNamespace>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="src/**/*.cs" />
+    <Compile Include="../Shared/src/WindowsConsoleEncoding.cs" Link="Shared/WindowsConsoleEncoding.cs" />
+  </ItemGroup>
+</Project>

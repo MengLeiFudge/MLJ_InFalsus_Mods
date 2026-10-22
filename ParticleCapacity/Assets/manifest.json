@@ -1,0 +1,10 @@
+{
+  "namespace": "MengLei",
+  "name": "ParticleCapacity",
+  "version_number": "1.0.0",
+  "website_url": "https://github.com/MengLeiFudge/MLJ_InFalsus_Mods",
+  "description": "解除粒子库存9999颗的获得门槛，将容量扩展至65535颗，保留原生掉落规则。",
+  "dependencies": [
+    "BepInEx-BepInExPack_IL2CPP-6.0.755"
+  ]
+}

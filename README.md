@@ -1,22 +1,24 @@
 # MLJ_InFalsus_Mods
 
-In Falsus 多模组解决方案。当前包含四个可独立安装的 BepInEx 6 IL2CPP 插件：
+In Falsus 多模组解决方案。当前包含五个可独立安装的 BepInEx 6 IL2CPP 插件：
 
 | 模组 | DLL | 功能 |
 | --- | --- | --- |
 | `ParticleFusion` | `ParticleFusion.dll` | 智能融合、选中供体融合与免费技能整理 |
 | `SkillSelection` | `SkillSelection.dll` | 制卡界面的技能多选与附加材料筛选 |
-| `KeyBindingExtensions`（按键绑定扩展） | `MouseKeyBindings.dll` | 鼠标按键绑定、同键多轨道绑定 |
+| `KeyBindingExtensions`（按键绑定扩展） | `KeyBindingExtensions.dll` | 鼠标按键绑定、同键多轨道绑定 |
 | `PotentialSystem`（潜力值系统） | `PotentialSystem.dll` | 动态定数的 B50/B10 PTT、徽章与完整成绩页、潜力值排序、B50 剪贴板图片及结算动画 |
+| `ParticleCapacity`（粒子容量扩展） | `ParticleCapacity.dll` | 解除9999颗获得门槛，将库存容量提高至65535颗 |
 
-KeyBindingExtensions 当前版本为 1.1.0，ParticleFusion 和 SkillSelection 为 1.0.1，PotentialSystem 为 1.0.0。现有三个模组适配游戏 1.0.6；PotentialSystem 使用当前游戏互操作引用构建，实际 UI 由用户在游戏内确认。四个模组互不依赖，所需共享源码会分别编入各 DLL，不发布公共运行时程序集。
+KeyBindingExtensions 当前版本为1.1.2，ParticleFusion 和 SkillSelection 为1.0.2，PotentialSystem 和 ParticleCapacity 为1.0.0。五个模组均使用游戏1.0.7离线生成的互操作引用通过 Release 编译，ParticleFusion 和 PotentialSystem 已适配新版接口；实际游戏行为尚待用户确认。五个模组互不依赖，所需共享源码分别编入各 DLL，不发布公共运行时程序集。
 
 ## 目录
 
 - `ParticleFusion/`：融合代码、数据、离线模拟器、样本报告及发布素材。模拟器链接当前正式融合源码，单独构建运行，不参与主解决方案构建。
 - `SkillSelection/`：技能选择代码及发布素材。
-- `MouseKeyBindings/`：KeyBindingExtensions 的按键绑定扩展代码及发布素材。
+- `KeyBindingExtensions/`：KeyBindingExtensions 的按键绑定扩展代码及发布素材。
 - `PotentialSystem/`：整数定数潜力值、独立成绩保存、原生选歌展示、完整成绩浏览与 B50 图片导出。
+- `ParticleCapacity/`：粒子容量扩展代码及发布素材。
 - `Shared/`：各项目按需共同编译的粒子字段访问、本地化、技能目录、原生 UI 和控制台工具。
 - `AfterBuildEvent/`：发现模组项目、更新本地 r2modman profile、生成 Thunderstore ZIP，并把 Steam 直启绑定到该 profile。
 - `tools/prepare-icons.py`：将 CPA 生图接口返回的高分辨率方图归一化为 1024×1024 母图，再用 Lanczos 转换为 256×256 发布图标。
@@ -39,6 +41,8 @@ dotnet build MLJ_InFalsus_Mods.sln -c Release
 
 新下载的 profile 尚未生成 `interop` 时，省略 `InteropDir` 会使用仓库 `.dependencies\interop` 中的编译快照；也可以在 `DefaultPath.props` 中显式指向其他现有 interop。profile 通过 Steam 直启生成 interop 后，默认优先使用 profile 版本。
 
+游戏更新后，旧 profile 的互操作程序集可能仍对应上个版本。编译前须生成或指定与当前游戏匹配的引用；离线生成时用 `-p:InteropDir=<当前版本互操作目录>` 覆盖，不把离线编译快照复制到 profile。
+
 ## 本地部署与打包
 
 完整构建后运行：
@@ -52,8 +56,9 @@ dotnet build MLJ_InFalsus_Mods.sln -c Release
 ```powershell
 .\AfterBuildEvent\bin\Release\AfterBuildEvent.exe 1 ParticleFusion
 .\AfterBuildEvent\bin\Release\AfterBuildEvent.exe 1 SkillSelection
-.\AfterBuildEvent\bin\Release\AfterBuildEvent.exe 1 MouseKeyBindings
+.\AfterBuildEvent\bin\Release\AfterBuildEvent.exe 1 KeyBindingExtensions
 .\AfterBuildEvent\bin\Release\AfterBuildEvent.exe 1 PotentialSystem
+.\AfterBuildEvent\bin\Release\AfterBuildEvent.exe 1 ParticleCapacity
 ```
 
 工具会：
