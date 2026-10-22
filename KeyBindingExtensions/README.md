@@ -19,7 +19,9 @@
 
 ## 安装
 
-建议通过 In Falsus 的 Thunderstore/r2modman 安装。依赖中的 BepInExPack_IL2CPP 会由模组管理器处理，本包不携带 BepInEx、Doorstop 或 .NET 运行时。Thunderstore 包标识为 `MengLei-MouseKeyBindings`，插件 DLL 名为 `MouseKeyBindings.dll`，可与 ParticleFusion 和 SkillSelection 分别启用或停用。
+建议通过 In Falsus 的 Thunderstore/r2modman 安装。依赖中的 BepInExPack_IL2CPP 会由模组管理器处理，本包不携带 BepInEx、Doorstop 或 .NET 运行时。Thunderstore 包标识为 `MengLei-KeyBindingExtensions`，插件 DLL 名为 `KeyBindingExtensions.dll`，可与 ParticleFusion 和 SkillSelection 分别启用或停用。
+
+若已安装旧包 `MengLei-MouseKeyBindings`，先在模组管理器中卸载旧包，再安装 `MengLei-KeyBindingExtensions`。手动安装时先移除旧的 `MouseKeyBindings.dll`，再放入 `KeyBindingExtensions.dll`。按键绑定仍保存在游戏原有的偏好项中。
 
 ## 输入行为
 
@@ -29,4 +31,4 @@
 
 ## 兼容范围
 
-当前适配 Steam App ID 3971950、Unity 6000.3.9f1 和 IL2CPP 元数据版本 39。实现依赖游戏当前的 `InputManager`、`LaneKeyBindSettingsContainer`、`GameScene` 和 `KeyPressedIndicator` 互操作接口；游戏更新这些接口后需要同步更新模组。
+当前适配游戏1.0.7（Steam App ID 3971950）、Unity 6000.3.9f1 和 IL2CPP 元数据版本 39。实现依赖游戏当前的 `InputManager`、`LaneKeyBindSettingsContainer`、`GameScene` 和 `KeyPressedIndicator` 互操作接口；游戏更新这些接口后需要同步更新模组。

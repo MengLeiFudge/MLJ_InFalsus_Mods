@@ -1,7 +1,7 @@
 {
   "namespace": "MengLei",
-  "name": "MouseKeyBindings",
-  "version_number": "1.1.0",
+  "name": "KeyBindingExtensions",
+  "version_number": "1.1.2",
   "website_url": "https://github.com/MengLeiFudge/MLJ_InFalsus_Mods",
   "description": "KeyBindingExtensions：扩展六轨按键绑定，支持鼠标按键和同键多轨道绑定，沿用游戏内设置与保存方式。",
   "dependencies": [

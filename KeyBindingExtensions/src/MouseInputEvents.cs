@@ -57,14 +57,44 @@ internal static class MouseInputEvents
     /// <summary>队列溢出后要求运行层释放全部已转发按键，避免轨道停留在按下状态。</summary>
     private static bool resetRequested;
 
+    /// <summary>主线程按绑定需求切换采集；事件入口先读取此标志，停用时不访问设备或获取锁。</summary>
+    private static volatile bool enabled;
+
     /// <summary>发生不兼容异常后停用事件提取，避免在高频鼠标移动中重复抛错。</summary>
     private static bool disabled;
+
+    /// <summary>切换鼠标采集；重新启用时从当前物理状态建立快照，不沿用停用期间的状态。</summary>
+    /// <param name="value">存在鼠标轨道、活动绑定界面或待释放按键时为真。</param>
+    internal static void SetEnabled(bool value)
+    {
+        if (enabled == value || disabled && value)
+            return;
+        lock (Sync)
+        {
+            if (enabled == value || disabled && value)
+                return;
+            if (value)
+            {
+                var mouse = Mouse.current;
+                if (mouse != null)
+                    GetOrCreateDevice(mouse);
+                enabled = true;
+            }
+            else
+            {
+                enabled = false;
+                Pending.Clear();
+                Devices.Clear();
+                resetRequested = false;
+            }
+        }
+    }
 
     /// <summary>在尚无鼠标事件时建立当前设备快照，避免首个事件被当成未知初始状态。</summary>
     /// <param name="mouse">Input System 当前鼠标；没有鼠标时可为 <see langword="null"/>。</param>
     internal static void EnsureDevice(Mouse? mouse)
     {
-        if (disabled || mouse == null)
+        if (!enabled || disabled || mouse == null)
             return;
         try
         {
@@ -83,7 +113,7 @@ internal static class MouseInputEvents
     /// <param name="device">该事件所属的 Input System 设备。</param>
     internal static unsafe void Observe(GameInputManager manager, InputEventPtr eventPtr, InputDevice? device)
     {
-        if (disabled || device == null || eventPtr.m_EventPtr == IntPtr.Zero)
+        if (!enabled || disabled || device == null || eventPtr.m_EventPtr == IntPtr.Zero)
             return;
         try
         {
@@ -93,6 +123,9 @@ internal static class MouseInputEvents
 
             lock (Sync)
             {
+                // 停用可能发生在入口检查之后；不能重新创建已清理的设备或继续入队。
+                if (!enabled)
+                    return;
                 var state = GetOrCreateDevice(mouse);
                 byte* eventData = (byte*)eventPtr.m_EventPtr;
                 bool contextRead = false;
@@ -480,10 +513,10 @@ internal static class MouseInputEvents
         internal uint StateFormat { get; }
 
         /// <summary>Mouse0 至 Mouse4 的标准 Input System 按钮控件。</summary>
-        internal IReadOnlyList<StandardButtonState> StandardButtons { get; }
+        internal StandardButtonState[] StandardButtons { get; }
 
         /// <summary>当前设备在原生 16 位字段之外公开的按钮控件。</summary>
-        internal IReadOnlyList<ExtraButtonState> ExtraButtons { get; }
+        internal List<ExtraButtonState> ExtraButtons { get; }
 
         /// <summary>最近一次完整应用后的 Mouse0 至 Mouse15 位状态。</summary>
         internal ushort Buttons { get; set; }
@@ -498,8 +531,8 @@ internal static class MouseInputEvents
             int buttonOffset,
             uint stateFormat,
             ushort buttons,
-            IReadOnlyList<StandardButtonState> standardButtons,
-            IReadOnlyList<ExtraButtonState> extraButtons)
+            StandardButtonState[] standardButtons,
+            List<ExtraButtonState> extraButtons)
         {
             ButtonOffset = buttonOffset;
             StateFormat = stateFormat;

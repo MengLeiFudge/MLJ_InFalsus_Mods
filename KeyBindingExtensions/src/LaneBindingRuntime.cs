@@ -1,4 +1,3 @@
-using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using UnityEngine.InputSystem;
 using _E;
 using ifapp.Game.Scenes.Game;
@@ -12,8 +11,60 @@ internal static class LaneBindingRuntime
     /// <summary>原版下方轨道与偏好键位槽的数量。</summary>
     private const int LaneCount = 6;
 
+    /// <summary>最近一次读取的原版键位；缺失槽位以 None 表示，不持有原生数组。</summary>
+    private static readonly Key[] Keys = new Key[LaneCount];
+
+    /// <summary>每条轨道对应的同键首轨；自身就是首轨时无需同步。</summary>
+    private static readonly int[] FirstLanes = { 0, 1, 2, 3, 4, 5 };
+
+    /// <summary>当前键位中是否有需要补齐输入和显示的同键轨道。</summary>
+    private static bool hasSharedBindings;
+
     /// <summary>发生接口不兼容异常后停止多轨道扩展，避免在输入回调中反复抛错。</summary>
     private static bool disabled;
+
+    /// <summary>最近读取的六轨键位是否需要鼠标事件采集；由主线程刷新和消费。</summary>
+    internal static bool HasMouseBindings { get; private set; }
+
+    /// <summary>读取六轨键位，仅在内容变化时重建托管映射，兼容原数组替换和原地修改。</summary>
+    internal static void RefreshBindings()
+    {
+        var keys = _YD._JfA;
+        int count = keys == null ? 0 : Math.Min(LaneCount, keys.Length);
+        bool changed = false;
+        for (int lane = 0; lane < LaneCount; lane++)
+        {
+            Key key = lane < count ? keys![lane] : Key.None;
+            changed |= Keys[lane] != key;
+            Keys[lane] = key;
+        }
+        if (!changed)
+            return;
+
+        HasMouseBindings = false;
+        hasSharedBindings = false;
+        for (int lane = 0; lane < LaneCount; lane++)
+        {
+            Key key = Keys[lane];
+            HasMouseBindings |= MouseKeyCodec.TryDecode(key, out _);
+            FirstLanes[lane] = lane;
+            if (key == Key.None)
+                continue;
+            for (int first = 0; first < lane; first++)
+            {
+                if (Keys[first] != key)
+                    continue;
+                FirstLanes[lane] = first;
+                hasSharedBindings = true;
+                break;
+            }
+        }
+    }
+
+    /// <summary>在本次已刷新的托管快照中查询鼠标合成键是否绑定六轨。</summary>
+    /// <param name="key">MouseN 对应的保留 Key 值。</param>
+    /// <returns>至少一条轨道使用该键时为真。</returns>
+    internal static bool IsLaneBinding(Key key) => Array.IndexOf(Keys, key) >= 0;
 
     /// <summary>只写入正在等待绑定的轨道，允许其他轨道保留相同键值。</summary>
     /// <param name="container">持有临时键位和等待槽位的原版设置容器。</param>
@@ -44,35 +95,26 @@ internal static class LaneBindingRuntime
         if (disabled || _VD._a != _VD._WD._afA)
             return;
 
-        var keys = _YD._JfA;
-        if (keys == null)
+        RefreshBindings();
+        if (!hasSharedBindings)
+            return;
+        var states = controller._pEA?._BEA;
+        if (states == null)
             return;
 
-        int count = Math.Min(LaneCount, keys.Length);
-        Il2CppStructArray<_zD>? states = null;
+        int count = Math.Min(LaneCount, states.Length);
         for (int lane = 1; lane < count; lane++)
         {
-            if (keys[lane] == Key.None)
+            int first = FirstLanes[lane];
+            if (first == lane)
                 continue;
-            for (int first = 0; first < lane; first++)
-            {
-                if (keys[first] != keys[lane])
-                    continue;
-
-                // 原版键盘和鼠标转发均只更新首个匹配槽位；没有重复键时无需读取输入数组。
-                states ??= controller._pEA?._BEA;
-                if (states == null || lane >= states.Length)
-                    return;
-
-                _zD source = states[first];
-                _zD target = states[lane];
-                target._lfA = source._lfA;
-                target._LfA = source._LfA;
-                target._nfA = source._nfA;
-                // _mfA 和 _MfA 由判定按轨道维护，不能随物理按键状态覆盖。
-                states[lane] = target;
-                break;
-            }
+            _zD source = states[first];
+            _zD target = states[lane];
+            target._lfA = source._lfA;
+            target._LfA = source._LfA;
+            target._nfA = source._nfA;
+            // _mfA 和 _MfA 由判定按轨道维护，不能随物理按键状态覆盖。
+            states[lane] = target;
         }
     }
 
@@ -82,19 +124,17 @@ internal static class LaneBindingRuntime
     /// <param name="pressed">按下为真，松开为假。</param>
     internal static void UpdateSharedIndicators(Track track, int lane, bool pressed)
     {
-        if (disabled)
+        if (disabled || (uint)lane >= LaneCount)
             return;
-        var keys = _YD._JfA;
+        RefreshBindings();
+        if (!hasSharedBindings || Keys[lane] == Key.None)
+            return;
         var indicators = track.keyPressedIndicators;
-        if (keys == null || indicators == null || (uint)lane >= (uint)Math.Min(LaneCount, keys.Length))
+        if (indicators == null)
             return;
-
-        Key key = keys[lane];
-        if (key == Key.None)
-            return;
-        int count = Math.Min(LaneCount, Math.Min(keys.Length, indicators.Length));
+        int count = Math.Min(LaneCount, indicators.Length);
         for (int other = 0; other < count; other++)
-            if (other != lane && keys[other] == key)
+            if (other != lane && Keys[other] == Keys[lane])
                 indicators[other]?._Wl(pressed);
     }
 

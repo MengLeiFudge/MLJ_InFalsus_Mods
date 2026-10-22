@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkillSelection", "SkillSele
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AfterBuildEvent", "AfterBuildEvent\AfterBuildEvent.csproj", "{45FDD4E2-44F2-41A0-9106-75EE5A28190D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MouseKeyBindings", "MouseKeyBindings\MouseKeyBindings.csproj", "{BBFCC679-4BD5-407E-9C44-5E572787775D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyBindingExtensions", "KeyBindingExtensions\KeyBindingExtensions.csproj", "{BBFCC679-4BD5-407E-9C44-5E572787775D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PotentialSystem", "PotentialSystem\PotentialSystem.csproj", "{C8E7483E-4DB5-468A-BE47-1263F2400BF2}"
 EndProject

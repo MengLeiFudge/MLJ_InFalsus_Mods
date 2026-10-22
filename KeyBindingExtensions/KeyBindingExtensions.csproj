@@ -3,11 +3,11 @@
     <TargetFramework>net6.0</TargetFramework>
     <OutputType>Library</OutputType>
     <RootNamespace>InFalsusMod</RootNamespace>
-    <AssemblyName>MouseKeyBindings</AssemblyName>
-    <PackageId>MouseKeyBindings</PackageId>
+    <AssemblyName>KeyBindingExtensions</AssemblyName>
+    <PackageId>KeyBindingExtensions</PackageId>
     <AssemblyTitle>KeyBindingExtensions</AssemblyTitle>
     <Product>KeyBindingExtensions</Product>
-    <Version>1.1.0</Version>
+    <Version>1.1.2</Version>
     <Description>扩展 In Falsus 的六轨按键绑定，支持鼠标按键和同键多轨道绑定，沿用游戏内设置与保存方式。</Description>
     <IsModProject>true</IsModProject>
     <BepInExPluginGuid>menglei.infalsus.mousekeybindings</BepInExPluginGuid>

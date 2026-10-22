@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.1.2
+
+- 使用游戏1.0.7互操作引用重新构建，保留鼠标按键与同键多轨道绑定行为。
+
+## 1.1.1
+
+- 项目目录、项目文件、程序集与 DLL 名统一为 KeyBindingExtensions，以 `MengLei-KeyBindingExtensions` 独立包重新发布。
+- 沿用原插件 GUID 和游戏按键偏好，保持鼠标按键及同键多轨道绑定行为。
+- 补充从旧包 `MengLei-MouseKeyBindings` 卸载后安装新包的迁移说明。
+
 ## 1.1.0
 
 - 模组显示名统一为 KeyBindingExtensions（按键绑定扩展），更新介绍与使用说明；保留原有插件 GUID、DLL 和发布包标识。

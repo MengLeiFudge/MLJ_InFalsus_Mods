@@ -17,6 +17,9 @@ internal static class MouseBindingRuntime
     /// <summary>已向原版输入栈接收者发送按下、仍需保证发送释放的按钮。</summary>
     private static readonly Dictionary<int, ActiveMousePress> ActivePresses = new();
 
+    /// <summary>复用的释放按钮缓冲区，先完成字典遍历再发送释放。</summary>
+    private static readonly List<int> ReleaseButtons = new();
+
     /// <summary>最近由操作设置页初始化的六轨绑定容器。</summary>
     private static LaneKeyBindSettingsContainer? settingsContainer;
 
@@ -43,6 +46,7 @@ internal static class MouseBindingRuntime
             return;
         settingsContainer = container;
         waitingLane = container._Hh;
+        MouseInputEvents.SetEnabled(true);
         captureAfterSequence = MouseInputEvents.CurrentSequence;
         RefreshLabels(container);
         Plugin.Logger.LogDebug("已接管六轨鼠标按键绑定界面。");
@@ -55,8 +59,14 @@ internal static class MouseBindingRuntime
         if (disabled)
             return;
 
-        MouseInputEvents.EnsureDevice(Mouse.current);
+        LaneBindingRuntime.RefreshBindings();
         ObserveBindingSlot();
+        bool needsMouse = LaneBindingRuntime.HasMouseBindings || settingsContainer != null || ActivePresses.Count > 0;
+        MouseInputEvents.SetEnabled(needsMouse);
+        if (!needsMouse)
+            return;
+
+        MouseInputEvents.EnsureDevice(Mouse.current);
         bool reset = MouseInputEvents.Drain(Transitions);
         if (reset || ActivePresses.Count > 0 && GetPlayableGameScene(manager) == null)
             ReleaseAll(InputState.currentTime);
@@ -68,9 +78,6 @@ internal static class MouseBindingRuntime
             ForwardToGame(manager, transition);
         }
         ReleasePhysicallyReleasedButtons(InputState.currentTime);
-
-        if (settingsContainer != null)
-            RefreshLabels(settingsContainer);
     }
 
     /// <summary>记录不可恢复异常并停止后续转发，防止异常跨过游戏的输入回调边界。</summary>
@@ -80,6 +87,7 @@ internal static class MouseBindingRuntime
         if (disabled)
             return;
         disabled = true;
+        MouseInputEvents.SetEnabled(false);
         ActivePresses.Clear();
         Transitions.Clear();
         settingsContainer = null;
@@ -149,7 +157,7 @@ internal static class MouseBindingRuntime
 
         Key key = MouseKeyCodec.Encode(transition.Button);
         GameScene? scene = GetPlayableGameScene(manager);
-        if (scene == null || !IsLaneBinding(key))
+        if (scene == null || !LaneBindingRuntime.IsLaneBinding(key))
             return;
 
         CurrentKeyboardModifiersState modifiers = transition.Modifiers;
@@ -192,31 +200,17 @@ internal static class MouseBindingRuntime
         return null;
     }
 
-    /// <summary>确认保留键值当前确实位于原版六轨键位数组中。</summary>
-    /// <param name="key">MouseN 对应的保留 Key 值。</param>
-    /// <returns>至少一条轨道当前是否绑定该值。</returns>
-    private static bool IsLaneBinding(Key key)
-    {
-        var laneKeys = _YD._JfA;
-        if (laneKeys == null)
-            return false;
-        int count = Math.Min(6, laneKeys.Length);
-        for (int i = 0; i < count; i++)
-            if (laneKeys[i] == key)
-                return true;
-        return false;
-    }
-
     /// <summary>在原始释放事件缺失时，以 Input System 当前物理状态补齐释放。</summary>
     /// <param name="time">补偿释放使用的当前 Input System 时间，单位秒。</param>
     private static void ReleasePhysicallyReleasedButtons(double time)
     {
-        int[] buttons = ActivePresses
-            .Where(pair => MouseInputEvents.TryGetCurrentButtonState(
-                pair.Value.Device, pair.Key, out bool pressed) && !pressed)
-            .Select(pair => pair.Key)
-            .ToArray();
-        foreach (int button in buttons)
+        if (ActivePresses.Count == 0)
+            return;
+        ReleaseButtons.Clear();
+        foreach (var pair in ActivePresses)
+            if (MouseInputEvents.TryGetCurrentButtonState(pair.Value.Device, pair.Key, out bool pressed) && !pressed)
+                ReleaseButtons.Add(pair.Key);
+        foreach (int button in ReleaseButtons)
             Release(button, time);
     }
 
@@ -241,8 +235,12 @@ internal static class MouseBindingRuntime
     /// <param name="time">恢复释放所使用的当前 Input System 时间，单位秒。</param>
     private static void ReleaseAll(double time)
     {
-        int[] buttons = ActivePresses.Keys.ToArray();
-        foreach (int button in buttons)
+        if (ActivePresses.Count == 0)
+            return;
+        ReleaseButtons.Clear();
+        foreach (int button in ActivePresses.Keys)
+            ReleaseButtons.Add(button);
+        foreach (int button in ReleaseButtons)
             Release(button, time);
     }
 

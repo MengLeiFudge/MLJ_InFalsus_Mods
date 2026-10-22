@@ -14,7 +14,7 @@ public sealed class Plugin : BasePlugin
     internal const string PluginGuid = "menglei.infalsus.mousekeybindings";
 
     /// <summary>插件及 Thunderstore 包版本。</summary>
-    internal const string PluginVersion = "1.1.0";
+    internal const string PluginVersion = "1.1.2";
 
     /// <summary>供输入补丁记录初始化和运行错误。</summary>
     internal static ManualLogSource Logger { get; private set; } = null!;
