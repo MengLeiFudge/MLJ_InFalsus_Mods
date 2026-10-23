@@ -36,6 +36,8 @@ internal sealed class ChartCatalog
 
     /// <summary>当前快照使用的定数来源；配置切换后重建曲库与完整排名。</summary>
     internal ChartConstantSource Source { get; }
+    /// <summary>所选定数表版本；后台更新在主线程采用后重建快照。</summary>
+    internal int ConstantsRevision { get; }
 
     /// <summary>接收已校验的运行时定义与本次选择的定数来源。</summary>
     private ChartCatalog(Dictionary<ChartKey, ChartDefinition> charts, Strings.Localization language, ChartConstantSource source)
@@ -43,6 +45,7 @@ internal sealed class ChartCatalog
         this.charts = charts;
         Language = language;
         Source = source;
+        ConstantsRevision = CommunityConstants.Revision(source);
         Maximum = PotentialCalculator.Overall(charts.Values.Select(chart => chart.Constant + PotentialCalculator.MaximumPerformance));
     }
 
@@ -99,7 +102,7 @@ internal sealed class ChartCatalog
                     && !songJackets.TryGetValue(song.Id.Value, out jacket))
                     jacket = data.FallbackJacketLargeMaterial;
                 var key = new ChartKey(song.Id.Value, difficulty);
-                decimal constant = CommunityConstants.Resolve(entry.Id, entry.Rating, source);
+                decimal constant = CommunityConstants.Resolve(key, entry.Id, entry.Rating, source);
                 if (!charts.TryAdd(key, new ChartDefinition(entry.Id, constant, title, artist, jacket)) || !ids.Add(entry.Id))
                     throw new InvalidDataException($"游戏存在重复谱面身份：{entry.Id}。");
             }
@@ -111,4 +114,9 @@ internal sealed class ChartCatalog
 
     /// <summary>匹配当前可用谱面；未知身份不猜测等级。</summary>
     internal bool TryGet(ChartKey key, out ChartDefinition chart) => charts.TryGetValue(key, out chart!);
+
+    /// <summary>按当前可用谱面比较实际生效值；远端未入库条目和格式变化不计入提示。</summary>
+    internal int CountConstantChanges(ChartCatalog next) => charts.Count(pair =>
+        !next.charts.TryGetValue(pair.Key, out var chart) || chart.Constant != pair.Value.Constant)
+        + next.charts.Keys.Count(key => !charts.ContainsKey(key));
 }

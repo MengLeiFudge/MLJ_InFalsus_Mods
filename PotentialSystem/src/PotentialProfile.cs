@@ -114,7 +114,7 @@ internal sealed class PotentialProfile
     internal PotentialProfile(PotentialDocument document)
     {
         if (document.SchemaVersion != 1 || document.Rule is not (CommunityConstants.NativeRule or CommunityConstants.CommunityRule
-            or CommunityConstants.AnXiaoLiRule or CommunityConstants.MengLeiRule)
+            or CommunityConstants.AnXiaoLiRule or CommunityConstants.MengLeiRule or CommunityConstants.LegacyMengLeiRule)
             || document.ImportedAt == null || document.ImportedAt.Value.Offset != TimeSpan.Zero
             || document.BestPlays == null || document.BestPlays.Count > 10_000)
             throw new InvalidDataException("潜力值文件格式或定数规则不受支持。");

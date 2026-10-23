@@ -9,7 +9,7 @@ using Object = UnityEngine.Object;
 namespace InFalsusMod.Potential;
 
 /// <summary>注册独立潜力值模组和原生场景完成后的观察入口。</summary>
-[BepInPlugin("menglei.infalsus.potentialsystem", "In Falsus Potential System", "1.0.0")]
+[BepInPlugin("menglei.infalsus.potentialsystem", "In Falsus Potential System", "1.0.1")]
 [BepInProcess("infalsus.exe")]
 public sealed class Plugin : BasePlugin
 {
@@ -19,6 +19,10 @@ public sealed class Plugin : BasePlugin
     internal static PotentialController? Controller { get; private set; }
     /// <summary>本模组的社区定数配置及原生设置视图。</summary>
     internal static PotentialSettings? Settings { get; private set; }
+    /// <summary>本 profile 的安小璃缓存与一次后台更新。</summary>
+    internal static AnXiaoLiConstants? AnXiaoLi { get; private set; }
+    /// <summary>本 profile 的萌泪酱 v6 内置表、冻结模型与后台计算。</summary>
+    internal static MengLeiConstants? MengLei { get; private set; }
     /// <summary>仅拦截本模组的场景观察、设置接入与选歌排序通知。</summary>
     private Harmony? harmony;
 
@@ -32,6 +36,8 @@ public sealed class Plugin : BasePlugin
             if (!ClassInjector.IsTypeRegisteredInIl2Cpp<PotentialInputReceiver>())
                 ClassInjector.RegisterTypeInIl2Cpp<PotentialInputReceiver>();
             Settings = new PotentialSettings(Config);
+            AnXiaoLi = new AnXiaoLiConstants(Paths.ConfigPath);
+            MengLei = new MengLeiConstants(Paths.ConfigPath);
             Controller = AddComponent<PotentialController>();
             harmony = new Harmony("menglei.infalsus.potentialsystem");
             harmony.PatchAll(typeof(Plugin).Assembly);
@@ -41,12 +47,16 @@ public sealed class Plugin : BasePlugin
             harmony?.UnpatchSelf();
             Settings?.Dispose();
             Settings = null;
+            AnXiaoLi?.Dispose();
+            AnXiaoLi = null;
+            MengLei?.Dispose();
+            MengLei = null;
             if (Controller != null)
                 Object.Destroy(Controller);
             Controller = null;
             throw;
         }
-        Log.LogInfo("潜力值系统 1.0.0 已加载，包含动态定数、完整排名、Arcaea 徽章与 B50 图片导出。");
+        Log.LogInfo("潜力值系统 1.0.1 已加载，安小璃更新和萌泪酱新谱面计算将在后台完成。");
     }
 
     /// <inheritdoc />
@@ -56,6 +66,10 @@ public sealed class Plugin : BasePlugin
         harmony = null;
         Settings?.Dispose();
         Settings = null;
+        AnXiaoLi?.Dispose();
+        AnXiaoLi = null;
+        MengLei?.Dispose();
+        MengLei = null;
         if (Controller != null)
             Object.Destroy(Controller);
         Controller = null;

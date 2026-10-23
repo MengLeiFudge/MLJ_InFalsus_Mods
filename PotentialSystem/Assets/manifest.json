@@ -1,7 +1,7 @@
 {
   "namespace": "MengLei",
   "name": "PotentialSystem",
-  "version_number": "1.0.0",
+  "version_number": "1.0.1",
   "website_url": "https://github.com/MengLeiFudge/MLJ_InFalsus_Mods",
   "description": "潜力值系统：可切换官方等级、安小璃和萌泪酱定数，提供角色头像与 PTT 菱形、原生设置、完整成绩浏览、潜力值排序、B50 图片导出与结算动画。",
   "dependencies": [

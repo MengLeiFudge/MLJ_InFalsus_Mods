@@ -59,6 +59,16 @@ public sealed class PotentialController : MonoBehaviour
     private bool saveFailed;
     /// <summary>新导入或新结算申请的一次保存；失败后不会逐帧重复尝试。</summary>
     private bool saveRequested;
+    /// <summary>定数更新提示只在选歌拥有输入时显示，持有回调到原版窗口关闭。</summary>
+    private NativeModalSession? constantsNotice;
+    /// <summary>原版弹窗文字临时换为完整中文字体，关闭后恢复，不改变其他弹窗。</summary>
+    private readonly Dictionary<FastText.FastText, FastText.Data.FastTextFontFamily> noticeFonts = new();
+    /// <summary>两来源都完成后等待统一提示的生效定数变化数。</summary>
+    private int pendingAnXiaoLiChanges, pendingMengLeiChanges;
+    /// <summary>本次启动只联合采用和提示一次。</summary>
+    private bool constantsProcessed;
+    /// <summary>主线程采用或提示失败后停止本次检查，避免逐帧重复报错。</summary>
+    private bool constantsUpdateFailed;
 
     /// <summary>绑定由 IL2CPP 创建的组件。</summary>
     /// <param name="pointer">原生 Unity 组件指针。</param>
@@ -75,6 +85,7 @@ public sealed class PotentialController : MonoBehaviour
                 nextDiscovery = Time.realtimeSinceStartup + 0.5f;
                 DiscoverScenes();
             }
+            UpdateConstants();
             if (resultsScene != null && resultsScene.isActiveAndEnabled)
             {
                 bool available = EnsureProfile(resultsScene.dataAccess);
@@ -241,9 +252,11 @@ public sealed class PotentialController : MonoBehaviour
                 Plugin.Logger.LogInfo($"潜力值已载入：{catalog.Count} 个动态谱面，上限 {PotentialCalculator.Format(catalog.Maximum)}。");
             }
             else if (refreshCatalog || catalog == null || catalog.Language != NativeLabel.CurrentLanguage()
-                || catalog.Source != (Plugin.Settings?.Source ?? ChartConstantSource.AnXiaoLi))
+                || catalog.Source != (Plugin.Settings?.Source ?? ChartConstantSource.AnXiaoLi)
+                || catalog.ConstantsRevision != CommunityConstants.Revision(catalog.Source))
             {
-                bool sourceChanged = catalog?.Source != (Plugin.Settings?.Source ?? ChartConstantSource.AnXiaoLi);
+                bool sourceChanged = catalog?.Source != (Plugin.Settings?.Source ?? ChartConstantSource.AnXiaoLi)
+                    || (catalog != null && catalog.ConstantsRevision != CommunityConstants.Revision(catalog.Source));
                 catalog = ChartCatalog.Read(data, Plugin.Settings?.Source ?? ChartConstantSource.AnXiaoLi);
                 snapshot = profile!.Calculate(catalog);
                 if (sourceChanged && resultsScene != null && resultsScene.isActiveAndEnabled && observedResult.HasValue)
@@ -397,10 +410,86 @@ public sealed class PotentialController : MonoBehaviour
         }
     }
 
+    /// <summary>曲库就绪后启动计算；两边结束后在选歌空闲时统一采用和提示。</summary>
+    [HideFromIl2Cpp]
+    private void UpdateConstants()
+    {
+        if (constantsNotice != null && !constantsNotice.IsOpen)
+        {
+            if (constantsNotice.Failure != null)
+                Plugin.Logger.LogWarning($"定数更新提示已关闭：{constantsNotice.Failure}");
+            ReleaseNoticeFonts();
+        }
+        if (constantsUpdateFailed || selection == null || !selection.isActiveAndEnabled
+            || selection.dataAccess?.SongData == null)
+            return;
+        try
+        {
+            var anXiaoLi = Plugin.AnXiaoLi;
+            var mengLei = Plugin.MengLei;
+            mengLei?.Start(selection.dataAccess);
+            if ((resultsScene != null && resultsScene.isActiveAndEnabled) || browser?.IsOpen == true
+                || InputManager.Instance?.IsHeadOfStack(selection) != true)
+                return;
+            if (!constantsProcessed && anXiaoLi?.UpdateReady == true && mengLei?.UpdateReady == true)
+            {
+                var data = selection.dataAccess.SongData;
+                var previousAnXiaoLi = ChartCatalog.Read(data, ChartConstantSource.AnXiaoLi);
+                var previousMengLei = ChartCatalog.Read(data, ChartConstantSource.MengLei);
+                anXiaoLi.ApplyUpdate();
+                mengLei.ApplyUpdate();
+                pendingAnXiaoLiChanges = previousAnXiaoLi.CountConstantChanges(ChartCatalog.Read(data, ChartConstantSource.AnXiaoLi));
+                pendingMengLeiChanges = previousMengLei.CountConstantChanges(ChartCatalog.Read(data, ChartConstantSource.MengLei));
+                constantsProcessed = true;
+                Plugin.Logger.LogInfo($"定数后台处理结束：安小璃 {pendingAnXiaoLiChanges} 个、萌泪酱 {pendingMengLeiChanges} 个可用谱面的定数有变化。");
+            }
+            if (pendingAnXiaoLiChanges + pendingMengLeiChanges > 0 && constantsNotice == null
+                && NativeModal.TryShowMessage("谱面定数已更新",
+                    $"安小璃：{pendingAnXiaoLiChanges} 个谱面定数有变化。\n萌泪酱：{pendingMengLeiChanges} 个谱面定数有变化。",
+                    out var notice, ReleaseNoticeFonts))
+            {
+                constantsNotice = notice;
+                foreach (var text in new[] { notice!.Modal.topHalfText, notice.Modal.topHalfSubText })
+                {
+                    if (text == null)
+                        continue;
+                    noticeFonts.Add(text, text.fontFamilyAsset);
+                    PotentialFonts.Apply(text);
+                    text.EnsureDirtyFlagsProcessed();
+                }
+                pendingAnXiaoLiChanges = pendingMengLeiChanges = 0;
+            }
+        }
+        catch (Exception ex)
+        {
+            constantsUpdateFailed = true;
+            constantsNotice?.Close();
+            ReleaseNoticeFonts();
+            Plugin.Logger.LogWarning($"定数更新或提示失败：{ex}");
+        }
+    }
+
+    /// <summary>原版确认回调或销毁路径都归还弹窗字体；异常不逃回游戏输入循环。</summary>
+    [HideFromIl2Cpp]
+    private void ReleaseNoticeFonts()
+    {
+        foreach (var pair in noticeFonts)
+        {
+            try { if (pair.Key != null) pair.Key.SetFontFamilyAsset(pair.Value); }
+            catch (Exception ex) { Plugin.Logger.LogWarning($"定数提示字体恢复失败：{ex.Message}"); }
+        }
+        noticeFonts.Clear();
+        constantsNotice = null;
+    }
+
     /// <summary>释放所有模组创建的场景文字。</summary>
     [HideFromIl2Cpp]
     private void ReleaseViews()
     {
+        constantsNotice?.Close();
+        if (constantsNotice?.Failure != null)
+            Plugin.Logger.LogWarning($"定数更新提示关闭失败：{constantsNotice.Failure}");
+        ReleaseNoticeFonts();
         try { browser?.Dispose(); }
         finally
         {

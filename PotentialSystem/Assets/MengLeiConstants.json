@@ -1,0 +1,1602 @@
+{
+  "alamode0": {
+    "Level": 1,
+    "Difficulty": 1,
+    "Constant": 1.5
+  },
+  "alamode1": {
+    "Level": 5,
+    "Difficulty": 2,
+    "Constant": 5.5
+  },
+  "alamode2": {
+    "Level": 9,
+    "Difficulty": 4,
+    "Constant": 9.6
+  },
+  "alamode3": {
+    "Level": 11,
+    "Difficulty": 8,
+    "Constant": 11.4
+  },
+  "alterededge0": {
+    "Level": 2,
+    "Difficulty": 1,
+    "Constant": 2.5
+  },
+  "alterededge1": {
+    "Level": 5,
+    "Difficulty": 2,
+    "Constant": 5.5
+  },
+  "alterededge2": {
+    "Level": 9,
+    "Difficulty": 4,
+    "Constant": 9.5
+  },
+  "alterededge3": {
+    "Level": 11,
+    "Difficulty": 8,
+    "Constant": 11.4
+  },
+  "bethere0": {
+    "Level": 3,
+    "Difficulty": 1,
+    "Constant": 3.5
+  },
+  "bethere1": {
+    "Level": 6,
+    "Difficulty": 2,
+    "Constant": 6.5
+  },
+  "bethere2": {
+    "Level": 10,
+    "Difficulty": 4,
+    "Constant": 10.2
+  },
+  "bethere3": {
+    "Level": 12,
+    "Difficulty": 8,
+    "Constant": 12.5
+  },
+  "chaoticismlegacy0": {
+    "Level": 4,
+    "Difficulty": 1,
+    "Constant": 4.5
+  },
+  "chaoticismlegacy1": {
+    "Level": 7,
+    "Difficulty": 2,
+    "Constant": 7.8
+  },
+  "chaoticismlegacy2": {
+    "Level": 10,
+    "Difficulty": 4,
+    "Constant": 10.7
+  },
+  "chaoticismlegacy3": {
+    "Level": 13,
+    "Difficulty": 8,
+    "Constant": 13.6
+  },
+  "chronomia0": {
+    "Level": 2,
+    "Difficulty": 1,
+    "Constant": 2.0
+  },
+  "chronomia1": {
+    "Level": 5,
+    "Difficulty": 2,
+    "Constant": 5.0
+  },
+  "chronomia2": {
+    "Level": 10,
+    "Difficulty": 4,
+    "Constant": 10.2
+  },
+  "chronomia3": {
+    "Level": 11,
+    "Difficulty": 8,
+    "Constant": 11.2
+  },
+  "chronophobia0": {
+    "Level": 6,
+    "Difficulty": 1,
+    "Constant": 6.5
+  },
+  "chronophobia1": {
+    "Level": 9,
+    "Difficulty": 2,
+    "Constant": 9.9
+  },
+  "chronophobia2": {
+    "Level": 11,
+    "Difficulty": 4,
+    "Constant": 11.9
+  },
+  "chronophobia3": {
+    "Level": 14,
+    "Difficulty": 8,
+    "Constant": 14.6
+  },
+  "codeleviathan0": {
+    "Level": 5,
+    "Difficulty": 1,
+    "Constant": 5.0
+  },
+  "codeleviathan1": {
+    "Level": 8,
+    "Difficulty": 2,
+    "Constant": 8.0
+  },
+  "codeleviathan2": {
+    "Level": 11,
+    "Difficulty": 4,
+    "Constant": 11.8
+  },
+  "codeleviathan3": {
+    "Level": 14,
+    "Difficulty": 8,
+    "Constant": 14.4
+  },
+  "coldsea0": {
+    "Level": 4,
+    "Difficulty": 1,
+    "Constant": 4.5
+  },
+  "coldsea1": {
+    "Level": 7,
+    "Difficulty": 2,
+    "Constant": 7.5
+  },
+  "coldsea2": {
+    "Level": 10,
+    "Difficulty": 4,
+    "Constant": 10.7
+  },
+  "coldsea3": {
+    "Level": 13,
+    "Difficulty": 8,
+    "Constant": 13.4
+  },
+  "cryogenic0": {
+    "Level": 2,
+    "Difficulty": 1,
+    "Constant": 2.0
+  },
+  "cryogenic1": {
+    "Level": 5,
+    "Difficulty": 2,
+    "Constant": 5.5
+  },
+  "cryogenic2": {
+    "Level": 9,
+    "Difficulty": 4,
+    "Constant": 9.6
+  },
+  "cryogenic3": {
+    "Level": 12,
+    "Difficulty": 8,
+    "Constant": 12.4
+  },
+  "cyaegha0": {
+    "Level": 3,
+    "Difficulty": 1,
+    "Constant": 3.5
+  },
+  "cyaegha1": {
+    "Level": 6,
+    "Difficulty": 2,
+    "Constant": 6.5
+  },
+  "cyaegha2": {
+    "Level": 10,
+    "Difficulty": 4,
+    "Constant": 10.5
+  },
+  "cyaegha3": {
+    "Level": 12,
+    "Difficulty": 8,
+    "Constant": 12.3
+  },
+  "destroyer0": {
+    "Level": 3,
+    "Difficulty": 1,
+    "Constant": 3.0
+  },
+  "destroyer1": {
+    "Level": 6,
+    "Difficulty": 2,
+    "Constant": 6.0
+  },
+  "destroyer2": {
+    "Level": 9,
+    "Difficulty": 4,
+    "Constant": 9.4
+  },
+  "destroyer3": {
+    "Level": 12,
+    "Difficulty": 8,
+    "Constant": 12.4
+  },
+  "enigma0": {
+    "Level": 4,
+    "Difficulty": 1,
+    "Constant": 4.5
+  },
+  "enigma1": {
+    "Level": 7,
+    "Difficulty": 2,
+    "Constant": 7.8
+  },
+  "enigma2": {
+    "Level": 11,
+    "Difficulty": 4,
+    "Constant": 11.8
+  },
+  "enigma3": {
+    "Level": 13,
+    "Difficulty": 8,
+    "Constant": 13.5
+  },
+  "everything0": {
+    "Level": 1,
+    "Difficulty": 1,
+    "Constant": 1.5
+  },
+  "everything1": {
+    "Level": 4,
+    "Difficulty": 2,
+    "Constant": 4.5
+  },
+  "everything2": {
+    "Level": 8,
+    "Difficulty": 4,
+    "Constant": 8.5
+  },
+  "everything3": {
+    "Level": 10,
+    "Difficulty": 8,
+    "Constant": 10.6
+  },
+  "exceedmind0": {
+    "Level": 3,
+    "Difficulty": 1,
+    "Constant": 3.5
+  },
+  "exceedmind1": {
+    "Level": 6,
+    "Difficulty": 2,
+    "Constant": 6.5
+  },
+  "exceedmind2": {
+    "Level": 10,
+    "Difficulty": 4,
+    "Constant": 10.4
+  },
+  "exceedmind3": {
+    "Level": 12,
+    "Difficulty": 8,
+    "Constant": 12.6
+  },
+  "fallingshadow0": {
+    "Level": 1,
+    "Difficulty": 1,
+    "Constant": 1.5
+  },
+  "fallingshadow1": {
+    "Level": 4,
+    "Difficulty": 2,
+    "Constant": 4.5
+  },
+  "fallingshadow2": {
+    "Level": 8,
+    "Difficulty": 4,
+    "Constant": 8.5
+  },
+  "fallingshadow3": {
+    "Level": 11,
+    "Difficulty": 8,
+    "Constant": 11.4
+  },
+  "falsequre0": {
+    "Level": 2,
+    "Difficulty": 1,
+    "Constant": 2.5
+  },
+  "falsequre1": {
+    "Level": 6,
+    "Difficulty": 2,
+    "Constant": 6.5
+  },
+  "falsequre2": {
+    "Level": 10,
+    "Difficulty": 4,
+    "Constant": 10.5
+  },
+  "falsequre3": {
+    "Level": 12,
+    "Difficulty": 8,
+    "Constant": 12.6
+  },
+  "ffff0": {
+    "Level": 2,
+    "Difficulty": 1,
+    "Constant": 2.5
+  },
+  "ffff1": {
+    "Level": 5,
+    "Difficulty": 2,
+    "Constant": 5.0
+  },
+  "ffff2": {
+    "Level": 9,
+    "Difficulty": 4,
+    "Constant": 9.6
+  },
+  "ffff3": {
+    "Level": 11,
+    "Difficulty": 8,
+    "Constant": 11.6
+  },
+  "fochaos0": {
+    "Level": 2,
+    "Difficulty": 1,
+    "Constant": 2.5
+  },
+  "fochaos1": {
+    "Level": 5,
+    "Difficulty": 2,
+    "Constant": 5.5
+  },
+  "fochaos2": {
+    "Level": 9,
+    "Difficulty": 4,
+    "Constant": 9.6
+  },
+  "fochaos3": {
+    "Level": 11,
+    "Difficulty": 8,
+    "Constant": 11.6
+  },
+  "greyscalecity0": {
+    "Level": 2,
+    "Difficulty": 1,
+    "Constant": 2.5
+  },
+  "greyscalecity1": {
+    "Level": 5,
+    "Difficulty": 2,
+    "Constant": 5.5
+  },
+  "greyscalecity2": {
+    "Level": 10,
+    "Difficulty": 4,
+    "Constant": 10.5
+  },
+  "greyscalecity3": {
+    "Level": 12,
+    "Difficulty": 8,
+    "Constant": 12.5
+  },
+  "hanabi0": {
+    "Level": 2,
+    "Difficulty": 1,
+    "Constant": 2.5
+  },
+  "hanabi1": {
+    "Level": 6,
+    "Difficulty": 2,
+    "Constant": 6.0
+  },
+  "hanabi2": {
+    "Level": 9,
+    "Difficulty": 4,
+    "Constant": 9.5
+  },
+  "hanabi3": {
+    "Level": 11,
+    "Difficulty": 8,
+    "Constant": 11.2
+  },
+  "hyalouyne0": {
+    "Level": 3,
+    "Difficulty": 1,
+    "Constant": 3.5
+  },
+  "hyalouyne1": {
+    "Level": 6,
+    "Difficulty": 2,
+    "Constant": 6.5
+  },
+  "hyalouyne2": {
+    "Level": 10,
+    "Difficulty": 4,
+    "Constant": 10.4
+  },
+  "hyalouyne3": {
+    "Level": 12,
+    "Difficulty": 8,
+    "Constant": 12.3
+  },
+  "init0": {
+    "Level": 2,
+    "Difficulty": 1,
+    "Constant": 2.5
+  },
+  "init1": {
+    "Level": 5,
+    "Difficulty": 2,
+    "Constant": 5.5
+  },
+  "init2": {
+    "Level": 9,
+    "Difficulty": 4,
+    "Constant": 9.2
+  },
+  "init3": {
+    "Level": 11,
+    "Difficulty": 8,
+    "Constant": 11.3
+  },
+  "kirapico0": {
+    "Level": 2,
+    "Difficulty": 1,
+    "Constant": 2.0
+  },
+  "kirapico1": {
+    "Level": 5,
+    "Difficulty": 2,
+    "Constant": 5.5
+  },
+  "kirapico2": {
+    "Level": 9,
+    "Difficulty": 4,
+    "Constant": 9.7
+  },
+  "kirapico3": {
+    "Level": 11,
+    "Difficulty": 8,
+    "Constant": 11.1
+  },
+  "kiretsu0": {
+    "Level": 4,
+    "Difficulty": 1,
+    "Constant": 4.5
+  },
+  "kiretsu1": {
+    "Level": 7,
+    "Difficulty": 2,
+    "Constant": 7.0
+  },
+  "kiretsu2": {
+    "Level": 10,
+    "Difficulty": 4,
+    "Constant": 10.6
+  },
+  "kiretsu3": {
+    "Level": 13,
+    "Difficulty": 8,
+    "Constant": 13.4
+  },
+  "latentduality0": {
+    "Level": 4,
+    "Difficulty": 1,
+    "Constant": 4.5
+  },
+  "latentduality1": {
+    "Level": 7,
+    "Difficulty": 2,
+    "Constant": 7.8
+  },
+  "latentduality2": {
+    "Level": 11,
+    "Difficulty": 4,
+    "Constant": 11.8
+  },
+  "latentduality3": {
+    "Level": 13,
+    "Difficulty": 8,
+    "Constant": 13.5
+  },
+  "lfdy0": {
+    "Level": 2,
+    "Difficulty": 1,
+    "Constant": 2.5
+  },
+  "lfdy1": {
+    "Level": 5,
+    "Difficulty": 2,
+    "Constant": 5.5
+  },
+  "lfdy2": {
+    "Level": 10,
+    "Difficulty": 4,
+    "Constant": 10.9
+  },
+  "lfdy3": {
+    "Level": 12,
+    "Difficulty": 8,
+    "Constant": 12.6
+  },
+  "lightsout0": {
+    "Level": 4,
+    "Difficulty": 1,
+    "Constant": 4.5
+  },
+  "lightsout1": {
+    "Level": 7,
+    "Difficulty": 2,
+    "Constant": 7.0
+  },
+  "lightsout2": {
+    "Level": 10,
+    "Difficulty": 4,
+    "Constant": 10.5
+  },
+  "lightsout3": {
+    "Level": 12,
+    "Difficulty": 8,
+    "Constant": 12.4
+  },
+  "memoire0": {
+    "Level": 4,
+    "Difficulty": 1,
+    "Constant": 4.5
+  },
+  "memoire1": {
+    "Level": 7,
+    "Difficulty": 2,
+    "Constant": 7.5
+  },
+  "memoire2": {
+    "Level": 11,
+    "Difficulty": 4,
+    "Constant": 11.6
+  },
+  "memoire3": {
+    "Level": 13,
+    "Difficulty": 8,
+    "Constant": 13.6
+  },
+  "minerva0": {
+    "Level": 2,
+    "Difficulty": 1,
+    "Constant": 2.5
+  },
+  "minerva1": {
+    "Level": 5,
+    "Difficulty": 2,
+    "Constant": 5.5
+  },
+  "minerva2": {
+    "Level": 9,
+    "Difficulty": 4,
+    "Constant": 9.1
+  },
+  "minerva3": {
+    "Level": 11,
+    "Difficulty": 8,
+    "Constant": 11.4
+  },
+  "mirinae0": {
+    "Level": 2,
+    "Difficulty": 1,
+    "Constant": 2.5
+  },
+  "mirinae1": {
+    "Level": 6,
+    "Difficulty": 2,
+    "Constant": 6.0
+  },
+  "mirinae2": {
+    "Level": 9,
+    "Difficulty": 4,
+    "Constant": 9.3
+  },
+  "mirinae3": {
+    "Level": 12,
+    "Difficulty": 8,
+    "Constant": 12.4
+  },
+  "moondiver0": {
+    "Level": 2,
+    "Difficulty": 1,
+    "Constant": 2.5
+  },
+  "moondiver1": {
+    "Level": 5,
+    "Difficulty": 2,
+    "Constant": 5.5
+  },
+  "moondiver2": {
+    "Level": 9,
+    "Difficulty": 4,
+    "Constant": 9.4
+  },
+  "moondiver3": {
+    "Level": 11,
+    "Difficulty": 8,
+    "Constant": 11.4
+  },
+  "moonsliders0": {
+    "Level": 3,
+    "Difficulty": 1,
+    "Constant": 3.5
+  },
+  "moonsliders1": {
+    "Level": 6,
+    "Difficulty": 2,
+    "Constant": 6.5
+  },
+  "moonsliders2": {
+    "Level": 10,
+    "Difficulty": 4,
+    "Constant": 10.6
+  },
+  "moonsliders3": {
+    "Level": 13,
+    "Difficulty": 8,
+    "Constant": 13.5
+  },
+  "mydeadlysins0": {
+    "Level": 2,
+    "Difficulty": 1,
+    "Constant": 2.0
+  },
+  "mydeadlysins1": {
+    "Level": 6,
+    "Difficulty": 2,
+    "Constant": 6.5
+  },
+  "mydeadlysins2": {
+    "Level": 9,
+    "Difficulty": 4,
+    "Constant": 9.4
+  },
+  "mydeadlysins3": {
+    "Level": 12,
+    "Difficulty": 8,
+    "Constant": 12.4
+  },
+  "newvision0": {
+    "Level": 1,
+    "Difficulty": 1,
+    "Constant": 1.0
+  },
+  "newvision1": {
+    "Level": 4,
+    "Difficulty": 2,
+    "Constant": 4.0
+  },
+  "newvision2": {
+    "Level": 9,
+    "Difficulty": 4,
+    "Constant": 9.4
+  },
+  "newvision3": {
+    "Level": 11,
+    "Difficulty": 8,
+    "Constant": 11.1
+  },
+  "noctidea0": {
+    "Level": 3,
+    "Difficulty": 1,
+    "Constant": 3.0
+  },
+  "noctidea1": {
+    "Level": 6,
+    "Difficulty": 2,
+    "Constant": 6.5
+  },
+  "noctidea2": {
+    "Level": 10,
+    "Difficulty": 4,
+    "Constant": 10.7
+  },
+  "noctidea3": {
+    "Level": 12,
+    "Difficulty": 8,
+    "Constant": 12.4
+  },
+  "nowiknow0": {
+    "Level": 3,
+    "Difficulty": 1,
+    "Constant": 3.5
+  },
+  "nowiknow1": {
+    "Level": 6,
+    "Difficulty": 2,
+    "Constant": 6.0
+  },
+  "nowiknow2": {
+    "Level": 10,
+    "Difficulty": 4,
+    "Constant": 10.4
+  },
+  "nowiknow3": {
+    "Level": 12,
+    "Difficulty": 8,
+    "Constant": 12.1
+  },
+  "outerjustice0": {
+    "Level": 3,
+    "Difficulty": 1,
+    "Constant": 3.0
+  },
+  "outerjustice1": {
+    "Level": 6,
+    "Difficulty": 2,
+    "Constant": 6.5
+  },
+  "outerjustice2": {
+    "Level": 9,
+    "Difficulty": 4,
+    "Constant": 9.6
+  },
+  "outerjustice3": {
+    "Level": 12,
+    "Difficulty": 8,
+    "Constant": 12.4
+  },
+  "papillonblanc0": {
+    "Level": 1,
+    "Difficulty": 1,
+    "Constant": 1.0
+  },
+  "papillonblanc1": {
+    "Level": 4,
+    "Difficulty": 2,
+    "Constant": 4.5
+  },
+  "papillonblanc2": {
+    "Level": 8,
+    "Difficulty": 4,
+    "Constant": 8.5
+  },
+  "papillonblanc3": {
+    "Level": 10,
+    "Difficulty": 8,
+    "Constant": 10.4
+  },
+  "phylaxron0": {
+    "Level": 6,
+    "Difficulty": 1,
+    "Constant": 6.5
+  },
+  "phylaxron1": {
+    "Level": 9,
+    "Difficulty": 2,
+    "Constant": 9.0
+  },
+  "phylaxron2": {
+    "Level": 12,
+    "Difficulty": 4,
+    "Constant": 12.6
+  },
+  "phylaxron3": {
+    "Level": 14,
+    "Difficulty": 8,
+    "Constant": 14.5
+  },
+  "primevaltexture0": {
+    "Level": 2,
+    "Difficulty": 1,
+    "Constant": 2.0
+  },
+  "primevaltexture1": {
+    "Level": 5,
+    "Difficulty": 2,
+    "Constant": 5.0
+  },
+  "primevaltexture2": {
+    "Level": 8,
+    "Difficulty": 4,
+    "Constant": 8.0
+  },
+  "primevaltexture3": {
+    "Level": 10,
+    "Difficulty": 8,
+    "Constant": 10.5
+  },
+  "reconnect0": {
+    "Level": 2,
+    "Difficulty": 1,
+    "Constant": 2.0
+  },
+  "reconnect1": {
+    "Level": 5,
+    "Difficulty": 2,
+    "Constant": 5.0
+  },
+  "reconnect2": {
+    "Level": 9,
+    "Difficulty": 4,
+    "Constant": 9.3
+  },
+  "reconnect3": {
+    "Level": 11,
+    "Difficulty": 8,
+    "Constant": 11.3
+  },
+  "reflection0": {
+    "Level": 4,
+    "Difficulty": 1,
+    "Constant": 4.0
+  },
+  "reflection1": {
+    "Level": 7,
+    "Difficulty": 2,
+    "Constant": 7.5
+  },
+  "reflection2": {
+    "Level": 10,
+    "Difficulty": 4,
+    "Constant": 10.2
+  },
+  "reflection3": {
+    "Level": 13,
+    "Difficulty": 8,
+    "Constant": 13.2
+  },
+  "scarletespada0": {
+    "Level": 3,
+    "Difficulty": 1,
+    "Constant": 3.5
+  },
+  "scarletespada1": {
+    "Level": 6,
+    "Difficulty": 2,
+    "Constant": 6.5
+  },
+  "scarletespada2": {
+    "Level": 9,
+    "Difficulty": 4,
+    "Constant": 9.6
+  },
+  "scarletespada3": {
+    "Level": 12,
+    "Difficulty": 8,
+    "Constant": 12.7
+  },
+  "selfconfrontation0": {
+    "Level": 3,
+    "Difficulty": 1,
+    "Constant": 3.5
+  },
+  "selfconfrontation1": {
+    "Level": 6,
+    "Difficulty": 2,
+    "Constant": 6.5
+  },
+  "selfconfrontation2": {
+    "Level": 10,
+    "Difficulty": 4,
+    "Constant": 10.3
+  },
+  "selfconfrontation3": {
+    "Level": 12,
+    "Difficulty": 8,
+    "Constant": 12.4
+  },
+  "shadowsofunknown0": {
+    "Level": 4,
+    "Difficulty": 1,
+    "Constant": 4.0
+  },
+  "shadowsofunknown1": {
+    "Level": 7,
+    "Difficulty": 2,
+    "Constant": 7.0
+  },
+  "shadowsofunknown2": {
+    "Level": 10,
+    "Difficulty": 4,
+    "Constant": 10.5
+  },
+  "shadowsofunknown3": {
+    "Level": 12,
+    "Difficulty": 8,
+    "Constant": 12.4
+  },
+  "shouldhavebeen0": {
+    "Level": 3,
+    "Difficulty": 1,
+    "Constant": 3.5
+  },
+  "shouldhavebeen1": {
+    "Level": 6,
+    "Difficulty": 2,
+    "Constant": 6.5
+  },
+  "shouldhavebeen2": {
+    "Level": 10,
+    "Difficulty": 4,
+    "Constant": 10.6
+  },
+  "shouldhavebeen3": {
+    "Level": 13,
+    "Difficulty": 8,
+    "Constant": 13.5
+  },
+  "sinutopia0": {
+    "Level": 3,
+    "Difficulty": 1,
+    "Constant": 3.5
+  },
+  "sinutopia1": {
+    "Level": 7,
+    "Difficulty": 2,
+    "Constant": 7.0
+  },
+  "sinutopia2": {
+    "Level": 10,
+    "Difficulty": 4,
+    "Constant": 10.4
+  },
+  "sinutopia3": {
+    "Level": 12,
+    "Difficulty": 8,
+    "Constant": 12.6
+  },
+  "sunanokioku0": {
+    "Level": 2,
+    "Difficulty": 1,
+    "Constant": 2.5
+  },
+  "sunanokioku1": {
+    "Level": 5,
+    "Difficulty": 2,
+    "Constant": 5.5
+  },
+  "sunanokioku2": {
+    "Level": 9,
+    "Difficulty": 4,
+    "Constant": 9.3
+  },
+  "sunanokioku3": {
+    "Level": 11,
+    "Difficulty": 8,
+    "Constant": 11.3
+  },
+  "tactom0": {
+    "Level": 4,
+    "Difficulty": 1,
+    "Constant": 4.5
+  },
+  "tactom1": {
+    "Level": 8,
+    "Difficulty": 2,
+    "Constant": 8.0
+  },
+  "tactom2": {
+    "Level": 11,
+    "Difficulty": 4,
+    "Constant": 11.9
+  },
+  "tactom3": {
+    "Level": 14,
+    "Difficulty": 8,
+    "Constant": 14.5
+  },
+  "thingsitreasure0": {
+    "Level": 2,
+    "Difficulty": 1,
+    "Constant": 2.5
+  },
+  "thingsitreasure1": {
+    "Level": 5,
+    "Difficulty": 2,
+    "Constant": 5.5
+  },
+  "thingsitreasure2": {
+    "Level": 9,
+    "Difficulty": 4,
+    "Constant": 9.2
+  },
+  "thingsitreasure3": {
+    "Level": 11,
+    "Difficulty": 8,
+    "Constant": 11.5
+  },
+  "toccatafunebre0": {
+    "Level": 3,
+    "Difficulty": 1,
+    "Constant": 3.5
+  },
+  "toccatafunebre1": {
+    "Level": 6,
+    "Difficulty": 2,
+    "Constant": 6.5
+  },
+  "toccatafunebre2": {
+    "Level": 10,
+    "Difficulty": 4,
+    "Constant": 10.2
+  },
+  "toccatafunebre3": {
+    "Level": 13,
+    "Difficulty": 8,
+    "Constant": 13.0
+  },
+  "tokonagi0": {
+    "Level": 6,
+    "Difficulty": 1,
+    "Constant": 6.0
+  },
+  "tokonagi1": {
+    "Level": 9,
+    "Difficulty": 2,
+    "Constant": 9.4
+  },
+  "tokonagi2": {
+    "Level": 12,
+    "Difficulty": 4,
+    "Constant": 12.7
+  },
+  "tokonagi3": {
+    "Level": 15,
+    "Difficulty": 8,
+    "Constant": 15.5
+  },
+  "trajectoryofhope0": {
+    "Level": 3,
+    "Difficulty": 1,
+    "Constant": 3.5
+  },
+  "trajectoryofhope1": {
+    "Level": 6,
+    "Difficulty": 2,
+    "Constant": 6.5
+  },
+  "trajectoryofhope2": {
+    "Level": 10,
+    "Difficulty": 4,
+    "Constant": 10.5
+  },
+  "trajectoryofhope3": {
+    "Level": 12,
+    "Difficulty": 8,
+    "Constant": 12.5
+  },
+  "transparency0": {
+    "Level": 1,
+    "Difficulty": 1,
+    "Constant": 1.5
+  },
+  "transparency1": {
+    "Level": 4,
+    "Difficulty": 2,
+    "Constant": 4.5
+  },
+  "transparency2": {
+    "Level": 8,
+    "Difficulty": 4,
+    "Constant": 8.5
+  },
+  "transparency3": {
+    "Level": 10,
+    "Difficulty": 8,
+    "Constant": 10.3
+  },
+  "vesper0": {
+    "Level": 3,
+    "Difficulty": 1,
+    "Constant": 3.0
+  },
+  "vesper1": {
+    "Level": 6,
+    "Difficulty": 2,
+    "Constant": 6.0
+  },
+  "vesper2": {
+    "Level": 10,
+    "Difficulty": 4,
+    "Constant": 10.6
+  },
+  "vesper3": {
+    "Level": 13,
+    "Difficulty": 8,
+    "Constant": 13.3
+  },
+  "withtruth0": {
+    "Level": 1,
+    "Difficulty": 1,
+    "Constant": 1.5
+  },
+  "withtruth1": {
+    "Level": 4,
+    "Difficulty": 2,
+    "Constant": 4.5
+  },
+  "withtruth2": {
+    "Level": 8,
+    "Difficulty": 4,
+    "Constant": 8.5
+  },
+  "withtruth3": {
+    "Level": 10,
+    "Difficulty": 8,
+    "Constant": 10.1
+  },
+  "worldender0": {
+    "Level": 4,
+    "Difficulty": 1,
+    "Constant": 4.0
+  },
+  "worldender1": {
+    "Level": 7,
+    "Difficulty": 2,
+    "Constant": 7.0
+  },
+  "worldender2": {
+    "Level": 10,
+    "Difficulty": 4,
+    "Constant": 10.6
+  },
+  "worldender3": {
+    "Level": 13,
+    "Difficulty": 8,
+    "Constant": 13.5
+  },
+  "yggthrasir0": {
+    "Level": 3,
+    "Difficulty": 1,
+    "Constant": 3.0
+  },
+  "yggthrasir1": {
+    "Level": 6,
+    "Difficulty": 2,
+    "Constant": 6.5
+  },
+  "yggthrasir2": {
+    "Level": 10,
+    "Difficulty": 4,
+    "Constant": 10.4
+  },
+  "yggthrasir3": {
+    "Level": 12,
+    "Difficulty": 8,
+    "Constant": 12.5
+  },
+  "zetta0": {
+    "Level": 3,
+    "Difficulty": 1,
+    "Constant": 3.5
+  },
+  "zetta1": {
+    "Level": 6,
+    "Difficulty": 2,
+    "Constant": 6.0
+  },
+  "zetta2": {
+    "Level": 10,
+    "Difficulty": 4,
+    "Constant": 10.6
+  },
+  "zetta3": {
+    "Level": 13,
+    "Difficulty": 8,
+    "Constant": 13.6
+  },
+  "zfc0": {
+    "Level": 2,
+    "Difficulty": 1,
+    "Constant": 2.5
+  },
+  "zfc1": {
+    "Level": 6,
+    "Difficulty": 2,
+    "Constant": 6.0
+  },
+  "zfc2": {
+    "Level": 10,
+    "Difficulty": 4,
+    "Constant": 10.6
+  },
+  "zfc3": {
+    "Level": 12,
+    "Difficulty": 8,
+    "Constant": 12.5
+  },
+  "forbiddensouls0": {
+    "Level": 2,
+    "Difficulty": 1,
+    "Constant": 2.0
+  },
+  "forbiddensouls1": {
+    "Level": 4,
+    "Difficulty": 2,
+    "Constant": 4.5
+  },
+  "forbiddensouls2": {
+    "Level": 9,
+    "Difficulty": 4,
+    "Constant": 9.6
+  },
+  "forbiddensouls3": {
+    "Level": 11,
+    "Difficulty": 8,
+    "Constant": 11.3
+  },
+  "ghostray0": {
+    "Level": 1,
+    "Difficulty": 1,
+    "Constant": 1.5
+  },
+  "ghostray1": {
+    "Level": 4,
+    "Difficulty": 2,
+    "Constant": 4.0
+  },
+  "ghostray2": {
+    "Level": 8,
+    "Difficulty": 4,
+    "Constant": 8.0
+  },
+  "ghostray3": {
+    "Level": 10,
+    "Difficulty": 8,
+    "Constant": 10.1
+  },
+  "wonderroom0": {
+    "Level": 3,
+    "Difficulty": 1,
+    "Constant": 3.0
+  },
+  "wonderroom1": {
+    "Level": 6,
+    "Difficulty": 2,
+    "Constant": 6.5
+  },
+  "wonderroom2": {
+    "Level": 9,
+    "Difficulty": 4,
+    "Constant": 9.3
+  },
+  "wonderroom3": {
+    "Level": 10,
+    "Difficulty": 8,
+    "Constant": 10.3
+  },
+  "deepintothevibe0": {
+    "Level": 3,
+    "Difficulty": 1,
+    "Constant": 3.0
+  },
+  "deepintothevibe1": {
+    "Level": 6,
+    "Difficulty": 2,
+    "Constant": 6.5
+  },
+  "deepintothevibe2": {
+    "Level": 10,
+    "Difficulty": 4,
+    "Constant": 10.6
+  },
+  "deepintothevibe3": {
+    "Level": 12,
+    "Difficulty": 8,
+    "Constant": 12.0
+  },
+  "cylin0": {
+    "Level": 3,
+    "Difficulty": 1,
+    "Constant": 3.5
+  },
+  "cylin1": {
+    "Level": 6,
+    "Difficulty": 2,
+    "Constant": 6.0
+  },
+  "cylin2": {
+    "Level": 10,
+    "Difficulty": 4,
+    "Constant": 10.1
+  },
+  "cylin3": {
+    "Level": 12,
+    "Difficulty": 8,
+    "Constant": 12.5
+  },
+  "ordirehv0": {
+    "Level": 1,
+    "Difficulty": 1,
+    "Constant": 1.5
+  },
+  "ordirehv1": {
+    "Level": 4,
+    "Difficulty": 2,
+    "Constant": 4.5
+  },
+  "ordirehv2": {
+    "Level": 8,
+    "Difficulty": 4,
+    "Constant": 8.5
+  },
+  "ordirehv3": {
+    "Level": 10,
+    "Difficulty": 8,
+    "Constant": 10.2
+  },
+  "rainshower0": {
+    "Level": 4,
+    "Difficulty": 1,
+    "Constant": 4.5
+  },
+  "rainshower1": {
+    "Level": 7,
+    "Difficulty": 2,
+    "Constant": 7.0
+  },
+  "rainshower2": {
+    "Level": 10,
+    "Difficulty": 4,
+    "Constant": 10.4
+  },
+  "rainshower3": {
+    "Level": 13,
+    "Difficulty": 8,
+    "Constant": 13.1
+  },
+  "albedo0": {
+    "Level": 3,
+    "Difficulty": 1,
+    "Constant": 3.0
+  },
+  "albedo1": {
+    "Level": 6,
+    "Difficulty": 2,
+    "Constant": 6.5
+  },
+  "albedo2": {
+    "Level": 10,
+    "Difficulty": 4,
+    "Constant": 10.3
+  },
+  "albedo3": {
+    "Level": 12,
+    "Difficulty": 8,
+    "Constant": 12.6
+  },
+  "neonvision0": {
+    "Level": 3,
+    "Difficulty": 1,
+    "Constant": 3.5
+  },
+  "neonvision1": {
+    "Level": 6,
+    "Difficulty": 2,
+    "Constant": 6.5
+  },
+  "neonvision2": {
+    "Level": 9,
+    "Difficulty": 4,
+    "Constant": 9.7
+  },
+  "neonvision3": {
+    "Level": 11,
+    "Difficulty": 8,
+    "Constant": 11.6
+  },
+  "disruptorarray0": {
+    "Level": 5,
+    "Difficulty": 1,
+    "Constant": 5.5
+  },
+  "disruptorarray1": {
+    "Level": 8,
+    "Difficulty": 2,
+    "Constant": 8.0
+  },
+  "disruptorarray2": {
+    "Level": 11,
+    "Difficulty": 4,
+    "Constant": 11.4
+  },
+  "disruptorarray3": {
+    "Level": 14,
+    "Difficulty": 8,
+    "Constant": 14.5
+  },
+  "kuukansouzou0": {
+    "Level": 3,
+    "Difficulty": 1,
+    "Constant": 3.5
+  },
+  "kuukansouzou1": {
+    "Level": 6,
+    "Difficulty": 2,
+    "Constant": 6.5
+  },
+  "kuukansouzou2": {
+    "Level": 10,
+    "Difficulty": 4,
+    "Constant": 10.6
+  },
+  "kuukansouzou3": {
+    "Level": 12,
+    "Difficulty": 8,
+    "Constant": 12.6
+  },
+  "megameteor0": {
+    "Level": 4,
+    "Difficulty": 1,
+    "Constant": 4.0
+  },
+  "megameteor1": {
+    "Level": 7,
+    "Difficulty": 2,
+    "Constant": 7.8
+  },
+  "megameteor2": {
+    "Level": 10,
+    "Difficulty": 4,
+    "Constant": 10.6
+  },
+  "megameteor3": {
+    "Level": 13,
+    "Difficulty": 8,
+    "Constant": 13.7
+  },
+  "technopolis0": {
+    "Level": 2,
+    "Difficulty": 1,
+    "Constant": 2.5
+  },
+  "technopolis1": {
+    "Level": 5,
+    "Difficulty": 2,
+    "Constant": 5.5
+  },
+  "technopolis2": {
+    "Level": 9,
+    "Difficulty": 4,
+    "Constant": 9.0
+  },
+  "technopolis3": {
+    "Level": 13,
+    "Difficulty": 8,
+    "Constant": 13.5
+  },
+  "yumenohajimari0": {
+    "Level": 2,
+    "Difficulty": 1,
+    "Constant": 2.5
+  },
+  "yumenohajimari1": {
+    "Level": 5,
+    "Difficulty": 2,
+    "Constant": 5.0
+  },
+  "yumenohajimari2": {
+    "Level": 8,
+    "Difficulty": 4,
+    "Constant": 8.5
+  },
+  "yumenohajimari3": {
+    "Level": 10,
+    "Difficulty": 8,
+    "Constant": 10.3
+  },
+  "kuukaku0": {
+    "Level": 5,
+    "Difficulty": 1,
+    "Constant": 5.5
+  },
+  "kuukaku1": {
+    "Level": 8,
+    "Difficulty": 2,
+    "Constant": 8.8
+  },
+  "kuukaku2": {
+    "Level": 11,
+    "Difficulty": 4,
+    "Constant": 11.8
+  },
+  "kuukaku3": {
+    "Level": 14,
+    "Difficulty": 8,
+    "Constant": 14.5
+  },
+  "monitoring0": {
+    "Level": 1,
+    "Difficulty": 1,
+    "Constant": 1.5
+  },
+  "monitoring1": {
+    "Level": 4,
+    "Difficulty": 2,
+    "Constant": 4.5
+  },
+  "monitoring2": {
+    "Level": 8,
+    "Difficulty": 4,
+    "Constant": 8.8
+  },
+  "monitoring3": {
+    "Level": 11,
+    "Difficulty": 8,
+    "Constant": 11.4
+  },
+  "roki0": {
+    "Level": 4,
+    "Difficulty": 1,
+    "Constant": 4.5
+  },
+  "roki1": {
+    "Level": 7,
+    "Difficulty": 2,
+    "Constant": 7.5
+  },
+  "roki2": {
+    "Level": 10,
+    "Difficulty": 4,
+    "Constant": 10.7
+  },
+  "roki3": {
+    "Level": 13,
+    "Difficulty": 8,
+    "Constant": 13.4
+  },
+  "lostonesweeping0": {
+    "Level": 2,
+    "Difficulty": 1,
+    "Constant": 2.5
+  },
+  "lostonesweeping1": {
+    "Level": 5,
+    "Difficulty": 2,
+    "Constant": 5.5
+  },
+  "lostonesweeping2": {
+    "Level": 8,
+    "Difficulty": 4,
+    "Constant": 8.8
+  },
+  "lostonesweeping3": {
+    "Level": 11,
+    "Difficulty": 8,
+    "Constant": 11.3
+  },
+  "nonbreathoblige0": {
+    "Level": 3,
+    "Difficulty": 1,
+    "Constant": 3.5
+  },
+  "nonbreathoblige1": {
+    "Level": 6,
+    "Difficulty": 2,
+    "Constant": 6.5
+  },
+  "nonbreathoblige2": {
+    "Level": 9,
+    "Difficulty": 4,
+    "Constant": 9.5
+  },
+  "nonbreathoblige3": {
+    "Level": 12,
+    "Difficulty": 8,
+    "Constant": 12.5
+  },
+  "kakushicommand0": {
+    "Level": 4,
+    "Difficulty": 1,
+    "Constant": 4.5
+  },
+  "kakushicommand1": {
+    "Level": 7,
+    "Difficulty": 2,
+    "Constant": 7.8
+  },
+  "kakushicommand2": {
+    "Level": 10,
+    "Difficulty": 4,
+    "Constant": 10.3
+  },
+  "kakushicommand3": {
+    "Level": 12,
+    "Difficulty": 8,
+    "Constant": 12.5
+  }
+}

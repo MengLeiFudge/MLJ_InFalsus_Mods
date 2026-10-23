@@ -5,7 +5,7 @@
     <RootNamespace>InFalsusMod.Potential</RootNamespace>
     <AssemblyName>PotentialSystem</AssemblyName>
     <PackageId>PotentialSystem</PackageId>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <Description>可切换官方等级、安小璃和萌泪酱定数，提供角色 PTT 菱形、原生设置、完整成绩浏览、潜力值排序与 B50 图片导出。</Description>
     <IsModProject>true</IsModProject>
     <BepInExPluginGuid>menglei.infalsus.potentialsystem</BepInExPluginGuid>
@@ -16,9 +16,12 @@
     <Compile Include="src/**/*.cs" />
     <Compile Include="../Shared/src/WindowsConsoleEncoding.cs" Link="Shared/WindowsConsoleEncoding.cs" />
     <Compile Include="../Shared/src/NativeButtons.cs" Link="Shared/NativeButtons.cs" />
+    <Compile Include="../Shared/src/NativeModal.cs" Link="Shared/NativeModal.cs" />
     <Compile Include="../SkillSelection/src/PngRgba.cs" Link="Shared/PngRgba.cs" />
-    <EmbeddedResource Include="Assets/CommunityConstants.json" LogicalName="PotentialSystem.CommunityConstants.json" />
+    <EmbeddedResource Include="Assets/MengLeiConstants.json" LogicalName="PotentialSystem.MengLeiConstants.json" />
+    <EmbeddedResource Include="Assets/定数测量/v6/model.json" LogicalName="PotentialSystem.MengLeiModel.json" />
     <EmbeddedResource Include="Assets/AnXiaoLiConstants.json" LogicalName="PotentialSystem.AnXiaoLiConstants.json" />
+    <EmbeddedResource Include="Assets/ChartDecoder.LICENSE.txt" LogicalName="PotentialSystem.ChartDecoder.LICENSE.txt" />
     <EmbeddedResource Include="Assets/Fonts/*.*" LogicalName="PotentialSystem.Fonts.%(Filename)%(Extension)" />
     <EmbeddedResource Include="Assets/PotentialBadges/*.png">
       <LogicalName>PotentialSystem.Badges.%(Filename)%(Extension)</LogicalName>
