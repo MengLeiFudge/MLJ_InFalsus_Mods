@@ -32,7 +32,7 @@ internal sealed class PotentialSelection : IDisposable
     /// <summary>头像和 PTT 各有独立菱形碰撞体；委托在注销前保持有效。</summary>
     private readonly List<UIButton> entries = new();
     private readonly List<UIButton._EI> openResults = new();
-    private NativeLabel? selectedRank;
+    private SelectedChartInfo? selectedInfo;
     private bool? entryEnabled;
     /// <summary>池化小卡按对象身份复用文字，歌曲切换时更新内容。</summary>
     private readonly Dictionary<IntPtr, NativeScoreLine> ranks = new();
@@ -63,8 +63,7 @@ internal sealed class PotentialSelection : IDisposable
             account.SetPortrait(icons._wI(saved.SelectedCharacter, default));
             CreateEntry("Portrait", PotentialView.PortraitCenter, PotentialView.FrameSize);
             CreateEntry("PTT", PotentialView.BadgeCenter, PotentialView.BadgeSize);
-            selectedRank = new NativeLabel(scene.topBar.text, scene.scene.transform, "SelectedChart",
-                new Vector2(0.5f, 0.5f), Constrained2DAlignment.BottomLeft, new Vector2(380f, 180f), 3f);
+            selectedInfo = new SelectedChartInfo(scene);
         }
         catch { Dispose(); throw; }
     }
@@ -75,27 +74,25 @@ internal sealed class PotentialSelection : IDisposable
     /// <param name="size">菱形水平及垂直对角线长度。</param>
     private void CreateEntry(string name, Vector2 center, float size)
     {
-        var entry = NativeButtons.Create(scene.backButton, scene, "PotentialSystem." + name, "", OpenResults);
+        var root = new GameObject("InFalsus.PotentialSystem." + name);
+        root.SetActive(false);
+        root.layer = scene.backButton.gameObject.layer;
+        root.transform.SetParent(account!.Entry.transform, false);
+        var constrained = root.AddComponent<Constrained2D>();
+        var entry = root.AddComponent<UIButton>();
         entries.Add(entry);
-        openResults.Add(entry._Gjb);
-        UIManager._A._ktA(entry);
-        entry.transform.SetParent(account!.Entry.transform, false);
-        foreach (var sideCar in entry.GetComponentsInChildren<UIButtonSideCar>(true))
-            sideCar.enabled = false;
-        entry.sideCar = null;
-        for (int index = 0; index < entry.transform.childCount; index++)
-            entry.transform.GetChild(index).gameObject.SetActive(false);
-        foreach (var collider in entry.GetComponentsInChildren<Collider>(true))
-            collider.enabled = false;
-        var renderer = entry.GetComponent<MeshRenderer>();
-        if (renderer != null) renderer.enabled = false;
+        entry.constrained2D = constrained;
+        entry.button = scene.backButton.button;
+        entry.sfxSetType = scene.backButton.sfxSetType;
+        UIButton._EI click = (Action<UIButton>)OpenResults;
+        openResults.Add(click);
+        entry._DSA(click);
         var hit = new GameObject("DiamondHitArea");
-        hit.layer = entry.gameObject.layer;
-        hit.transform.SetParent(entry.transform, false);
+        hit.layer = root.layer;
+        hit.transform.SetParent(root.transform, false);
         hit.transform.localRotation = Quaternion.Euler(0f, 0f, 45f);
         entry.ButtonCollider = hit.AddComponent<BoxCollider>();
         entry.ButtonCollider.enabled = false;
-        entry.constrained2D = entry.GetComponent<Constrained2D>();
         entry.flags = UIButton.Flags.DoesConsumeTouchOnPress | UIButton.Flags.DoesHoverBlockOtherHover
             | UIButton.Flags.CanCauseCursorHover;
         var layout = entry.constrained2D.constrained2DTransform;
@@ -126,8 +123,9 @@ internal sealed class PotentialSelection : IDisposable
     private void OpenResults(UIButton button)
     {
         var input = InputManager.Instance;
-        if (entries.Contains(button) && account != null && input?.IsHeadOfStack(scene) == true
-            && BrowserWidgets.ContainsPoint(account.Entry, input.GetCurrentMousePositionNormalizedInUISpace()))
+        if (entryEnabled == true && entries.Any(entry => entry.Pointer == button.Pointer)
+            && button.ButtonCollider.enabled && scene.isActiveAndEnabled && !scene.DisableInputEvents
+            && input?.IsHeadOfStack(scene) == true)
             browser.RequestOpen(scene, snapshot);
     }
 
@@ -139,6 +137,8 @@ internal sealed class PotentialSelection : IDisposable
         var input = InputManager.Instance;
         bool enabled = data != null && scene.isActiveAndEnabled && !scene.DisableInputEvents
             && input?.IsHeadOfStack(scene) == true;
+        var point = input == null ? new Vector2(-1f, -1f) : input.GetCurrentMousePositionNormalizedInUISpace();
+        bool visible = point.x is >= 0f and <= 1f && point.y is >= 0f and <= 1f;
         bool inputChanged = entryEnabled != enabled;
         bool hitAreaChanged = false;
         _m._wi._ERA(false);
@@ -167,8 +167,8 @@ internal sealed class PotentialSelection : IDisposable
             BrowserWidgets.SyncHitArea(container, entry.ButtonCollider);
             var hitSize = entry.ButtonCollider.size;
             entry.ButtonCollider.size = new Vector3(hitSize.x * 0.70710678f, hitSize.y * 0.70710678f, hitSize.z);
-            entry.ButtonCollider.enabled &= enabled && BrowserWidgets.ContainsPoint(account!.Entry,
-                input!.GetCurrentMousePositionNormalizedInUISpace());
+            // 菱形由原生射线判定；这里只裁切 UI 黑边，不用另一套布局坐标重复裁切入口。
+            entry.ButtonCollider.enabled &= enabled && visible;
             hitAreaChanged |= wasEnabled != entry.ButtonCollider.enabled;
             if (inputChanged && enabled)
             {
@@ -187,8 +187,7 @@ internal sealed class PotentialSelection : IDisposable
             RefreshOrder();
         UpdateCards(scene.leftSongCardContainer);
         UpdateCards(scene.rightSongCardContainer);
-        if (selectedRank?.Set(PotentialPresentation.RankLine(data, new ChartKey(scene._sr.Value, (byte)scene._Sr)), Color.white) == true)
-            NativePotentialPage.PlaceLabel(selectedRank, new Vector2(380f, 180f), 700f, 3f);
+        selectedInfo?.Render(data, new ChartKey(scene._sr.Value, (byte)scene._Sr));
     }
 
     /// <summary>池化小卡按歌曲行实际绑定的 SongId 和难度更新，保持与原生等级、分数一致。</summary>
@@ -206,7 +205,9 @@ internal sealed class PotentialSelection : IDisposable
                 ranks[card.Pointer] = label;
             }
             var row = card._py;
-            label.Set(row == null ? "" : PotentialPresentation.RankLine(snapshot, new ChartKey(row._A.Value, (byte)row._e)));
+            var key = row == null ? default : new ChartKey(row._A.Value, (byte)row._e);
+            label.Set(row == null ? "" : PotentialPresentation.RankLine(snapshot, key),
+                PotentialPresentation.PotentialColor(row == null ? null : snapshot?.Find(key)?.Potential));
         }
     }
 
@@ -340,8 +341,10 @@ internal sealed class PotentialSelection : IDisposable
             RestoreOrder();
         foreach (var entry in entries)
         {
-            if (entry.ButtonCollider != null)
-                entry.ButtonCollider.enabled = false;
+            // 原生 UIButton.OnDestroy 已注销随场景销毁的入口，不能再用其空 Collider 作字典键。
+            if (entry == null || entry.ButtonCollider == null)
+                continue;
+            entry.ButtonCollider.enabled = false;
             try { UIManager._A?._ktA(entry); }
             catch (Exception ex) { Plugin.Logger.LogError($"注销潜力值徽章入口失败：{ex}"); }
         }
@@ -349,8 +352,8 @@ internal sealed class PotentialSelection : IDisposable
         openResults.Clear();
         account?.Dispose();
         account = null;
-        selectedRank?.Dispose();
-        selectedRank = null;
+        selectedInfo?.Dispose();
+        selectedInfo = null;
         foreach (var label in ranks.Values)
             label.Dispose();
         ranks.Clear();

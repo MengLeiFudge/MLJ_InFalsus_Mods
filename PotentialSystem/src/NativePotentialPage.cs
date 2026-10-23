@@ -15,8 +15,8 @@ internal sealed class NativePotentialPage : IDisposable
     private readonly UIScrollView scroll;
     private readonly UiProgressVerticalSliderContainer slider;
     private readonly UIButton close, export, search, track;
-    private readonly BrowserGraphic background, badge, line, pip;
-    private readonly NativeLabel title, account, summary, status, searchText, empty;
+    private readonly BrowserGraphic background, line, pip;
+    private readonly NativeLabel account, status, searchText, empty;
     private readonly List<BrowserCard> cards = new();
     private Vector2 size;
     private float scale, cardScale, viewportHeight, cardWidth, maximum;
@@ -32,10 +32,8 @@ internal sealed class NativePotentialPage : IDisposable
         {
             var parent = widgets.Root.transform;
             background = widgets.Graphic(parent, "Results.Backing", Texture2D.whiteTexture, PotentialPresentation.Color(0x080f1c));
-            badge = widgets.Graphic(parent, "Results.Badge", Texture2D.whiteTexture, Color.white);
-            title = widgets.Label(parent, "Results.Title", 5f);
-            account = widgets.Label(parent, "Results.Account", 3.6f);
-            summary = widgets.Label(parent, "Results.Summary", 3f);
+            background.Depth(0.1f);
+            account = widgets.Label(parent, "Results.Account", 4f);
             status = widgets.Label(parent, "Results.Status", 2.8f);
             viewport = widgets.Container(parent, "Results.Viewport", Vector2.one, hitArea: true);
             content = widgets.Container(viewport.transform, "Results.ScrollPosition", Vector2.one);
@@ -49,7 +47,9 @@ internal sealed class NativePotentialPage : IDisposable
             scroll.constrainScrollToBounds = true;
             UIManager._A._KtA(scroll, receiver);
             empty = widgets.Label(viewport.transform, "Results.Empty", 3.8f);
-            close = widgets.Button(parent, "Results.Close", "关闭", closePage);
+            close = widgets.Button(parent, "Results.Close", "×", closePage);
+            foreach (var text in close.GetComponentsInChildren<FastText.FastText>(true))
+                text.SetTextColor(PotentialPresentation.Color(0xff5964));
             export = widgets.Button(parent, "Results.Export", "导出 B50 到剪贴板", exportImage);
             search = widgets.Button(parent, "Results.Search", " ", focusSearch);
             searchText = widgets.Label(search.transform, "Results.SearchText", 3.2f);
@@ -57,6 +57,8 @@ internal sealed class NativePotentialPage : IDisposable
             track.flags |= UIButton.Flags.CanContinuedDragOutsideOfBounds | UIButton.Flags.CanSelectedButtonBePressed;
             line = widgets.Graphic(track.transform, "Results.Scrollbar.Line", Texture2D.whiteTexture, PotentialPresentation.Color(0x152339));
             pip = widgets.Graphic(track.transform, "Results.Scrollbar.Thumb", Texture2D.whiteTexture, PotentialPresentation.Color(0xa3bedc));
+            line.Depth(-0.04f);
+            pip.Depth(-0.06f);
             slider = track.gameObject.AddComponent<UiProgressVerticalSliderContainer>();
             slider.inputLayer = receiver;
             slider.line = line.Layout;
@@ -86,25 +88,24 @@ internal sealed class NativePotentialPage : IDisposable
         scale = Mathf.Clamp(size.y / 1015f, 0.65f, 2f);
         float padding = 24f * scale;
         background.Show(Vector2.zero, size, Texture2D.whiteTexture);
-        PlaceLabel(title, Center(180f * scale, 26f * scale, size.x - 204f * scale, 60f * scale), size.x - 204f * scale, 5f * scale);
-        PlaceLabel(account, Center(180f * scale, 92f * scale, size.x - 204f * scale, 40f * scale), size.x - 204f * scale, 3.6f * scale);
-        PlaceLabel(summary, Center(180f * scale, 142f * scale, size.x - 204f * scale, 35f * scale), size.x - 204f * scale, 3f * scale);
-        BrowserWidgets.PlaceButton(close, Center(size.x - padding - 95f * scale, 193f * scale, 95f * scale, 60f * scale), new Vector2(95f, 60f) * scale, scale);
-        BrowserWidgets.PlaceButton(export, Center(size.x - padding - 400f * scale, 193f * scale, 285f * scale, 60f * scale), new Vector2(285f, 60f) * scale, scale);
-        BrowserWidgets.PlaceButton(search, Center(padding, 193f * scale, 420f * scale, 50f * scale), new Vector2(420f, 50f) * scale, scale);
-        PlaceLabel(searchText, Vector2.zero, 395f * scale, 3.2f * scale);
-        PlaceLabel(status, Center(padding, size.y - 52f * scale, size.x - padding * 2, 40f * scale), size.x - padding * 2, 2.8f * scale);
-        float top = 265f * scale;
-        viewportHeight = size.y - top - 64f * scale;
+        PlaceLabel(account, Center(padding, 20f * scale, size.x - 140f * scale, 60f * scale), size.x - 140f * scale, 4f * scale);
+        BrowserWidgets.PlaceButton(close, Center(size.x - padding - 56f * scale, 20f * scale, 56f * scale, 56f * scale), new Vector2(56f, 56f) * scale, scale);
+        BrowserWidgets.PlaceButton(export, Center(size.x - padding - 285f * scale, 100f * scale, 285f * scale, 54f * scale), new Vector2(285f, 54f) * scale, scale);
+        BrowserWidgets.PlaceButton(search, Center(padding, 100f * scale, 520f * scale, 54f * scale), new Vector2(520f, 54f) * scale, scale);
+        PlaceLabel(searchText, Vector2.zero, 490f * scale, 3.2f * scale);
+        BrowserWidgets.CenterButtonText(search);
+        PlaceLabel(status, Center(padding, size.y - 42f * scale, size.x - padding * 2, 32f * scale), size.x - padding * 2, 2.8f * scale);
+        float top = 176f * scale;
+        viewportHeight = size.y - top - 52f * scale;
         float viewportWidth = size.x - padding * 2 - 46f * scale;
         BrowserWidgets.Place(viewport, Center(padding, top, viewportWidth, viewportHeight), new Vector2(viewportWidth, viewportHeight));
         BrowserWidgets.Place(content, Vector2.zero, new Vector2(viewportWidth, viewportHeight));
         columns = B50Image.Columns;
         cardScale = viewportWidth / (columns * B50Image.CardWidth + (columns - 1) * B50Image.Gap);
         cardWidth = B50Image.CardWidth * cardScale;
-        BrowserWidgets.PlaceButton(track, Center(size.x - padding - 30f * scale, top + 30f * scale, 30f * scale, viewportHeight - 60f * scale),
-            new Vector2(30f * scale, viewportHeight - 60f * scale), scale);
-        line.Show(Vector2.zero, new Vector2(10f * scale, viewportHeight - 60f * scale), Texture2D.whiteTexture);
+        BrowserWidgets.PlaceButton(track, Center(size.x - padding - 30f * scale, top, 30f * scale, viewportHeight),
+            new Vector2(30f * scale, viewportHeight), scale);
+        line.Show(Vector2.zero, new Vector2(8f * scale, viewportHeight - 54f * scale), Texture2D.whiteTexture);
         pip.Show(Vector2.zero, new Vector2(26f, 54f) * scale, Texture2D.whiteTexture);
         SetBounds();
         foreach (var card in cards)
@@ -156,8 +157,14 @@ internal sealed class NativePotentialPage : IDisposable
         NativeButtons.SetState(track, maximum > 0);
     }
 
-    /// <summary>滚轮仍由原生输入头接收，实际移动使用游戏滚动接口。</summary>
-    internal void Wheel(Vector2 delta) => scroll._TTA(new Vector2(0f, Mathf.Clamp(delta.y, -120f, 120f) * 0.75f * scale));
+    /// <summary>滚轮按一格移动约一行；直接设置列表偏移并清掉拖动惯性。</summary>
+    internal void Wheel(Vector2 delta)
+    {
+        if (!float.IsFinite(delta.y) || delta.y == 0f) return;
+        float steps = Mathf.Abs(delta.y) >= 120f ? delta.y / 120f : delta.y;
+        SetScroll(content.constrained2DTransform.offset.y - Mathf.Clamp(steps, -8f, 8f)
+            * (B50Image.CardHeight + B50Image.Gap) * cardScale);
+    }
 
     /// <summary>垂直滑块跳转后停止惯性，避免鼠标拖动与之前的滚动相互覆盖。</summary>
     private void SetScroll(float position)
@@ -167,16 +174,17 @@ internal sealed class NativePotentialPage : IDisposable
     }
 
     /// <summary>刷新信息和可见卡片；未显示的封面不启动加载。</summary>
-    internal void Render(PotentialSnapshot snapshot, PotentialBadges badges, CoverCache covers, string query, string message, bool focused, bool exporting)
+    internal void Render(PotentialSnapshot snapshot, CoverCache covers, string query, string message, bool focused, bool exporting)
     {
         Layout();
-        badge.Show(Center(30f * scale, 27f * scale, 135f * scale, 135f * scale), new Vector2(135f, 135f) * scale,
-            badges.Texture(PotentialBadges.Tier(snapshot.Potential)));
-        SetLabel(title, "潜力值 · 全部最佳成绩", size.x - 204f * scale, 5f * scale);
-        SetLabel(account, $"PTT {PotentialCalculator.Format(snapshot.Potential)}  /  MAX {PotentialCalculator.Format(snapshot.Maximum)}", size.x - 204f * scale, 3.6f * scale);
-        SetLabel(summary, $"B50 {PotentialCalculator.Format(snapshot.B50Average)}   B10 {PotentialCalculator.Format(snapshot.B10Average)}   已游玩 {snapshot.Plays.Count} 谱面", size.x - 204f * scale, 3f * scale);
+        SetLabel(account, $"PTT {PotentialCalculator.Format(snapshot.Potential)}    B10 {PotentialCalculator.Format(snapshot.B10Average)}    B50 {PotentialCalculator.Format(snapshot.B50Average)}", size.x - 140f * scale, 4f * scale);
         SetLabel(status, message, size.x - 48f * scale, 2.8f * scale);
-        SetLabel(searchText, string.IsNullOrEmpty(query) && !focused ? "搜索歌名、作者或难度" : "搜索：" + query, 395f * scale, 3.2f * scale);
+        string searchValue = string.IsNullOrEmpty(query) && !focused ? "搜索歌名、作者或难度" : query;
+        if (searchText.Set(searchValue, Color.white))
+        {
+            PlaceLabel(searchText, Vector2.zero, 490f * scale, 3.2f * scale);
+            BrowserWidgets.CenterButtonText(search);
+        }
         NativeButtons.SetState(search, true, focused);
         NativeButtons.SetState(export, !exporting);
         slider._cE(maximum > 0 ? 1f - content.constrained2DTransform.offset.y / maximum : 1f);
@@ -217,88 +225,55 @@ internal sealed class NativePotentialPage : IDisposable
             if (scroll != null)
                 UIManager._A?._ItA(scroll);
         }
-        finally { widgets.Dispose(); }
+        finally
+        {
+            widgets.Dispose();
+            foreach (var card in cards) card.Dispose();
+            cards.Clear();
+        }
     }
 }
 
-/// <summary>五列横向成绩卡，与分享图共用曲绘印象色；图形与文字限定在滚动视口内。</summary>
-internal sealed class BrowserCard
+/// <summary>仅为可见行保留卡片纹理，与导出共用绘制函数，整张纹理随视口裁切。</summary>
+internal sealed class BrowserCard : IDisposable
 {
-    /// <summary>原生布局单位的卡片高度；列表边界与虚拟行复用同一尺寸。</summary>
-    private const float Height = B50Image.CardHeight;
-    private readonly Constrained2D root;
-    private readonly BrowserGraphic border, background, cover;
-    private readonly NativeLabel[] labels;
+    private readonly BrowserGraphic graphic;
+    private Texture2D? texture;
     private RankedPlay? bound;
+    private PixelImage? cover;
+    private string? coverError;
 
-    internal BrowserCard(BrowserWidgets widgets, Transform parent)
-    {
-        root = widgets.Container(parent, "Results.Card", Vector2.one);
-        border = widgets.Graphic(root.transform, "Results.Card.Border", Texture2D.whiteTexture, Color.white);
-        background = widgets.Graphic(root.transform, "Results.Card.Backing", Texture2D.whiteTexture, Color.white);
-        cover = widgets.Graphic(root.transform, "Results.Card.Cover", Texture2D.whiteTexture, Color.white);
-        var layout = border.Layout.constrained2DTransform;
-        layout.zPosition = 0f;
-        border.Layout.constrained2DTransform = layout;
-        border.Layout._PQA(0x3f);
-        layout = cover.Layout.constrained2DTransform;
-        layout.zPosition = -0.04f;
-        cover.Layout.constrained2DTransform = layout;
-        cover.Layout._PQA(0x3f);
-        labels = Enumerable.Range(0, 8).Select(i => widgets.Label(root.transform, "Results.Card.Text" + i, 3f)).ToArray();
-    }
+    internal BrowserCard(BrowserWidgets widgets, Transform parent) =>
+        graphic = widgets.Graphic(parent, "Results.Card", Texture2D.whiteTexture, Color.white);
 
     internal void Invalidate() => bound = null;
-    internal void Hide() => root.gameObject.SetActive(false);
+    internal void Hide() => graphic.Layout.gameObject.SetActive(false);
 
-    /// <summary>封面在左，成绩信息在右；颜色随封面异步就绪更新，搜索保留原始排名。</summary>
+    /// <summary>成绩或异步封面改变时重画，滚动帧只调整位置和裁切 UV。</summary>
     internal void Render(RankedPlay play, CoverCache covers, Vector2 center, float width, float scale, float height)
     {
-        root.gameObject.SetActive(true);
-        BrowserWidgets.Place(root, center, new Vector2(width, Height * scale));
-        float lower = -height / 2f - center.y, upper = height / 2f - center.y;
-        var texture = covers.GetTexture(play.Chart, out var palette, out var error);
-        border.Tint(PotentialPresentation.Color(palette.Border));
-        border.Show(Vector2.zero, new Vector2(width, Height * scale), Texture2D.whiteTexture, lower, upper);
-        background.Tint(PotentialPresentation.Color(palette.Background));
-        background.Show(Vector2.zero, new Vector2(width - 4f * scale, (Height - 4f) * scale), Texture2D.whiteTexture, lower, upper);
-        // 封面与导出图一致：左边距 18、上边距 21、边长 236（导出像素），垂直居中。
-        float coverSize = 236f * Height / 278f * scale;
-        cover.Show(new Vector2(-width / 2f + 136f * Height / 278f * scale, 0f), new Vector2(coverSize, coverSize),
-            texture ?? Texture2D.whiteTexture, lower, upper);
-        cover.Tint(texture == null ? PotentialPresentation.Color(0x17202d) : Color.white);
-        if (bound != play)
+        var pixels = covers.GetPixels(play.Chart, out var error);
+        if (bound != play || !ReferenceEquals(cover, pixels) || coverError != error)
         {
-            var accent = PotentialPresentation.Color(PotentialPresentation.DifficultyRgb(play.Play.Difficulty));
-            labels[0].Set(play.Rank.HasValue ? $"#{play.Rank}" : "#--", Color.white);
-            labels[1].Set(play.Potential.HasValue ? PotentialCalculator.Format(play.Potential.Value) : "--.---", accent);
-            labels[2].Set(play.Chart == null ? $"{PotentialPresentation.Difficulty(play.Play.Difficulty)}  定数不可用"
-                : $"{PotentialPresentation.Difficulty(play.Play.Difficulty)}  {PotentialCalculator.FormatConstant(play.Chart.Constant)}", accent);
-            labels[3].Set(play.Chart?.Title ?? play.Play.ChartId, Color.white);
-            labels[4].Set(PotentialPresentation.Score(play.Play.Score), Color.white);
-            labels[5].Set(PotentialPresentation.Lamp(play.Play.Lamp), play.Play.Lamp == 2 ? new Color(0.65f, 0.95f, 0.84f) : Color.white);
-            labels[6].Set(play.Chart?.Artist ?? "", PotentialPresentation.Color(0xc9d4df));
-            // 宽高、封面、留白及字号均按同一个比例缩放，窄列不会压缩文字区域或挤占封面。
-            float k = Height / 278f * scale;
-            float F(float px) => px * 0.125f * Height / 278f * scale;
-            float left = -width / 2f + 274f * k, infoWidth = width - 298f * k;
-            float top = Height / 2f * scale;
-            NativePotentialPage.PlaceLabel(labels[2], new Vector2(left + (infoWidth - 188f * k) / 2f, top - 40f * k), infoWidth - 188f * k, F(25f), -1f);
-            NativePotentialPage.PlaceLabel(labels[1], new Vector2(width / 2f - 110.5f * k, top - 40.5f * k), 173f * k, F(42f), 1f);
-            NativePotentialPage.PlaceLabel(labels[3], new Vector2(left + infoWidth / 2f, top - 94f * k), infoWidth, F(33f), -1f);
-            NativePotentialPage.PlaceLabel(labels[6], new Vector2(left + infoWidth / 2f, top - 131f * k), infoWidth, F(22f), -1f);
-            NativePotentialPage.PlaceLabel(labels[4], new Vector2(left + infoWidth / 2f, top - 187f * k), infoWidth, F(56f), -1f);
-            NativePotentialPage.PlaceLabel(labels[5], new Vector2(left + (infoWidth - 100f * k) / 2f, top - 247f * k), infoWidth - 100f * k, F(25f), -1f);
-            NativePotentialPage.PlaceLabel(labels[0], new Vector2(width / 2f - 77f * k, top - 242.5f * k), 106f * k, F(33f), 1f);
-            NativePotentialPage.PlaceLabel(labels[7], new Vector2(-width / 2f + 136f * k, 0f), 220f * k, F(22f));
+            var card = B50Image.RenderCard(play, pixels, error == null ? "封面加载中" : "封面不可用");
+            if (texture == null)
+                texture = new Texture2D(card.Width, card.Height, TextureFormat.RGBA32, false)
+                {
+                    name = "PotentialSystem.ResultCard", hideFlags = HideFlags.HideAndDontSave,
+                    wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Bilinear
+                };
+            texture.LoadRawTextureData(new Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppStructArray<byte>(card.Rgba));
+            texture.Apply(false, false);
             bound = play;
+            cover = pixels;
+            coverError = error;
         }
-        labels[7].Set(error != null ? "封面不可用" : "封面加载中", PotentialPresentation.Color(0xc9d4df));
-        foreach (var label in labels)
-        {
-            float y = label.Text.GetComponent<Constrained2D>().constrained2DTransform.offset.y;
-            bool visible = y - 19f * scale >= lower && y + 19f * scale <= upper;
-            label.Text.gameObject.SetActive(visible && (label != labels[7] || texture == null));
-        }
+        graphic.Show(center, new Vector2(width, B50Image.CardHeight * scale), texture!, -height / 2f, height / 2f);
+    }
+
+    public void Dispose()
+    {
+        if (texture != null) UnityEngine.Object.Destroy(texture);
+        texture = null;
     }
 }

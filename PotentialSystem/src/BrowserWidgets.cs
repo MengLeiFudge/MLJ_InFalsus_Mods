@@ -234,6 +234,28 @@ internal sealed class BrowserWidgets : IDisposable
             text.SetMaxAutoLineBreakPixelWidth((int)(size.x - 24f * scale), FastText.FastText.UpdateType.DontUpdateMesh);
             text.EnsureDirtyFlagsProcessed();
         }
+        CenterButtonText(button);
+    }
+
+    /// <summary>按实际字形包围盒居中，消除字体模板基线与按钮中心之间的偏移。</summary>
+    internal static void CenterButtonText(UIButton button)
+    {
+        foreach (var text in button.GetComponentsInChildren<FastText.FastText>(true))
+        {
+            var layout = text.GetComponent<Constrained2D>();
+            Place(layout, Vector2.zero, layout.constrained2DTransform.sizeInPixels);
+            text.EnsureDirtyFlagsProcessed();
+            _m._wi._ERA(false);
+            var bounds = text.meshRenderer.bounds;
+            if (bounds.size.x <= 0f || bounds.size.y <= 0f) continue;
+            var calculated = ReadLayout(layout);
+            var unit = ProjectionValues.GetWorldSize(calculated.CalculatedZFromCamera, Vector2.one);
+            var inherited = calculated.CachedWorldScale;
+            float x = unit.x * inherited.x, y = unit.y * inherited.y;
+            if (Mathf.Abs(x) <= 0f || Mathf.Abs(y) <= 0f) continue;
+            var delta = button.transform.position - bounds.center;
+            Place(layout, new Vector2(delta.x / x, delta.y / y), layout.constrained2DTransform.sizeInPixels);
+        }
     }
 
     /// <summary>原生 _irA 遇到同一材质对象会直接返回；每次换纹理或 UV 都提交一份新材质并释放旧的。</summary>
@@ -274,18 +296,6 @@ internal sealed class BrowserWidgets : IDisposable
         collider.enabled = true;
     }
 
-    /// <summary>检查原生鼠标坐标是否落在布局矩形内；用于拒绝顶部裁切区域外的点击。</summary>
-    /// <param name="constrained">已完成布局的可见入口容器。</param>
-    /// <param name="point">InputManager 提供的 UI 归一化鼠标位置。</param>
-    /// <returns>点是否位于可见矩形内。</returns>
-    internal static bool ContainsPoint(Constrained2D constrained, Vector2 point)
-    {
-        var layout = ReadLayout(constrained);
-        var delta = point - layout.CalculatedNormalizedPositionInScreen;
-        var size = layout.CalculatedNormalizedSizeOfScreen;
-        return Math.Abs(delta.x) <= size.x / 2f && Math.Abs(delta.y) <= size.y / 2f;
-    }
-
     /// <summary>分辨率或布局变化后，按钮与列表视口都按最新原生显示区域更新命中范围。</summary>
     internal void SyncHitAreas()
     {
@@ -306,7 +316,7 @@ internal sealed class BrowserWidgets : IDisposable
             if (collider != null) collider.enabled = false;
         hitAreas.Clear();
         foreach (var button in buttons)
-            if (button != null)
+            if (button != null && button.ButtonCollider != null)
             {
                 try { UIManager._A?._ktA(button); }
                 catch (Exception ex) { Plugin.Logger.LogError($"注销成绩页按钮失败：{ex}"); }
@@ -340,6 +350,15 @@ internal sealed class BrowserGraphic : IDisposable
         if (material != null)
             Object.Destroy(material);
         material = null;
+    }
+
+    /// <summary>区分底板、轨道和滑块的深度，避免同平面互相覆盖。</summary>
+    internal void Depth(float value)
+    {
+        var layout = Layout.constrained2DTransform;
+        layout.zPosition = value;
+        Layout.constrained2DTransform = layout;
+        Layout._PQA(0x3f);
     }
 
     /// <summary>覆盖图形颜色，不改变共享纹理。</summary>

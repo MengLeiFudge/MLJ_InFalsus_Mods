@@ -51,25 +51,39 @@ internal static class B50Image
     }
 
     /// <summary>封面在左，难度/定数、歌名、作者及大号分数在右，潜力值与排名靠右对齐。</summary>
-    private static void DrawCard(WindowsBitmap image, RankedPlay play, PixelImage cover,
+    private static void DrawCard(WindowsBitmap image, RankedPlay play, PixelImage? cover,
         (int X, int Y, int Width, int Height) bounds)
     {
-        var chart = play.Chart!;
-        var palette = CoverPalette.From(cover);
+        var chart = play.Chart;
+        var palette = cover == null ? CoverPalette.Neutral : CoverPalette.From(cover);
         int x = bounds.X, y = bounds.Y, width = bounds.Width;
         image.RoundedFill(bounds, 16, palette.Border);
         image.RoundedFill((x + 2, y + 2, width - 4, bounds.Height - 4), 14, palette.Background);
-        image.Image(cover, x + 18, y + 21, 236, 236);
+        if (cover != null)
+            image.Image(cover, x + 18, y + 21, 236, 236);
+        else
+            image.Fill(x + 18, y + 21, 236, 236, 0x17202d);
         int left = x + 274, infoWidth = width - 298;
         uint accent = PotentialPresentation.DifficultyRgb(play.Play.Difficulty);
-        image.Text($"{PotentialPresentation.Difficulty(play.Play.Difficulty)}  {PotentialCalculator.FormatConstant(chart.Constant)}",
+        image.Text($"{PotentialPresentation.Difficulty(play.Play.Difficulty)}  {(chart == null ? "定数不可用" : PotentialCalculator.FormatConstant(chart.Constant))}",
             left, y + 20, infoWidth - 188, 40, 25, accent, true);
-        image.Text(PotentialCalculator.Format(play.Potential!.Value), x + width - 197, y + 15, 173, 51, 42, accent, true, true);
-        image.Text(chart.Title, left, y + 73, infoWidth, 42, 33, 0xffffff, true);
-        image.Text(chart.Artist, left, y + 116, infoWidth, 30, 22, 0xc9d4df);
+        image.Text(play.Potential.HasValue ? PotentialCalculator.Format(play.Potential.Value) : "--.---", x + width - 197, y + 15, 173, 51, 42, accent, true, true);
+        image.Text(chart?.Title ?? play.Play.ChartId, left, y + 73, infoWidth, 42, 33, 0xffffff, true);
+        image.Text(chart?.Artist ?? "", left, y + 116, infoWidth, 30, 22, 0xc9d4df);
         image.Text(PotentialPresentation.Score(play.Play.Score), left, y + 153, infoWidth, 68, 56, 0xf0faff, true);
         image.Text(PotentialPresentation.Lamp(play.Play.Lamp), left, y + 231, infoWidth - 100, 32, 25,
             play.Play.Lamp == 2 ? 0xa6f0d6U : 0xd2dce7U, true);
-        image.Text($"#{play.Rank}", x + width - 130, y + 222, 106, 41, 33, 0xffffff, true, true);
+        image.Text(play.Rank.HasValue ? $"#{play.Rank}" : "#--", x + width - 130, y + 222, 106, 41, 33, 0xffffff, true, true);
+    }
+
+    /// <summary>浏览卡片直接复用导出绘制，字号、圆角和文字基线只有一份定义。</summary>
+    internal static PixelImage RenderCard(RankedPlay play, PixelImage? cover, string? coverStatus)
+    {
+        using var image = new WindowsBitmap(CardWidth, CardHeight);
+        image.Fill(0, 0, CardWidth, CardHeight, 0x080f1c);
+        DrawCard(image, play, cover, (0, 0, CardWidth, CardHeight));
+        if (cover == null)
+            image.Text(coverStatus ?? "封面加载中", 26, 120, 220, 38, 22, 0xc9d4df);
+        return image.ToPixels();
     }
 }

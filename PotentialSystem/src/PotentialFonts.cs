@@ -10,7 +10,7 @@ namespace InFalsusMod.Potential;
 internal static class PotentialFonts
 {
     /// <summary>字体缓存不随页面关闭或插件重载重复创建；原生 FastText 在退出时统一回收字形资源。</summary>
-    private static FastTextFontFamily? chinese;
+    private static FastTextFontFamily? chinese, digits;
 
     /// <summary>仅给传入的模组文字副本绑定字体，保留其字号、字重、颜色和原生字体设置。</summary>
     /// <param name="text">本模组拥有的文字组件。</param>
@@ -22,18 +22,26 @@ internal static class PotentialFonts
             text.SetFontFamilyAsset(chinese);
     }
 
+    /// <summary>PTT 数字采用 Arcaea 原布局的 Exo-SemiBold，独立于中文字体族。</summary>
+    internal static void ApplyDigits(Text text)
+    {
+        digits ??= Create(text.fontFamilyAsset, numeric: true);
+        text.SetFontFamilyAsset(digits);
+    }
+
     /// <summary>创建六个字重槽位均有效的字体族；中文界面不依赖原生子集或系统字体。</summary>
     /// <param name="template">提供 FastText 排版设置的原生字体族。</param>
     /// <returns>由本模块保留、供所有模组文字共享的字体族。</returns>
-    private static FastTextFontFamily Create(FastTextFontFamily template)
+    private static FastTextFontFamily Create(FastTextFontFamily template, bool numeric = false)
     {
         var assets = new List<FastTextAsset>();
         FastTextFontFamily? family = null;
         try
         {
-            foreach (string weight in new[] { "Regular", "Bold", "Light" })
+            var names = numeric ? new[] { "Exo-SemiBold.ttf" }
+                : new[] { "NotoSansCJKsc-Regular.otf", "NotoSansCJKsc-Bold.otf", "NotoSansCJKsc-Light.otf" };
+            foreach (string name in names)
             {
-                string name = "NotoSansCJKsc-" + weight + ".otf";
                 using var stream = typeof(PotentialFonts).Assembly.GetManifestResourceStream("PotentialSystem.Fonts." + name)
                     ?? throw new InvalidDataException("缺少嵌入字体：" + name);
                 using var bytes = new MemoryStream();
@@ -46,16 +54,15 @@ internal static class PotentialFonts
                 asset.PointSizeMultiplier = 1f;
             }
             family = ScriptableObject.CreateInstance<FastTextFontFamily>();
-            family.name = "PotentialSystem.Chinese";
+            family.name = numeric ? "PotentialSystem.Digits" : "PotentialSystem.Chinese";
             family.hideFlags = HideFlags.HideAndDontSave;
             family.settings = template.settings;
             family.behaviours = template.behaviours;
             family.supportsLocalization = false;
             // Regular / Bold / Italic / Light / Medium / SemiBold；没有独立斜体时仍提供完整中文字形。
-            family.fontAssets = new Il2CppReferenceArray<FastTextAsset>(new[]
-            {
-                assets[0], assets[1], assets[0], assets[2], assets[0], assets[1]
-            });
+            family.fontAssets = new Il2CppReferenceArray<FastTextAsset>(numeric
+                ? Enumerable.Repeat(assets[0], 6).ToArray()
+                : new[] { assets[0], assets[1], assets[0], assets[2], assets[0], assets[1] });
             return family;
         }
         catch

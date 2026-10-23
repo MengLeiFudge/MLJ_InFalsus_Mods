@@ -24,7 +24,7 @@ internal sealed class PotentialBrowser : IDisposable
     /// <summary>入口释放后再打开；封面导出等待有明确的时间上限。</summary>
     private int requestedFrame = -1;
     private float exportStarted;
-    private string status = "每个已游玩谱面显示其最佳表现，可滚动浏览全部成绩。";
+    private string status = "";
 
     internal bool IsOpen => receiver != null;
 
@@ -63,7 +63,7 @@ internal sealed class PotentialBrowser : IDisposable
                 caret = anchor = 0;
                 focused = false;
                 filteredSnapshot = null;
-                status = "每个已游玩谱面显示其最佳表现，可滚动浏览全部成绩。";
+                status = "";
                 view = new NativePotentialPage(owner, receiver, () => closeRequested = true,
                     () => Guard(RequestExport), () => { focused = true; caret = anchor = search.Length; });
                 InputManager.Instance.TakeInputControl(receiver);
@@ -88,7 +88,7 @@ internal sealed class PotentialBrowser : IDisposable
         }
         UpdateExport();
         string displayed = focused ? search.Insert(caret, "|") : search;
-        view!.Render(snapshot, badges, covers!, displayed, status, focused, exporting != null);
+        view!.Render(snapshot, covers!, displayed, status, focused, exporting != null);
     }
 
     /// <summary>冻结点击时的 B50 快照；搜索和滚动不会改变导出内容。</summary>

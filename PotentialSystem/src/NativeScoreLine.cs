@@ -8,8 +8,9 @@ namespace InFalsusMod.Potential;
 /// <summary>侧卡上方的单层定数与潜力值文字，随原生歌曲卡片一起移动。</summary>
 internal sealed class NativeScoreLine : IDisposable
 {
-    /// <summary>独立布局及文字副本；宽度沿用侧卡信息区域的设计像素。</summary>
+    /// <summary>侧卡信息区域的设计像素宽度。</summary>
     private const float Width = 310f;
+    /// <summary>零尺寸容器只提供卡片上方的定位点；文字自行计算尺寸并继承原生缩放。</summary>
     private Constrained2D? row;
     private NativeLabel? value;
     private readonly float fontSize;
@@ -32,6 +33,8 @@ internal sealed class NativeScoreLine : IDisposable
             var layout = row.constrained2DTransform;
             layout.transform = root.transform;
             layout.type = Constrained2DType.Container;
+            layout.sizeInPixels = Vector2.zero;
+            layout.sizeInParentNormalized = Vector2.zero;
             layout.anchor = new Vector2(0.5f, 0.5f);
             layout.parentAlignment = Constrained2DAlignment.Top;
             layout.offset = new Vector2(0f, 40f);
@@ -44,24 +47,23 @@ internal sealed class NativeScoreLine : IDisposable
             row._rQA();
             row._RQA();
             row._PQA(0x3f);
-            BrowserWidgets.Place(row, layout.offset, new Vector2(Width, 54f));
             value = new NativeLabel(scoreTemplate, root.transform, "ChartValue.Text", new Vector2(0.5f, 0.5f),
                 Constrained2DAlignment.Center, Vector2.zero, fontSize);
         }
         catch { if (row == null) Object.Destroy(root); Dispose(); throw; }
     }
 
-    /// <summary>按已绑定歌曲行更新文本，并适配当前卡片缩放后的父布局。</summary>
+    /// <summary>按已绑定歌曲行更新文本与显示状态；位置和缩放由原生父布局继承。</summary>
     /// <param name="text">定数或排名、定数与潜力值；空串隐藏本行。</param>
-    internal void Set(string text)
+    /// <param name="tint">按单曲潜力值档位得到的辨识色。</param>
+    internal void Set(string text, Color tint)
     {
         if (row == null || value == null)
             return;
         row.gameObject.SetActive(text.Length > 0);
         if (text.Length == 0)
             return;
-        BrowserWidgets.Place(row, new Vector2(0f, 40f), new Vector2(Width, 54f));
-        if (value.Set(text, Color.white))
+        if (value.Set(text, tint))
             NativePotentialPage.PlaceLabel(value, Vector2.zero, Width - 30f, fontSize);
     }
 

@@ -22,6 +22,19 @@ internal static class PotentialPresentation
     internal static string Score(ulong score) => score.ToString("N0", CultureInfo.InvariantCulture);
     /// <summary>与该最佳表现同一次游玩的通关状态。</summary>
     internal static string Lamp(byte lamp) => lamp switch { 2 => "CLEAR", 1 => "DIVE", _ => "FAILED" };
+    /// <summary>显示最佳表现同一局的完整完成等级，不借用其他局的灯。</summary>
+    internal static string Completion(byte result) => result switch
+    {
+        4 => "PERFECT DIVE", 3 => "FULL LINK", 2 => "DIVE CLEARED", 1 => "DIVE FAILED", _ => "未完成"
+    };
+
+    /// <summary>按账号徽章的相同门槛为单曲值配色；未游玩保留中性色。</summary>
+    internal static Color PotentialColor(decimal? value) => Color(value.HasValue ? PotentialBadges.Tier(value.Value) switch
+    {
+        0 => 0x86dbe8U, 1 => 0x91dda8U, 2 => 0xc5b7ecU, 3 => 0xbc94ebU,
+        4 => 0xf28c98U, 5 => 0xf3b5daU, 6 => 0xf39fcfU, _ => 0xff88bcU
+    } : 0xc9c2d4U);
+
     /// <summary>未游玩显示一位小数定数；已游玩显示完整排名、定数与三位小数单曲值。</summary>
     internal static string RankLine(PotentialSnapshot? snapshot, ChartKey key)
     {

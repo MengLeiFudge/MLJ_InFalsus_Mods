@@ -130,9 +130,30 @@ internal sealed class WindowsBitmap : IDisposable
             new BlendFunction { SourceConstantAlpha = 255, AlphaFormat = 1 }), "合成分享图素材");
     }
 
+    /// <summary>将 GDI 顶向下 BGRA 转为 Unity 底向上 RGBA；GDI 不维护的 Alpha 设为不透明。</summary>
+    internal PixelImage ToPixels()
+    {
+        Check(GdiFlush(), "完成图像绘制");
+        var bgra = new byte[checked(Width * Height * 4)];
+        Marshal.Copy(bits, bgra, 0, bgra.Length);
+        var rgba = new byte[bgra.Length];
+        for (int y = 0; y < Height; y++)
+            for (int x = 0; x < Width; x++)
+            {
+                int source = (y * Width + x) * 4;
+                int target = ((Height - 1 - y) * Width + x) * 4;
+                rgba[target] = bgra[source + 2];
+                rgba[target + 1] = bgra[source + 1];
+                rgba[target + 2] = bgra[source];
+                rgba[target + 3] = 255;
+            }
+        return new PixelImage(Width, Height, rgba);
+    }
+
     /// <summary>输出广泛兼容的 CF_DIB 数据：40 字节头、正高度、底向上 BGRA 像素。</summary>
     internal byte[] ToClipboardDib()
     {
+        Check(GdiFlush(), "完成图像绘制");
         int stride = checked(Width * 4);
         var pixels = new byte[checked(stride * Height)];
         Marshal.Copy(bits, pixels, 0, pixels.Length);
@@ -203,6 +224,7 @@ internal sealed class WindowsBitmap : IDisposable
         internal byte BlendOp, BlendFlags, SourceConstantAlpha, AlphaFormat;
     }
 
+    [DllImport("gdi32.dll")] [return: MarshalAs(UnmanagedType.Bool)] private static extern bool GdiFlush();
     [DllImport("gdi32.dll", SetLastError = true)] private static extern IntPtr CreateCompatibleDC(IntPtr hdc);
     [DllImport("gdi32.dll", SetLastError = true)] private static extern IntPtr CreateDIBSection(IntPtr hdc, ref BitmapHeader info, uint usage, out IntPtr bits, IntPtr section, uint offset);
     [DllImport("gdi32.dll", SetLastError = true)] private static extern IntPtr SelectObject(IntPtr hdc, IntPtr obj);

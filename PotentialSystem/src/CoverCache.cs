@@ -15,8 +15,6 @@ internal sealed class CoverCache : IDisposable
         internal AsyncOperationHandle<Material>? Handle;
         internal Texture2D? Texture;
         internal PixelImage? Pixels;
-        /// <summary>封面读取完成时计算一次，池化卡片逐帧只读取缓存。</summary>
-        internal CoverPalette Palette = CoverPalette.Neutral;
         internal string? Error;
         internal bool Finished;
     }
@@ -59,7 +57,6 @@ internal sealed class CoverCache : IDisposable
             if (entry.Handle.Status != AsyncOperationStatus.Succeeded || entry.Handle.Result?.mainTexture == null)
                 throw new InvalidOperationException("游戏封面加载失败：" + entry.Handle.OperationException?.Message);
             (entry.Texture, entry.Pixels) = Capture(entry.Handle.Result.mainTexture);
-            entry.Palette = CoverPalette.From(entry.Pixels);
         }
         catch (Exception ex)
         {
@@ -105,14 +102,13 @@ internal sealed class CoverCache : IDisposable
         }
     }
 
-    /// <summary>浏览页按需请求封面；未就绪时返回空纹理和可显示的加载状态。</summary>
-    internal Texture2D? GetTexture(ChartDefinition? chart, out CoverPalette palette, out string? error)
+    /// <summary>为浏览卡片提供与导出相同的封面像素；仍按需异步加载。</summary>
+    internal PixelImage? GetPixels(ChartDefinition? chart, out string? error)
     {
         var entry = Request(chart);
         Poll(entry);
         error = entry.Error;
-        palette = entry.Palette;
-        return entry.Texture;
+        return entry.Pixels;
     }
 
     /// <summary>为导出申请并收集封面；全部完成或明确失败后才能执行剪贴板写入。</summary>

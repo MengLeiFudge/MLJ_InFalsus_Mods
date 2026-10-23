@@ -16,10 +16,11 @@ internal sealed record ResultSummary(decimal? Previous, decimal Best, decimal Pl
 /// <summary>拥有原生 PTT 文字、角色菱形与独立档位徽章；结算视图展示单曲与变化状态。</summary>
 internal sealed class PotentialView : IDisposable
 {
-    /// <summary>角色菱形上角裁至游戏上边缘；小徽章位于头像右下，所有节点均在可见入口内。</summary>
-    internal static readonly Vector2 PortraitCenter = new(0f, 75f), BadgeCenter = new(120f, -93f);
-    private const float EntryHeight = 330f, PortraitSize = 344f;
-    internal const float FrameSize = 360f, BadgeSize = 144f;
+    /// <summary>Arcaea UserCell：150 的头像框、128 的头像、85 的徽章，徽章偏移 (56,-37.5)。</summary>
+    internal const float FrameSize = 360f, BadgeSize = FrameSize * 85f / 150f;
+    private const float EntryHeight = 330f, PortraitSize = FrameSize * 128f / 150f;
+    internal static readonly Vector2 PortraitCenter = new(0f, 75f);
+    internal static readonly Vector2 BadgeCenter = PortraitCenter + new Vector2(56f, -37.5f) * (FrameSize / 150f);
     /// <summary>结算信息相对顶部中央布局；左侧显示单曲变化，右侧显示账号变化，避开两端导航按钮。</summary>
     private static readonly (Vector2 Center, float Width, float Font)[] ResultSlots =
     {
@@ -36,6 +37,7 @@ internal sealed class PotentialView : IDisposable
     private readonly List<NativeLabel> labels = new();
     private readonly PotentialBadges badges;
     private readonly bool results;
+    private PotentialRatingText? rating;
     private Constrained2D? entryRoot, graphic, portrait, frame, backing;
     private Material? material, portraitMaterial, frameMaterial, backingMaterial;
     /// <summary>按菱形轮廓裁去框外像素的头像副本，由本视图释放。</summary>
@@ -68,7 +70,7 @@ internal sealed class PotentialView : IDisposable
                 container.anchor = anchor;
                 container.parentAlignment = alignment;
                 container.offset = center;
-                container.sizeInPixels = new Vector2(440f, EntryHeight);
+                container.sizeInPixels = new Vector2(FrameSize + BadgeSize, EntryHeight);
                 container.sizeInParentNormalized = Vector2.zero;
                 container.renderableScale = Vector2.one;
                 container.color = Color.white;
@@ -132,8 +134,7 @@ internal sealed class PotentialView : IDisposable
                     mainTexture = badges.AvatarFrame, mainTextureScale = Vector2.one, mainTextureOffset = Vector2.zero
                 };
                 CropAtGameTop(frame, frameMaterial, FrameSize);
-                labels.Add(new NativeLabel(template, graphicsParent, "Account", anchor,
-                    Constrained2DAlignment.Center, BadgeCenter, 3.6f));
+                rating = new PotentialRatingText(template, graphicsParent);
                 labels.Add(new NativeLabel(template, parent, "Status", anchor, alignment,
                     center + new Vector2(0f, -EntryHeight / 2f - 25f), 2.4f));
             }
@@ -154,7 +155,7 @@ internal sealed class PotentialView : IDisposable
     }
 
     /// <summary>复制原生图形并重新绑定渲染引用；布局以独立父容器为基准。</summary>
-    private static Constrained2D CloneGraphic(Constrained2D template, Transform parent, string name)
+    internal static Constrained2D CloneGraphic(Constrained2D template, Transform parent, string name)
     {
         var root = Object.Instantiate(template.gameObject, parent, false);
         try
@@ -272,8 +273,8 @@ internal sealed class PotentialView : IDisposable
             BrowserWidgets.Place(entryRoot, layout.offset, layout.sizeInPixels);
         }
         ShowTier(snapshot == null ? 8 : PotentialBadges.Tier(snapshot.Potential));
-        labels[0].Set(snapshot == null ? "--.---" : PotentialCalculator.Format(snapshot.Potential), Color.white);
-        labels[1].Set(snapshot == null || status.StartsWith("Unsaved", StringComparison.Ordinal) ? status : "",
+        rating?.Set(snapshot == null ? "--.---" : PotentialCalculator.Format(snapshot.Potential), BadgeCenter, BadgeSize);
+        labels[0].Set(snapshot == null || status.StartsWith("Unsaved", StringComparison.Ordinal) ? status : "",
             new Color(0.7f, 1f, 0.85f));
     }
 
@@ -330,6 +331,8 @@ internal sealed class PotentialView : IDisposable
     /// <summary>先销毁自有节点，再释放视图材质与头像副本；共享纹理留给控制器回收。</summary>
     public void Dispose()
     {
+        rating?.Dispose();
+        rating = null;
         foreach (var label in labels)
             label.Dispose();
         labels.Clear();
