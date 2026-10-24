@@ -15,7 +15,7 @@ namespace InFalsusMod.Potential;
 /// <summary>选歌场景的徽章入口、卡片排名和原生排序扩展；游戏继续管理歌曲列表与输入。</summary>
 internal sealed class PotentialSelection : IDisposable
 {
-    /// <summary>原版排序选项按枚举顺序排列，扩展选项只保存在本视图中。</summary>
+    /// <summary>原版排序选项按枚举顺序排列；扩展选项另存模组配置。</summary>
     private static readonly SortType[] NativeSortTypes = Enum.GetValues<SortType>();
     /// <summary>原版选项后的双向循环顺序，以及各项使用的数值和方向。</summary>
     private static readonly (string Label, bool ByConstant, bool Descending)[] CustomSortTypes =
@@ -40,6 +40,7 @@ internal sealed class PotentialSelection : IDisposable
     private PotentialSnapshot? snapshot, sortedSnapshot;
     /// <summary>零为原版，其余为 CustomSortTypes 的下标加一；原生枚举始终保留合法值。</summary>
     private int sortMode;
+    private int displayedPortrait = -2;
     private Str.Strings.Localization sortLanguage;
     private byte sortedDifficulty;
     private IntPtr sortedList;
@@ -52,15 +53,12 @@ internal sealed class PotentialSelection : IDisposable
     {
         this.scene = scene;
         this.browser = browser;
+        sortMode = Plugin.Settings?.SelectionSort ?? 0;
         try
         {
             var graphic = scene.leftSongCardContainer.songCardPrefab.jacket;
             account = new PotentialView(scene.topBar.text, scene.scene.transform, graphic, badges);
-            var saved = SaveOwner._CEb?._DEb?._iEb?.GeneralSaveState
-                ?? throw new InvalidOperationException("当前选歌角色尚未载入。");
-            var icons = scene.songSelectRemembranceContainer?.characterUniversalIconMapping
-                ?? throw new InvalidOperationException("选歌场景缺少原生角色头像映射。");
-            account.SetPortrait(icons._wI(saved.SelectedCharacter, default));
+            RefreshPortrait();
             CreateEntry("Portrait", PotentialView.PortraitCenter, PotentialView.FrameSize);
             CreateEntry("PTT", PotentialView.BadgeCenter, PotentialView.BadgeSize);
             selectedInfo = new SelectedChartInfo(scene);
@@ -126,17 +124,21 @@ internal sealed class PotentialSelection : IDisposable
         if (entryEnabled == true && entries.Any(entry => entry.Pointer == button.Pointer)
             && button.ButtonCollider.enabled && scene.isActiveAndEnabled && !scene.DisableInputEvents
             && input?.IsHeadOfStack(scene) == true)
-            browser.RequestOpen(scene, snapshot);
+            browser.RequestOpen(scene, snapshot, button.Pointer == entries[0].Pointer ? PotentialTab.Appearance : PotentialTab.Scores);
     }
 
     /// <summary>刷新当前难度排名，并在曲包、难度、定数来源或成绩变化后重新应用自选排序。</summary>
     internal void Render(PotentialSnapshot? data, string status)
     {
         snapshot = data;
-        account?.Render(data, status);
         var input = InputManager.Instance;
-        bool enabled = data != null && scene.isActiveAndEnabled && !scene.DisableInputEvents
+        bool onSelection = scene.isActiveAndEnabled && !scene.DisableInputEvents
             && input?.IsHeadOfStack(scene) == true;
+        bool enabled = data != null && onSelection;
+        if (!onSelection) { Hide(); return; }
+        account?.SetVisible(true);
+        RefreshPortrait();
+        account?.Render(data, status);
         var point = input == null ? new Vector2(-1f, -1f) : input.GetCurrentMousePositionNormalizedInUISpace();
         bool visible = point.x is >= 0f and <= 1f && point.y is >= 0f and <= 1f;
         bool inputChanged = entryEnabled != enabled;
@@ -190,6 +192,38 @@ internal sealed class PotentialSelection : IDisposable
         selectedInfo?.Render(data, new ChartKey(scene._sr.Value, (byte)scene._Sr));
     }
 
+    /// <summary>选歌场景停用或其他页面取得输入时，同步隐藏全部自有选歌信息。</summary>
+    internal void Hide()
+    {
+        account?.SetVisible(false);
+        foreach (var entry in entries)
+            if (entry != null && entry.ButtonCollider != null)
+            {
+                NativeButtons.SetState(entry, false);
+                entry.ButtonCollider.enabled = false;
+            }
+        selectedInfo?.Render(null, default);
+        entryEnabled = false;
+    }
+
+    /// <summary>头像设置变化后更新原生图标副本，不改变存档中的角色。</summary>
+    private void RefreshPortrait()
+    {
+        var settings = Plugin.Settings;
+        var saved = SaveOwner._CEb?._DEb?._iEb?.GeneralSaveState
+            ?? throw new InvalidOperationException("当前选歌角色尚未载入。");
+        int character = settings?.Portrait is >= 0 ? settings.Portrait : (int)saved.SelectedCharacter;
+        if (displayedPortrait != character)
+        {
+            var icons = scene.songSelectRemembranceContainer?.characterUniversalIconMapping
+                ?? throw new InvalidOperationException("选歌场景缺少原生角色头像映射。");
+            account!.SetPortrait(icons._wI((ifapp.Game.Data.CharacterIdentifier)character, default));
+            displayedPortrait = character;
+        }
+        account!.SetNamecard(string.IsNullOrWhiteSpace(settings?.ProfileName)
+            ? ((ifapp.Game.Data.CharacterIdentifier)character).ToString() : settings!.ProfileName, settings?.NamecardColor ?? 0);
+    }
+
     /// <summary>池化小卡按歌曲行实际绑定的 SongId 和难度更新，保持与原生等级、分数一致。</summary>
     private void UpdateCards(SongSelectSmallCardScrollContainer container)
     {
@@ -232,6 +266,7 @@ internal sealed class PotentialSelection : IDisposable
             if (next < NativeSortTypes.Length)
             {
                 sortMode = 0;
+                if (Plugin.Settings != null) Plugin.Settings.SelectionSort = 0;
                 button._Bs = NativeSortTypes[next];
                 // BO 同时更新原生名称并调用原版 OnValueChanged，不能再次手工调用该回调。
                 button._BO();
@@ -239,6 +274,7 @@ internal sealed class PotentialSelection : IDisposable
             else
             {
                 sortMode = next - NativeSortTypes.Length + 1;
+                if (Plugin.Settings != null) Plugin.Settings.SelectionSort = sortMode;
                 UpdateSortText();
                 RefreshOrder();
             }
@@ -252,11 +288,11 @@ internal sealed class PotentialSelection : IDisposable
         return true;
     }
 
-    /// <summary>原版主动设置排序时退出自有模式，名称与后续刷新均由原生回调维护。</summary>
+    /// <summary>原版重建排序只使缓存失效；用户退出扩展模式由 TryCycleSort 明确保存。</summary>
     internal void NativeSortRequested(SongSelectScene current)
     {
         if (scene == current)
-            sortMode = 0;
+            sortedSnapshot = null;
     }
 
     /// <summary>原版建立当前曲包列表后只调整现有行，不增加歌曲或改变解锁状态。</summary>
@@ -289,6 +325,7 @@ internal sealed class PotentialSelection : IDisposable
             sortedDifficulty = difficulty;
             sortedList = scene._rr.Pointer;
             sortedCount = scene._rr.Count;
+            UpdateSortText();
         }
         catch
         {

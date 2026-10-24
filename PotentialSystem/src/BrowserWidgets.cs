@@ -1,4 +1,3 @@
-using FastText.Data;
 using ifapp.Game.Input;
 using ifapp.Game.Scenes;
 using ifapp.Game.UI.Common;
@@ -30,7 +29,7 @@ internal sealed class BrowserWidgets : IDisposable
         try
         {
             var layout = Root.constrained2DTransform;
-            layout.sizeInParentNormalized = new Vector2(0.96f, 0.94f);
+            layout.sizeInParentNormalized = new Vector2(0.94f, 0.82f);
             layout.zPosition = -1f;
             layout.overrideMaterialRenderQueueOffset = 100;
             Root.constrained2DTransform = layout;
@@ -176,23 +175,8 @@ internal sealed class BrowserWidgets : IDisposable
         catch { Object.Destroy(root); throw; }
     }
 
-    /// <summary>保留 FastText 字形缓存和当前语言，并限制自动换行宽度。</summary>
-    internal NativeLabel Label(Transform parent, string name, float fontSize)
-    {
-        var label = new NativeLabel(scene.topBar.text, parent, name, new Vector2(0.5f, 0.5f),
-            Constrained2DAlignment.Center, Vector2.zero, fontSize);
-        label.Text.SetAlignment(AlignmentOptions.Center, FastText.FastText.UpdateType.DontUpdateMesh);
-        var constrained = label.Text.GetComponent<Constrained2D>();
-        var layout = constrained.constrained2DTransform;
-        layout.overrideMaterialRenderQueueOffset = 0;
-        layout.sizeInParentNormalized = Vector2.zero;
-        constrained.constrained2DTransform = layout;
-        constrained._PQA(0x3f);
-        return label;
-    }
-
-    /// <summary>创建原生 UIButton，不携带模板的碰撞体、动画目标或原版点击回调。</summary>
-    internal UIButton Button(Transform parent, string name, string text, Action clicked)
+    /// <summary>创建无装饰的原生点击区域，供卡片与图像使用；所有回调随工厂回收。</summary>
+    internal UIButton HitButton(Transform parent, string name, Action clicked, Action<bool>? hovered = null)
     {
         var constrained = Container(parent, name, new Vector2(100f, 60f), hitArea: true);
         var button = constrained.gameObject.AddComponent<UIButton>();
@@ -202,60 +186,18 @@ internal sealed class BrowserWidgets : IDisposable
         button.button = scene.backButton.button;
         button.sfxSetType = scene.backButton.sfxSetType;
         button.flags = UIButton.Flags.DoesConsumeTouchOnPress | UIButton.Flags.CanCauseCursorHover;
-        var background = Graphic(button.transform, name + ".Backing", Texture2D.whiteTexture, PotentialPresentation.Color(0x283951));
-        var label = Label(button.transform, name + ".Text", 3.4f);
-        label.Set(text, Color.white);
         UIButton._EI click = (Action<UIButton>)(_ => clicked());
-        UIButton._fI hover = (Action<UIButton, bool>)((_, hovered) => background.Tint(
-            PotentialPresentation.Color(hovered ? 0x425b7cU : 0x283951U)));
         callbacks.Add(click);
-        callbacks.Add(hover);
         button._DSA(click);
-        button._eSA(hover);
+        if (hovered != null)
+        {
+            UIButton._fI hover = (Action<UIButton, bool>)((_, value) => hovered(value));
+            callbacks.Add(hover);
+            button._eSA(hover);
+        }
         button._dSA(_m._dI._YIb);
         UIManager._A._mtA(button, owner);
         return button;
-    }
-
-    /// <summary>按钮图形和命中区域使用相同布局；文字随可用宽度换行。</summary>
-    internal static void PlaceButton(UIButton button, Vector2 center, Vector2 size, float scale)
-    {
-        Place(button.constrained2D, center, size);
-        foreach (var graphic in button.GetComponentsInChildren<Constrained2D>(true))
-        {
-            if (graphic == button.constrained2D)
-                continue;
-            if (graphic.constrained2DTransform.type == Constrained2DType.Sprite)
-                Place(graphic, Vector2.zero, size);
-        }
-        foreach (var text in button.GetComponentsInChildren<FastText.FastText>(true))
-        {
-            text.SetFontSize(3.4f * scale, FastText.FastText.UpdateType.DontUpdateMesh);
-            text.SetMaxAutoLineBreakPixelWidth((int)(size.x - 24f * scale), FastText.FastText.UpdateType.DontUpdateMesh);
-            text.EnsureDirtyFlagsProcessed();
-        }
-        CenterButtonText(button);
-    }
-
-    /// <summary>按实际字形包围盒居中，消除字体模板基线与按钮中心之间的偏移。</summary>
-    internal static void CenterButtonText(UIButton button)
-    {
-        foreach (var text in button.GetComponentsInChildren<FastText.FastText>(true))
-        {
-            var layout = text.GetComponent<Constrained2D>();
-            Place(layout, Vector2.zero, layout.constrained2DTransform.sizeInPixels);
-            text.EnsureDirtyFlagsProcessed();
-            _m._wi._ERA(false);
-            var bounds = text.meshRenderer.bounds;
-            if (bounds.size.x <= 0f || bounds.size.y <= 0f) continue;
-            var calculated = ReadLayout(layout);
-            var unit = ProjectionValues.GetWorldSize(calculated.CalculatedZFromCamera, Vector2.one);
-            var inherited = calculated.CachedWorldScale;
-            float x = unit.x * inherited.x, y = unit.y * inherited.y;
-            if (Mathf.Abs(x) <= 0f || Mathf.Abs(y) <= 0f) continue;
-            var delta = button.transform.position - bounds.center;
-            Place(layout, new Vector2(delta.x / x, delta.y / y), layout.constrained2DTransform.sizeInPixels);
-        }
     }
 
     /// <summary>原生 _irA 遇到同一材质对象会直接返回；每次换纹理或 UV 都提交一份新材质并释放旧的。</summary>
@@ -301,7 +243,8 @@ internal sealed class BrowserWidgets : IDisposable
     {
         _m._wi._ERA(false);
         foreach (var (layout, collider) in hitAreas)
-            SyncHitArea(layout, collider);
+            if (layout.gameObject.activeInHierarchy) SyncHitArea(layout, collider);
+            else collider.enabled = false;
     }
 
     /// <summary>保留传入的原生委托，直到控件注销并失去输入权限。</summary>

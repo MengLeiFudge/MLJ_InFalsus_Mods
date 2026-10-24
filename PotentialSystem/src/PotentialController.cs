@@ -133,6 +133,7 @@ public sealed class PotentialController : MonoBehaviour
                     Plugin.Logger.LogError($"选歌潜力值界面刷新失败：{ex}");
                 }
             }
+            else selectionView?.Hide();
             UpdateBrowser(selectionAvailable ? snapshot : null);
         }
         catch (Exception ex)
@@ -523,7 +524,7 @@ public sealed class PotentialController : MonoBehaviour
     internal bool TryCycleSort(SongSelectSortingButton button, int requested)
         => selectionView?.TryCycleSort(button, requested) == true;
 
-    /// <summary>原生排序入口通知，交给选歌视图退出自选模式。</summary>
+    /// <summary>原生排序入口使排序缓存失效，保留用户已保存的扩展模式。</summary>
     [HideFromIl2Cpp]
     internal void NativeSortRequested(SongSelectScene scene) => selectionView?.NativeSortRequested(scene);
 

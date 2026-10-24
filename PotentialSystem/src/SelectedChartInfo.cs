@@ -63,6 +63,7 @@ internal sealed class SelectedChartInfo : IDisposable
 
     internal void Render(PotentialSnapshot? snapshot, ChartKey key)
     {
+        if (root == null) { shown = null; return; }
         bool available = snapshot != null && snapshot.Catalog.TryGet(key, out _);
         root!.gameObject.SetActive(available);
         if (!available) { shown = null; return; }

@@ -44,6 +44,12 @@ internal sealed class PotentialView : IDisposable
     private Texture2D? portraitTexture;
     private int displayedTier = -1;
     private float displayedPop = -1f;
+    /// <summary>选歌名片使用独立背景与昵称，随头像容器统一隐藏。</summary>
+    private Constrained2D? namecard;
+    private Material? namecardMaterial;
+    private NativeLabel? namecardText;
+    private string displayedName = "";
+    private int displayedNamecardColor = -1;
     /// <summary>选歌入口绑定不带渲染缩放的容器，头像、边框、徽章和数字分别布局。</summary>
     internal Constrained2D Entry => entryRoot!;
 
@@ -137,6 +143,16 @@ internal sealed class PotentialView : IDisposable
                 rating = new PotentialRatingText(template, graphicsParent);
                 labels.Add(new NativeLabel(template, parent, "Status", anchor, alignment,
                     center + new Vector2(0f, -EntryHeight / 2f - 25f), 2.4f));
+                namecard = CloneGraphic(graphicTemplate, graphicsParent, "Namecard");
+                namecardMaterial = new Material(sourceMaterial)
+                {
+                    name = "PotentialSystem.Namecard", hideFlags = HideFlags.HideAndDontSave,
+                    mainTexture = Texture2D.whiteTexture, mainTextureScale = Vector2.one, mainTextureOffset = Vector2.zero
+                };
+                namecard._irA(namecardMaterial);
+                BrowserWidgets.Place(namecard, new Vector2(-440f, -20f), new Vector2(440f, 110f));
+                namecardText = new NativeLabel(template, graphicsParent, "Namecard.Name", anchor,
+                    Constrained2DAlignment.Center, new Vector2(-440f, -20f), 3.4f);
             }
         }
         catch { Dispose(); throw; }
@@ -264,6 +280,33 @@ internal sealed class PotentialView : IDisposable
         displayedTier = tier;
     }
 
+    /// <summary>头像和名片仅在选歌获得输入时显示，状态文字同样受此边界约束。</summary>
+    internal void SetVisible(bool visible)
+    {
+        if (entryRoot != null) entryRoot.gameObject.SetActive(visible);
+        if (!results) foreach (var label in labels) if (label.Text != null) label.Text.gameObject.SetActive(visible);
+    }
+
+    /// <summary>只在昵称或配色改变后刷新选歌名片。</summary>
+    internal void SetNamecard(string name, int color)
+    {
+        if (namecard == null || namecardText == null) return;
+        if (displayedNamecardColor != color)
+        {
+            var layout = namecard.constrained2DTransform;
+            layout.color = PotentialPresentation.Color(PotentialAppearance.NamecardColors[color]);
+            namecard.constrained2DTransform = layout;
+            namecard._PQA(0x3f);
+            displayedNamecardColor = color;
+        }
+        if (displayedName != name)
+        {
+            namecardText.Set(name, Color.white);
+            NativePotentialPage.PlaceLabel(namecardText, new Vector2(-440f, -20f), 395f, 3.4f);
+            displayedName = name;
+        }
+    }
+
     /// <summary>同步选歌入口尺寸并刷新徽章数值，保持分辨率变化后的点击范围与显示一致。</summary>
     internal void Render(PotentialSnapshot? snapshot, string status)
     {
@@ -333,6 +376,11 @@ internal sealed class PotentialView : IDisposable
     {
         rating?.Dispose();
         rating = null;
+        namecardText?.Dispose();
+        namecardText = null;
+        if (namecardMaterial != null) Object.Destroy(namecardMaterial);
+        namecardMaterial = null;
+        namecard = null;
         foreach (var label in labels)
             label.Dispose();
         labels.Clear();

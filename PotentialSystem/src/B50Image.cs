@@ -5,7 +5,7 @@ namespace InFalsusMod.Potential;
 /// <summary>从冻结的最佳成绩快照生成分享图，独立于屏幕分辨率和浏览页滚动位置。</summary>
 internal static class B50Image
 {
-    /// <summary>浏览页和导出图共用五列、卡片宽高及间距；浏览页按可用宽度等比缩放。</summary>
+    /// <summary>分享图固定五列；浏览页复用卡片宽高与间距，按可用宽度决定列数。</summary>
     internal const int Columns = 5, CardWidth = 833, CardHeight = 278, Gap = 20;
 
     /// <summary>五列横向成绩卡参考 Player Bests 布局，以曲绘印象色作底，不补造缺少的成绩。</summary>

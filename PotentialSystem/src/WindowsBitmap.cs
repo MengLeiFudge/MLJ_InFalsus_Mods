@@ -83,6 +83,35 @@ internal sealed class WindowsBitmap : IDisposable
         }
     }
 
+    /// <summary>绘制连续折线，原生画笔从画布移出后释放。</summary>
+    /// <param name="points">自上而下位图坐标。</param>
+    /// <param name="rgb">线条颜色。</param>
+    /// <param name="width">像素线宽。</param>
+    internal void Stroke(IReadOnlyList<(int X, int Y)> points, uint rgb, int width = 2)
+    {
+        if (points.Count < 2) return;
+        var pen = CreatePen(0, width, ColorRef(rgb));
+        Check(pen != IntPtr.Zero, "建立曲线画笔");
+        IntPtr old = IntPtr.Zero;
+        try
+        {
+            old = SelectObject(dc, pen);
+            Check(old != IntPtr.Zero && old != new IntPtr(-1), "选择曲线画笔");
+            Check(MoveToEx(dc, points[0].X, points[0].Y, IntPtr.Zero), "定位曲线");
+            for (int i = 1; i < points.Count; i++)
+                Check(LineTo(dc, points[i].X, points[i].Y), "绘制曲线");
+        }
+        finally
+        {
+            if (old != IntPtr.Zero && old != new IntPtr(-1)) SelectObject(dc, old);
+            DeleteObject(pen);
+        }
+    }
+
+    [DllImport("gdi32.dll", SetLastError = true)] private static extern IntPtr CreatePen(int style, int width, uint color);
+    [DllImport("gdi32.dll", SetLastError = true)] [return: MarshalAs(UnmanagedType.Bool)] private static extern bool MoveToEx(IntPtr dc, int x, int y, IntPtr previous);
+    [DllImport("gdi32.dll", SetLastError = true)] [return: MarshalAs(UnmanagedType.Bool)] private static extern bool LineTo(IntPtr dc, int x, int y);
+
     /// <summary>使用系统中英文字体绘制单行，过长时在矩形内省略，不解析歌曲名中的 &amp;。</summary>
     internal void Text(string text, int x, int y, int width, int height, int size, uint rgb, bool bold = false, bool right = false)
     {

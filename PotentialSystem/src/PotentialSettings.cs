@@ -23,9 +23,40 @@ internal sealed class PotentialSettings : IDisposable
 
     /// <summary>使用 BepInEx 的当前 profile 配置，不写入游戏存档或外部定数素材。</summary>
     /// <param name="config">本模组的 profile 配置。</param>
-    internal PotentialSettings(ConfigFile config) => source = config.Bind("PotentialSystem", "ChartConstantSource", (int)ChartConstantSource.AnXiaoLi,
-        new ConfigDescription("谱面定数来源：0 官方等级、1 安小璃（默认）、2 萌泪酱；缺失定数回退等级。",
-            new AcceptableValueList<int>(Enum.GetValues<ChartConstantSource>().Select(value => (int)value).ToArray())));
+    internal PotentialSettings(ConfigFile config)
+    {
+        source = config.Bind("PotentialSystem", "ChartConstantSource", (int)ChartConstantSource.AnXiaoLi,
+            new ConfigDescription("谱面定数来源：0 官方等级、1 安小璃（默认）、2 萌泪酱；缺失定数回退等级。",
+                new AcceptableValueList<int>(Enum.GetValues<ChartConstantSource>().Select(value => (int)value).ToArray())));
+        selectionSort = config.Bind("PotentialSystem", "SelectionSort", 0,
+            new ConfigDescription("选歌排序：0 原版，1 定数升序，2 定数降序，3 PTT 升序，4 PTT 降序。", new AcceptableValueRange<int>(0, 4)));
+        browserSort = config.Bind("PotentialSystem", "BrowserSort", 0,
+            new ConfigDescription("成绩页排序：0 PTT降序，1 定数升序，2 定数降序，3 分数降序，4 歌名。", new AcceptableValueRange<int>(0, 4)));
+        browserDifficulty = config.Bind("PotentialSystem", "BrowserDifficulty", 0,
+            new ConfigDescription("成绩页难度：0 全部，1 MIN，2 EVO，4 ULT，8 FBD。", new AcceptableValueList<int>(0, 1, 2, 4, 8)));
+        portrait = config.Bind("Appearance", "PortraitCharacter", -1,
+            new ConfigDescription("头像角色编号；-1 跟随游戏当前角色。", new AcceptableValueRange<int>(-1, 25)));
+        namecardColor = config.Bind("Appearance", "NamecardColor", 0,
+            new ConfigDescription("名片配色：0 青，1 紫，2 红，3 蓝。", new AcceptableValueRange<int>(0, 3)));
+        profileName = config.Bind("Appearance", "ProfileName", "", "名片昵称，留空使用角色名称。");
+    }
+
+    /// <summary>选歌扩展排序归 profile 所有；零使用原版，1～4 为定数/PTT 升降序。</summary>
+    private readonly ConfigEntry<int> selectionSort;
+    /// <summary>成绩页保留难度筛选和排序。</summary>
+    private readonly ConfigEntry<int> browserSort, browserDifficulty;
+    /// <summary>头像与名片只改变本模组展示，不修改原生角色选择。</summary>
+    private readonly ConfigEntry<int> portrait, namecardColor;
+    private readonly ConfigEntry<string> profileName;
+    internal int SelectionSort { get => selectionSort.Value; set => selectionSort.Value = value; }
+    internal int BrowserSort { get => browserSort.Value; set => browserSort.Value = value; }
+    internal int BrowserDifficulty { get => browserDifficulty.Value; set => browserDifficulty.Value = value; }
+    internal int Portrait { get => portrait.Value; set => portrait.Value = value; }
+    internal int NamecardColor { get => namecardColor.Value; set => namecardColor.Value = value; }
+    internal string ProfileName { get => profileName.Value; set => profileName.Value = value; }
+
+    /// <summary>页面与原生设置页共享同一定数来源配置。</summary>
+    internal void CycleSource() => source.Value = (source.Value + 1) % Enum.GetValues<ChartConstantSource>().Length;
 
     /// <summary>设置页打开后建立分类；再次打开时读取已保存的来源和当前语言。</summary>
     internal void Show(UiSettingGameplayPanel panel)
