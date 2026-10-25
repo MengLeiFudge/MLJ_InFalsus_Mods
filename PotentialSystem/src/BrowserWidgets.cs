@@ -1,5 +1,6 @@
 using ifapp.Game.Input;
 using ifapp.Game.Scenes;
+using ifapp.Game.Scenes.Recipe;
 using ifapp.Game.UI.Common;
 using Lowiro.UI.Projection;
 using UnityEngine;
@@ -11,7 +12,7 @@ namespace InFalsusMod.Potential;
 internal sealed class BrowserWidgets : IDisposable
 {
     /// <summary>模板只提供字体和图形资源；输入、布局及碰撞体全部属于本页。</summary>
-    private readonly SongSelectScene scene;
+    private readonly RecipeScene scene;
     private readonly InputReceiver owner;
     private readonly List<BrowserGraphic> graphics = new();
     private readonly List<UIButton> buttons = new();
@@ -20,16 +21,16 @@ internal sealed class BrowserWidgets : IDisposable
     private readonly List<(Constrained2D Layout, BoxCollider Collider)> hitAreas = new();
     internal Constrained2D Root { get; }
 
-    /// <summary>使用原生选歌区域为根节点，随游戏的投影和黑边范围变化。</summary>
-    internal BrowserWidgets(SongSelectScene scene, InputReceiver owner)
+    /// <summary>附着到实际卡牌页的共同父布局，随原版投影和黑边变化。</summary>
+    internal BrowserWidgets(RecipeScene scene, InputReceiver owner)
     {
         this.scene = scene;
         this.owner = owner;
-        Root = Container(scene.scene.transform, "Results", Vector2.zero);
+        Root = Container(scene.overviewContainer.transform.parent, "Results", Vector2.zero);
         try
         {
             var layout = Root.constrained2DTransform;
-            layout.sizeInParentNormalized = new Vector2(0.94f, 0.82f);
+            layout.sizeInParentNormalized = Vector2.one;
             layout.zPosition = -1f;
             layout.overrideMaterialRenderQueueOffset = 100;
             Root.constrained2DTransform = layout;
@@ -139,7 +140,7 @@ internal sealed class BrowserWidgets : IDisposable
     /// <summary>复制游戏图形并重新绑定渲染引用，自有材质允许逐卡更新封面。</summary>
     internal BrowserGraphic Graphic(Transform parent, string name, Texture texture, Color color)
     {
-        var template = scene.leftSongCardContainer.songCardPrefab.jacket;
+        var template = scene.cardInventoryLayer.cardPrefab.art;
         var root = Object.Instantiate(template.gameObject, parent, false);
         root.name = "InFalsus.PotentialSystem." + name;
         try
@@ -245,6 +246,51 @@ internal sealed class BrowserWidgets : IDisposable
         foreach (var (layout, collider) in hitAreas)
             if (layout.gameObject.activeInHierarchy) SyncHitArea(layout, collider);
             else collider.enabled = false;
+    }
+
+    /// <summary>将原版控件在屏幕上的实际范围换算到本页，不复制猜测的页面比例。</summary>
+    internal Rect Bounds(Constrained2D target)
+    {
+        _m._wi._ERA(false);
+        var root = ReadLayout(Root);
+        var value = ReadLayout(target);
+        var pixels = ProjectionValues.CameraPixelSize;
+        var scale = root.CachedWorldScale;
+        var center = value.CalculatedNormalizedPositionInScreen - root.CalculatedNormalizedPositionInScreen;
+        var size = value.CalculatedNormalizedSizeOfScreen;
+        return new Rect((center.x - size.x / 2) * pixels.x / scale.x,
+            (center.y - size.y / 2) * pixels.y / scale.y, size.x * pixels.x / scale.x, size.y * pixels.y / scale.y);
+    }
+
+    /// <summary>保留原版按钮外观并重绑输入；副本随本页销毁。</summary>
+    internal UIButton NativeButton(Transform parent, string name, string text, Action clicked)
+    {
+        var button = NativeButtons.Create(scene.cardInventoryLayer.filterButton, owner, "PotentialSystem." + name, text, _ => clicked());
+        button.transform.SetParent(parent, false);
+        buttons.Add(button);
+        foreach (var layout in button.GetComponentsInChildren<Constrained2D>(true)) Rebind(layout);
+        var rootLayout = button.constrained2D.constrained2DTransform;
+        rootLayout.anchor = new Vector2(0.5f, 0.5f);
+        rootLayout.parentAlignment = Constrained2DAlignment.Center;
+        rootLayout.renderableScale = Vector2.one;
+        rootLayout.zPosition = -0.08f;
+        button.constrained2D.constrained2DTransform = rootLayout;
+        hitAreas.Add((button.constrained2D, button.ButtonCollider));
+        return button;
+    }
+
+    /// <summary>克隆层级后使布局缓存指向副本。</summary>
+    internal static void Rebind(Constrained2D layout)
+    {
+        var value = layout.constrained2DTransform;
+        value.transform = layout.transform;
+        value.meshRenderer = layout.GetComponent<MeshRenderer>();
+        value.meshFilter = layout.GetComponent<MeshFilter>();
+        value.fastText = layout.GetComponent<FastText.FastText>();
+        layout.constrained2DTransform = value;
+        layout._rQA();
+        layout._RQA();
+        layout._PQA(0x3f);
     }
 
     /// <summary>保留传入的原生委托，直到控件注销并失去输入权限。</summary>

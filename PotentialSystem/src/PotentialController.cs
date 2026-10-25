@@ -134,7 +134,13 @@ public sealed class PotentialController : MonoBehaviour
                 }
             }
             else selectionView?.Hide();
-            UpdateBrowser(selectionAvailable ? snapshot : null);
+            if (browser?.DataAccess is { } browserAccess && EnsureProfile(browserAccess))
+            {
+                TrySave();
+                UpdateBrowser(snapshot);
+            }
+            else
+                UpdateBrowser(selectionAvailable ? snapshot : null);
         }
         catch (Exception ex)
         {

@@ -5,6 +5,7 @@ using ifapp.Game.Data;
 using SaveOwner = GameData::_K._NH;
 using ifapp.Game.Input;
 using ifapp.Game.Scenes;
+using ifapp.Game.Scenes.Recipe;
 using UnityEngine;
 using Key = UnityEngine.InputSystem.Key;
 using Object = UnityEngine.Object;
@@ -20,6 +21,11 @@ internal sealed class PotentialBrowser : IDisposable
     /// <summary>当前原生场景、排名快照及共享徽章。</summary>
     private readonly PotentialBadges badges;
     private SongSelectScene? owner;
+    private RecipeScene? inventory;
+    private bool loading;
+    private Il2CppSystem.Action<RecipeScene>? loaded;
+    private float openedAt;
+    internal CharacterUniversalIconMapping? Portraits { get; private set; }
     private PotentialSnapshot? snapshot, exporting, filteredSnapshot;
     private PotentialInputReceiver? receiver;
     private NativePotentialPage? view;
@@ -27,7 +33,7 @@ internal sealed class PotentialBrowser : IDisposable
     /// <summary>搜索内容和 Unicode 文本选区；筛选后仍保留原始排名。</summary>
     private string search = "", filteredSearch = "";
     private int caret, anchor;
-    private bool focused, closeRequested;
+    private bool focused, closeRequested, returnToHub;
     /// <summary>入口释放后再打开；封面导出等待有明确的时间上限。</summary>
     private int requestedFrame = -1;
     private float exportStarted;
@@ -50,16 +56,19 @@ internal sealed class PotentialBrowser : IDisposable
         : (int)(SaveOwner._CEb?._DEb?._iEb?.GeneralSaveState?.SelectedCharacter ?? default);
 
     internal bool IsOpen => receiver != null;
+    internal DataAccess? DataAccess => inventory == null ? null : inventory.dataAccess;
 
     internal PotentialBrowser(PotentialBadges badges) => this.badges = badges;
 
     /// <summary>只在选歌场景拥有输入时预约打开，防止场景切换期间抢占输入。</summary>
     internal void RequestOpen(SongSelectScene scene, PotentialSnapshot? data, PotentialTab tab = PotentialTab.Scores)
     {
-        if (IsOpen || requestedFrame >= 0 || data == null || InputManager.Instance?.IsHeadOfStack(scene) != true)
+        if (IsOpen || loading || inventory != null || requestedFrame >= 0 || data == null || InputManager.Instance?.IsHeadOfStack(scene) != true)
             return;
         Tab = tab;
         owner = scene;
+        Portraits = Object.Instantiate(scene.songSelectRemembranceContainer.characterUniversalIconMapping);
+        Portraits.hideFlags = HideFlags.HideAndDontSave;
         snapshot = data;
         requestedFrame = Time.frameCount;
     }
@@ -67,19 +76,35 @@ internal sealed class PotentialBrowser : IDisposable
     /// <summary>在同一异常边界内管理原生视图、过滤结果与异步导出。</summary>
     internal void Update(SongSelectScene? scene, PotentialSnapshot? data)
     {
-        if (closeRequested || owner == null || owner != scene || !owner.isActiveAndEnabled || data == null)
-        { Close(); return; }
-        snapshot = data;
+        if (closeRequested) { Close(); return; }
         if (requestedFrame >= 0 && Time.frameCount > requestedFrame)
         {
             requestedFrame = -1;
-            if (InputManager.Instance?.IsHeadOfStack(owner) != true)
-                return;
+            if (owner == null || owner != scene || InputManager.Instance?.IsHeadOfStack(owner) != true)
+            { Close(); return; }
+            loading = true;
+            openedAt = Time.realtimeSinceStartup;
+            loaded = (Action<RecipeScene>)RecipeReady;
+            CoreScene._c._Bj<SongSelectScene, RecipeScene>(_d._AB._nl, null, null, loaded);
+        }
+        if (loading)
+        {
+            if (Time.realtimeSinceStartup - openedAt > 45f)
+            {
+                Plugin.Logger.LogError("原版卡牌页面加载超时，已取消潜力值页面接入。");
+                Close();
+            }
+            return;
+        }
+        if (inventory == null || snapshot == null) { if (IsOpen) Close(); return; }
+        if (data != null) snapshot = data;
+        if (!IsOpen)
+        {
             var root = new GameObject("InFalsus.PotentialSystem.BrowserInput");
             try
             {
-                root.layer = owner.gameObject.layer;
-                root.transform.SetParent(owner.transform, false);
+                root.layer = inventory.gameObject.layer;
+                root.transform.SetParent(inventory.transform, false);
                 receiver = root.AddComponent<PotentialInputReceiver>();
                 receiver.Bind(this);
                 covers = new CoverCache();
@@ -88,7 +113,7 @@ internal sealed class PotentialBrowser : IDisposable
                 focused = false;
                 filteredSnapshot = null;
                 status = "";
-                view = new NativePotentialPage(owner, receiver, this);
+                view = new NativePotentialPage(inventory, receiver, this);
                 InputManager.Instance.TakeInputControl(receiver);
                 InputManager.Instance.RequestLastMouseMoveReplay();
             }
@@ -188,6 +213,7 @@ internal sealed class PotentialBrowser : IDisposable
     /// <summary>切换页签保留筛选与列表偏移，昵称结束编辑时写入配置。</summary>
     internal void ChangeTab(PotentialTab tab) { FinishEdit(); Tab = tab; view?.Invalidate(); }
     internal void RequestClose() { FinishEdit(); closeRequested = true; }
+    internal void RequestHome() { FinishEdit(); returnToHub = true; closeRequested = true; }
     internal void FocusSearch() { FinishEdit(); editName = false; focused = true; caret = anchor = search.Length; }
     internal void FocusName() { FinishEdit(); editName = true; nameDraft = Settings.ProfileName; focused = true; caret = anchor = nameDraft.Length; }
     /// <summary>昵称只在编辑结束时保存，避免每次按键写配置。</summary>
@@ -320,6 +346,14 @@ internal sealed class PotentialBrowser : IDisposable
     /// <summary>同步注销本页控件，然后归还输入；关闭不改原生成绩和剪贴板。</summary>
     internal void Close()
     {
+        var returningFrom = inventory;
+        bool home = returnToHub;
+        returnToHub = false;
+        inventory = null;
+        loading = false;
+        loaded = null;
+        if (Portraits != null) Object.Destroy(Portraits);
+        Portraits = null;
         requestedFrame = -1;
         closeRequested = false;
         focused = false;
@@ -349,8 +383,30 @@ internal sealed class PotentialBrowser : IDisposable
                     finally { if (current != null) Object.Destroy(current.gameObject); }
                 }
             }
-            finally { resources?.Dispose(); }
+            finally
+            {
+                resources?.Dispose();
+                if (returningFrom != null && CoreScene._c != null)
+                {
+                    if (home) CoreScene._c._Bj<RecipeScene, HubScene>(_d._AB._nl);
+                    else CoreScene._c._Bj<RecipeScene, SongSelectScene>(_d._AB._nl);
+                }
+            }
         }
+    }
+
+    /// <summary>只接入本次入口请求加载的原生页面；普通卡牌页不受影响。</summary>
+    private void RecipeReady(RecipeScene scene)
+    {
+        if (!loading)
+        {
+            if (scene != null && CoreScene._c != null)
+                CoreScene._c._Bj<RecipeScene, SongSelectScene>(_d._AB._nl);
+            return;
+        }
+        inventory = scene;
+        loading = false;
+        owner = null;
     }
 
     public void Dispose() => Close();

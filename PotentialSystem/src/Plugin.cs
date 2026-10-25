@@ -17,13 +17,13 @@ public sealed class Plugin : BasePlugin
     internal static ManualLogSource Logger { get; private set; } = null!;
     /// <summary>当前插件持有的唯一主线程控制器。</summary>
     internal static PotentialController? Controller { get; private set; }
-    /// <summary>本模组的社区定数配置及原生设置视图。</summary>
+    /// <summary>本 profile 的定数与个性化配置。</summary>
     internal static PotentialSettings? Settings { get; private set; }
     /// <summary>本 profile 的安小璃缓存与一次后台更新。</summary>
     internal static AnXiaoLiConstants? AnXiaoLi { get; private set; }
     /// <summary>本 profile 的萌泪酱 v6 内置表、冻结模型与后台计算。</summary>
     internal static MengLeiConstants? MengLei { get; private set; }
-    /// <summary>仅拦截本模组的场景观察、设置接入与选歌排序通知。</summary>
+    /// <summary>观察原生场景完成初始化与选歌排序通知。</summary>
     private Harmony? harmony;
 
     /// <inheritdoc />
@@ -45,7 +45,6 @@ public sealed class Plugin : BasePlugin
         catch
         {
             harmony?.UnpatchSelf();
-            Settings?.Dispose();
             Settings = null;
             AnXiaoLi?.Dispose();
             AnXiaoLi = null;
@@ -64,7 +63,6 @@ public sealed class Plugin : BasePlugin
     {
         harmony?.UnpatchSelf();
         harmony = null;
-        Settings?.Dispose();
         Settings = null;
         AnXiaoLi?.Dispose();
         AnXiaoLi = null;
