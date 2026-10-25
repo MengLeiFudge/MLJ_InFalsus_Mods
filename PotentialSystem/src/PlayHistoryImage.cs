@@ -65,6 +65,41 @@ internal static class PlayHistoryImage
         return image.ToPixels();
     }
 
+    /// <summary>选歌页面的透明趋势图；复用逐局曲线，黑白两次绘制仅用于恢复 GDI 抗锯齿透明度。</summary>
+    internal static PixelImage Selection(PotentialSnapshot snapshot, ChartKey key, IReadOnlyList<ChartPlay> history, string error)
+    {
+        if (!snapshot.Catalog.TryGet(key, out var chart)) throw new ArgumentException("选中谱面不在当前曲库中。", nameof(key));
+        var play = snapshot.Find(key);
+        using var black = new WindowsBitmap(860, 430);
+        using var white = new WindowsBitmap(860, 430);
+        black.Fill(0, 0, 860, 430, 0);
+        white.Fill(0, 0, 860, 430, 0xffffff);
+        Draw(black);
+        Draw(white);
+        return black.ToPixels(white);
+
+        void Draw(WindowsBitmap image)
+        {
+            image.Text($"{PotentialPresentation.Difficulty(key.Difficulty)} · 定数 {PotentialCalculator.FormatConstant(chart.Constant)}",
+                10, 4, 490, 38, 28, Foreground, true);
+            image.Text($"{history.Count} 次游玩", 580, 4, 270, 38, 26, Foreground, right: true);
+            string ptt = play?.Potential is decimal value ? $"PTT {PotentialCalculator.Format(value)}  #{play.Rank}" : "尚未游玩";
+            image.Text(ptt, 10, 48, 490, 46, 34, Accent, true);
+            image.Text($"定数来源：{CommunityConstants.DisplayName(snapshot.Catalog.Source)}", 510, 48, 340, 46, 23, Foreground, right: true);
+            if (history.Count == 0)
+            {
+                image.Text(string.IsNullOrEmpty(error) ? "没有可读取的逐局记录" : error, 10, 180, 820, 60, 30, Foreground);
+                return;
+            }
+            image.Text($"最高 {PotentialPresentation.Score(history.Max(p => p.Score))}", 10, 104, 450, 40, 27, Foreground, true);
+            image.Text($"最近 {PotentialPresentation.Score(history[^1].Score)}", 450, 104, 400, 40, 27, Foreground, right: true);
+            DrawCurve(image, history, (100, 175, 740, 175), history.Count - 1);
+            image.Text("1", 95, 358, 80, 30, 22, Foreground);
+            image.Text(history.Count.ToString(), 750, 358, 90, 30, 22, Foreground, right: true);
+            image.Text(Time(history[^1]), 380, 397, 460, 30, 23, Foreground, right: true);
+        }
+    }
+
     /// <summary>复用标题、难度和定数含义，缺失谱面定义时不猜测。</summary>
     private static void Header(WindowsBitmap image, RankedPlay play, int width)
     {

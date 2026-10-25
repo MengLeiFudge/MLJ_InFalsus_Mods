@@ -16,13 +16,15 @@ internal sealed class PotentialBadges : IDisposable
 {
     /// <summary>八档潜力值徽章的下界；13、13.5、14 分别对应 Arcaea 的一星、二星、三星。</summary>
     private static readonly decimal[] thresholds = { 0m, 4m, 8m, 11m, 12m, 13m, 13.5m, 14m };
-    /// <summary>徽章像素与按需创建的纹理；8 为不可用状态，9、10 为角色边框和深色底。</summary>
-    private readonly PixelImage?[] pixels = new PixelImage[11];
-    private readonly Texture2D?[] textures = new Texture2D[11];
-    /// <summary>APK 中的白色角色菱形框，与头像独立布局；上角按游戏边界裁切。</summary>
+    /// <summary>徽章像素与按需创建的纹理；8 为不可用状态，9、10 为角色边框和深色底，11～14 为四种原版名片横幅。</summary>
+    private readonly PixelImage?[] pixels = new PixelImage[15];
+    private readonly Texture2D?[] textures = new Texture2D[15];
+    /// <summary>APK 中正常状态的角色菱形框，与头像独立布局；上角按游戏边界裁切。</summary>
     internal Texture2D AvatarFrame => Texture(9);
     /// <summary>与边框轮廓一致的深色菱形底，保证角色头像不透出曲绘。</summary>
     internal Texture2D AvatarBacking => Texture(10);
+    /// <summary>APK 自带的阶梯名片横幅，保留斜切轮廓、细边和纹理。</summary>
+    internal Texture2D Namecard(int color) => Texture(11 + color);
 
     /// <summary>按潜力值选择固定档位，选歌、结算、成绩浏览和 B50 导出共用。</summary>
     /// <param name="potential">当前显示或导出快照的账号潜力值。</param>
@@ -43,7 +45,7 @@ internal sealed class PotentialBadges : IDisposable
             return pixels[tier]!;
         string file = tier switch
         {
-            8 => "rating_off.png", 9 => "avatar_frame.png", 10 => "avatar_backing.png", _ => $"rating_{tier}.png"
+            8 => "rating_off.png", 9 => "avatar_frame.png", 10 => "avatar_backing.png", >= 11 => $"namecard_{tier - 11}.png", _ => $"rating_{tier}.png"
         };
         using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("PotentialSystem.Badges." + file)
             ?? throw new InvalidDataException($"缺少潜力值徽章：{file}。");

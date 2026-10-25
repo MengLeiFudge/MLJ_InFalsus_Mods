@@ -142,7 +142,8 @@ internal sealed class NativePotentialPage : IDisposable
         inventory.sortButton.gameObject.SetActive(false);
         inventory.scrollBarButton.gameObject.SetActive(false);
         scene.guidanceButton.gameObject.SetActive(false);
-        scene.topBar.guideButton.gameObject.SetActive(false);
+        // 卡牌场景的 TopBar 未配置帮助按钮；该引用在原版资源中允许为空。
+        if (scene.topBar.guideButton != null) scene.topBar.guideButton.gameObject.SetActive(false);
         foreach (var input in scene.GetComponentsInChildren<InputReceiver>(true))
             if (input.Pointer != receiver.Pointer)
             {
@@ -155,7 +156,8 @@ internal sealed class NativePotentialPage : IDisposable
     private void ReadNativeBounds()
     {
         var native = scene.cardInventoryLayer;
-        originalGrid = BoundsWhenVisible(native.gridScrollView.self);
+        // 手动卡牌列表未序列化 self；布局组件实际挂在 GridContainer 上。
+        originalGrid = BoundsWhenVisible(native.gridScrollView.GetComponent<Constrained2D>());
         var detail = native.inventorySelectedContainer;
         var detailLayout = detail.GetComponent<Constrained2D>() ?? detail.activeContainer.GetComponentInParent<Constrained2D>();
         rightColumn = BoundsWhenVisible(detailLayout);

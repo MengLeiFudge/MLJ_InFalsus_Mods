@@ -159,22 +159,34 @@ internal sealed class WindowsBitmap : IDisposable
             new BlendFunction { SourceConstantAlpha = 255, AlphaFormat = 1 }), "合成分享图素材");
     }
 
-    /// <summary>将 GDI 顶向下 BGRA 转为 Unity 底向上 RGBA；GDI 不维护的 Alpha 设为不透明。</summary>
-    internal PixelImage ToPixels()
+    /// <summary>将 GDI 位图转为底向上 RGBA；提供同内容的白底画布时，从黑白两次绘制恢复透明度及抗锯齿边缘。</summary>
+    /// <param name="whiteMatte">同尺寸白底副本；当前画布必须为黑底。为空时输出不透明图像。</param>
+    internal PixelImage ToPixels(WindowsBitmap? whiteMatte = null)
     {
         Check(GdiFlush(), "完成图像绘制");
         var bgra = new byte[checked(Width * Height * 4)];
         Marshal.Copy(bits, bgra, 0, bgra.Length);
+        byte[]? matte = null;
+        if (whiteMatte != null)
+        {
+            if (whiteMatte.Width != Width || whiteMatte.Height != Height)
+                throw new ArgumentException("透明图像的黑白画布尺寸不一致。", nameof(whiteMatte));
+            matte = new byte[bgra.Length];
+            Marshal.Copy(whiteMatte.bits, matte, 0, matte.Length);
+        }
         var rgba = new byte[bgra.Length];
         for (int y = 0; y < Height; y++)
             for (int x = 0; x < Width; x++)
             {
                 int source = (y * Width + x) * 4;
                 int target = ((Height - 1 - y) * Width + x) * 4;
-                rgba[target] = bgra[source + 2];
-                rgba[target + 1] = bgra[source + 1];
-                rgba[target + 2] = bgra[source];
-                rgba[target + 3] = 255;
+                int alpha = matte == null ? 255 : Math.Clamp(255 - Math.Max(matte[source] - bgra[source],
+                    Math.Max(matte[source + 1] - bgra[source + 1], matte[source + 2] - bgra[source + 2])), 0, 255);
+                if (alpha == 0) continue;
+                rgba[target] = (byte)Math.Min(255, (bgra[source + 2] * 255 + alpha / 2) / alpha);
+                rgba[target + 1] = (byte)Math.Min(255, (bgra[source + 1] * 255 + alpha / 2) / alpha);
+                rgba[target + 2] = (byte)Math.Min(255, (bgra[source] * 255 + alpha / 2) / alpha);
+                rgba[target + 3] = (byte)alpha;
             }
         return new PixelImage(Width, Height, rgba);
     }
