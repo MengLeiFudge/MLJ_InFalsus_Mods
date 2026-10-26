@@ -144,7 +144,7 @@ internal sealed class PotentialView : IDisposable
                     mainTexture = badges.AvatarFrame, mainTextureScale = Vector2.one, mainTextureOffset = Vector2.zero
                 };
                 CropAtGameTop(frame, frameMaterial, FrameSize);
-                rating = new PotentialRatingText(template, graphicsParent);
+                rating = new PotentialRatingText(graphicTemplate, graphicsParent);
                 labels.Add(new NativeLabel(template, parent, "Status", anchor, alignment,
                     center + new Vector2(0f, -EntryHeight / 2f - 25f), 2.4f));
                 namecard = CloneGraphic(graphicTemplate, graphicsParent, "Namecard");
@@ -305,7 +305,11 @@ internal sealed class PotentialView : IDisposable
                 new Vector2(NamecardWidth / 564f, 1f), Vector2.zero);
             displayedNamecardColor = color;
         }
-        if (namecardText.Set(name, Color.white)) nameLaidOut = false;
+        if (namecardText.Set(name, Color.white))
+        {
+            PotentialFonts.ApplyName(namecardText.Text, name);
+            nameLaidOut = false;
+        }
         if (nameLaidOut) return;
         var bounds = namecardText.Measure(1f);
         if (bounds.width <= 0f || bounds.height <= 0f) return;
