@@ -149,6 +149,19 @@ internal sealed class PotentialSelection : IDisposable
         bool inputChanged = entryEnabled != enabled;
         bool hitAreaChanged = false;
         _m._wi._ERA(false);
+        // 账号图形与命中区域一起放在原生顶部栏前方；只改深度，不改变屏幕位置或原生黑条。
+        var accountRoot = account!.Entry;
+        var topBar = scene.topBar.GetComponent<Constrained2D>();
+        float shift = BrowserWidgets.ReadLayout(topBar).CalculatedZFromCamera - 0.2f
+            - BrowserWidgets.ReadLayout(accountRoot).CalculatedZFromCamera;
+        if (shift < 0f)
+        {
+            var layout = accountRoot.constrained2DTransform;
+            layout.zPosition += shift;
+            accountRoot.constrained2DTransform = layout;
+            accountRoot._PQA(0x3f);
+            _m._wi._ERA(false);
+        }
         foreach (var entry in entries)
         {
             if (inputChanged) NativeButtons.SetState(entry, enabled);

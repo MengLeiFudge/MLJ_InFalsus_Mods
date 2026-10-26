@@ -61,12 +61,12 @@ internal sealed class PotentialBadges : IDisposable
         return pixels[tier] = tier == 15 ? DrawSettings(image) : image;
     }
 
-    /// <summary>将 TopBar 的 98×51 按三倍设计单位绘制；文字为 16 字号、2 宽深色描边。</summary>
+    /// <summary>将 TopBar 的 98×51 按三倍设计单位绘制；L2-Semibold 按 APK 简中映射使用 NotoSC Bold，16 字号、2 宽深色描边。</summary>
     private PixelImage DrawSettings(PixelImage background)
     {
         using var black = new WindowsBitmap(294, 153);
         using var white = new WindowsBitmap(294, 153);
-        using var font = new BitmapFont("NotoSansCJKsc-Regular.otf", "Noto Sans CJK SC Regular", 48);
+        using var font = new BitmapFont("NotoSansCJKsc-Bold.otf", "Noto Sans CJK SC Bold", 48, 700);
         var size = black.Measure("设定", font);
         black.Fill(0, 0, 294, 153, 0);
         white.Fill(0, 0, 294, 153, 0xffffff);

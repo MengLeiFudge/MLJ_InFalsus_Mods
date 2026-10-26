@@ -169,6 +169,14 @@ internal sealed class WindowsBitmap : IDisposable
             Check(TextOutW(dc, x, y, text, text.Length), "生成名片文字轮廓");
             Check(EndPath(dc), "完成名片文字轮廓");
             Check(StrokeAndFillPath(dc), "绘制名片文字");
+            if (stroke.HasValue && stroke.Value != rgb)
+            {
+                // GDI 描边居中覆盖轮廓；重新填字保留完整正文，描边只露出字形外侧。
+                Check(BeginPath(dc), "开始正文轮廓");
+                Check(TextOutW(dc, x, y, text, text.Length), "生成正文轮廓");
+                Check(EndPath(dc), "完成正文轮廓");
+                Check(FillPath(dc), "填充正文颜色");
+            }
         }
         finally
         {
@@ -186,6 +194,7 @@ internal sealed class WindowsBitmap : IDisposable
     [DllImport("gdi32.dll", SetLastError = true)] [return: MarshalAs(UnmanagedType.Bool)] private static extern bool BeginPath(IntPtr dc);
     [DllImport("gdi32.dll", SetLastError = true)] [return: MarshalAs(UnmanagedType.Bool)] private static extern bool EndPath(IntPtr dc);
     [DllImport("gdi32.dll", SetLastError = true)] [return: MarshalAs(UnmanagedType.Bool)] private static extern bool StrokeAndFillPath(IntPtr dc);
+    [DllImport("gdi32.dll", SetLastError = true)] [return: MarshalAs(UnmanagedType.Bool)] private static extern bool FillPath(IntPtr dc);
     [DllImport("gdi32.dll", CharSet = CharSet.Unicode, SetLastError = true)] [return: MarshalAs(UnmanagedType.Bool)] private static extern bool TextOutW(IntPtr dc, int x, int y, string text, int length);
 
     /// <summary>透明图像转成预乘 BGRA 后合成，保留 Arcaea 徽章的透明边缘。</summary>

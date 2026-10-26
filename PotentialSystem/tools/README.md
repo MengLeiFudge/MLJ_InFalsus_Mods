@@ -39,3 +39,7 @@
 函数 `0x854078` 将横幅顶端裁去 4，保留 70 高，中心放在头像上方 7.5；没有课程数字装饰时，昵称右端距头像中心 85。以昵称前进宽度为 W，横幅宽度为 `clamp(250+W,404,514)`，从原图右侧裁切。昵称 y=64.8811035，头像 y=60。各阶梯横幅的图案不同，点阵数量不能用来推断共同的裁切高度。
 
 设定按钮来自 `TopBar.csb`：按钮中心 x=762.9059、顶部 y=301，锚点 `(0.5,1)`，尺寸 98×51；齿轮中心 `(761.6654,272)`、31×31、透明度 99；文字中心 `(762.8451,270.9554)`、字号 16、描边 2、描边色 `#402D3F`。TopBar 的顶部基准 y=300，布局按三倍设计单位换算。`settings_button.png` 和 `settings_icon.png` 分别保留 APK 的 `assets/layouts/1080/topbar/top_button_settings.png`、`assets/layouts/topbar/settings.png` 原件；`PotentialBadges.DrawSettings` 按这些数据合成中文按钮。
+
+“设定”的字体由 `0x1790da4` 识别 `Fonts/L2-Semibold.ttf` 后，以类型 2 调用 `0x1809ddc`；`zh-Hans` 分支选择 `Fonts/NotoSansCJKsc-Bold.otf`（全局指针 `0x1bccd58` 的重定位目标为 `0x5555ad`）。嵌入字体与 APK 原件逐字节相同，SHA256 为 `f32e8651b534178dfd21cbc3fac22861883c2105a8cb39a4f305170b715fe503`。GDI 使用字体族 `Noto Sans CJK SC Bold`、字重 700；先描边，再填充完整白色正文，避免居中描边盖住笔画。
+
+`PotentialSelection.Render` 按原生 `TopBar` 的 `CalculatedZFromCamera` 将账号容器放在其前方 0.2 深度单位，头像、名片、PTT、设定及命中区域随容器同步。它只调整绘制深度，保持账号的二维布局与原生顶部栏不变。
