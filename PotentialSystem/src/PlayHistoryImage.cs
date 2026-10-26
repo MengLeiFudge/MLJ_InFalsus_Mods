@@ -65,15 +65,16 @@ internal static class PlayHistoryImage
         return image.ToPixels();
     }
 
-    /// <summary>选歌页面的透明趋势图；复用逐局曲线，黑白两次绘制仅用于恢复 GDI 抗锯齿透明度。</summary>
+    /// <summary>选歌页面仅显示最近十场；透明绘制，无时间和定数来源，不影响详情页的完整历史。</summary>
     internal static PixelImage Selection(PotentialSnapshot snapshot, ChartKey key, IReadOnlyList<ChartPlay> history, string error)
     {
         if (!snapshot.Catalog.TryGet(key, out var chart)) throw new ArgumentException("选中谱面不在当前曲库中。", nameof(key));
         var play = snapshot.Find(key);
-        using var black = new WindowsBitmap(860, 430);
-        using var white = new WindowsBitmap(860, 430);
-        black.Fill(0, 0, 860, 430, 0);
-        white.Fill(0, 0, 860, 430, 0xffffff);
+        var recent = history.TakeLast(10).ToArray();
+        using var black = new WindowsBitmap(980, 520);
+        using var white = new WindowsBitmap(980, 520);
+        black.Fill(0, 0, 980, 520, 0);
+        white.Fill(0, 0, 980, 520, 0xffffff);
         Draw(black);
         Draw(white);
         return black.ToPixels(white);
@@ -81,22 +82,25 @@ internal static class PlayHistoryImage
         void Draw(WindowsBitmap image)
         {
             image.Text($"{PotentialPresentation.Difficulty(key.Difficulty)} · 定数 {PotentialCalculator.FormatConstant(chart.Constant)}",
-                10, 4, 490, 38, 28, Foreground, true);
-            image.Text($"{history.Count} 次游玩", 580, 4, 270, 38, 26, Foreground, right: true);
+                12, 6, 620, 52, 38, Foreground, true);
+            image.Text($"最近 {recent.Length} 场", 660, 6, 300, 52, 34, Foreground, right: true);
             string ptt = play?.Potential is decimal value ? $"PTT {PotentialCalculator.Format(value)}  #{play.Rank}" : "尚未游玩";
-            image.Text(ptt, 10, 48, 490, 46, 34, Accent, true);
-            image.Text($"定数来源：{CommunityConstants.DisplayName(snapshot.Catalog.Source)}", 510, 48, 340, 46, 23, Foreground, right: true);
-            if (history.Count == 0)
+            image.Text(ptt, 12, 65, 948, 62, 46, Accent, true);
+            if (recent.Length == 0)
             {
-                image.Text(string.IsNullOrEmpty(error) ? "没有可读取的逐局记录" : error, 10, 180, 820, 60, 30, Foreground);
+                image.Text(string.IsNullOrEmpty(error) ? "没有可读取的逐局记录" : error, 12, 220, 948, 65, 38, Foreground);
                 return;
             }
-            image.Text($"最高 {PotentialPresentation.Score(history.Max(p => p.Score))}", 10, 104, 450, 40, 27, Foreground, true);
-            image.Text($"最近 {PotentialPresentation.Score(history[^1].Score)}", 450, 104, 400, 40, 27, Foreground, right: true);
-            DrawCurve(image, history, (100, 175, 740, 175), history.Count - 1);
-            image.Text("1", 95, 358, 80, 30, 22, Foreground);
-            image.Text(history.Count.ToString(), 750, 358, 90, 30, 22, Foreground, right: true);
-            image.Text(Time(history[^1]), 380, 397, 460, 30, 23, Foreground, right: true);
+            image.Text($"近期最高 {PotentialPresentation.Score(recent.Max(p => p.Score))}", 12, 138, 500, 50, 32, Foreground, true);
+            image.Text($"最近 {PotentialPresentation.Score(recent[^1].Score)}", 520, 138, 440, 50, 32, Foreground, right: true);
+            DrawCurve(image, recent, (145, 230, 810, 220), recent.Length - 1, 26);
+            if (recent.Length == 1)
+                image.Text("1", 535, 470, 60, 38, 28, Foreground);
+            else
+            {
+                image.Text("1", 140, 470, 80, 38, 28, Foreground);
+                image.Text(recent.Length.ToString(), 865, 470, 90, 38, 28, Foreground, right: true);
+            }
         }
     }
 
@@ -110,7 +114,7 @@ internal static class PlayHistoryImage
 
     /// <summary>曲线按每局分数绘制，纵轴包含全部数据并留边；基准线仅在量程内显示。</summary>
     private static void DrawCurve(WindowsBitmap image, IReadOnlyList<ChartPlay> history,
-        (int X, int Y, int Width, int Height) box, int selected)
+        (int X, int Y, int Width, int Height) box, int selected, int axisFont = 17)
     {
         double min = history.Min(p => (double)p.Score), max = history.Max(p => (double)p.Score);
         double pad = Math.Max(100000d, (max - min) * 0.1d);
@@ -122,7 +126,8 @@ internal static class PlayHistoryImage
             double score = min + (max - min) * i / 3;
             int y = Y(score);
             image.Fill(box.X, y, box.Width, 1, 0x2a424e);
-            if (full) image.Text((score / 1000000d).ToString("F2") + "M", 8, y - 14, 85, 28, 17, Muted, right: true);
+            if (full) image.Text((score / 1000000d).ToString("F2") + "M", 8, y - (axisFont + 11) / 2,
+                box.X - 15, axisFont + 11, axisFont, Muted, right: true);
         }
         if (full)
             foreach (var (score, label) in new[] { (98000000d, "EX"), (99500000d, "EX+") })
@@ -130,7 +135,9 @@ internal static class PlayHistoryImage
                 {
                     int y = Y(score);
                     for (int x = box.X; x < box.X + box.Width; x += 16) image.Fill(x, y, Math.Min(7, box.X + box.Width - x), 1, 0x617d88);
-                    image.Text(label, box.X + box.Width - 60, y - 30, 58, 27, 18, Accent, right: true);
+                    int labelWidth = 60 + (axisFont - 17) * 4;
+                    image.Text(label, box.X + box.Width - labelWidth, y - axisFont - 13,
+                        labelWidth - 2, axisFont + 10, axisFont + 1, Accent, right: true);
                 }
         var points = history.Select((p, i) => (X: box.X + (history.Count == 1 ? box.Width / 2 : (int)Math.Round(i * (double)box.Width / (history.Count - 1))), Y: Y(p.Score))).ToArray();
         image.Stroke(points, Accent, full ? 3 : 2);

@@ -19,7 +19,7 @@ internal sealed class SelectedChartInfo : IDisposable
     private ChartKey selected;
     private int historyCount = -1;
     private Str.Strings.Localization language;
-    private const float Width = 900f, Height = 450f;
+    private const float Width = 980f, Height = 520f;
 
     internal SelectedChartInfo(SongSelectScene scene)
     {
@@ -29,8 +29,8 @@ internal sealed class SelectedChartInfo : IDisposable
                 scene.scene.transform, "SelectedChart.History");
             var layout = root.constrained2DTransform;
             layout.parentAlignment = Constrained2DAlignment.BottomLeft;
-            // 底边沿用原成绩区的 220，避免压住返回按钮；左侧保留 100 的导航边距。
-            layout.offset = new Vector2(100f + Width / 2f, 220f + Height / 2f);
+            // 底边保持 220，避开返回按钮；向上及左侧展开，右边界保持原位。
+            layout.offset = new Vector2(20f + Width / 2f, 220f + Height / 2f);
             layout.sizeInPixels = new Vector2(Width, Height);
             layout.zPosition = -0.2f;
             layout.overrideMaterialRenderQueueOffset = 12;
