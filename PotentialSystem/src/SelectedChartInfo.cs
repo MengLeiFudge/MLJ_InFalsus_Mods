@@ -19,7 +19,7 @@ internal sealed class SelectedChartInfo : IDisposable
     private ChartKey selected;
     private int historyCount = -1;
     private Str.Strings.Localization language;
-    private const float Width = 650f, Height = 325f;
+    private const float Width = 900f, Height = 450f;
 
     internal SelectedChartInfo(SongSelectScene scene)
     {

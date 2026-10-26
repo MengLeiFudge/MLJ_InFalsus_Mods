@@ -78,7 +78,8 @@ internal sealed class BrowserWidgets : IDisposable
     {
         var root = new GameObject("InFalsus.PotentialSystem." + name);
         root.SetActive(false);
-        root.layer = scene.backButton.gameObject.layer;
+        // RecipeScene 的 backButton 未配置；输入层与按键音取实际 TopBar 导航按钮。
+        root.layer = scene.topBar.primaryNavigationButton.gameObject.layer;
         root.transform.SetParent(parent, false);
         try
         {
@@ -184,8 +185,8 @@ internal sealed class BrowserWidgets : IDisposable
         buttons.Add(button);
         button.constrained2D = constrained;
         button.ButtonCollider = constrained.GetComponent<BoxCollider>();
-        button.button = scene.backButton.button;
-        button.sfxSetType = scene.backButton.sfxSetType;
+        button.button = scene.topBar.primaryNavigationButton.button;
+        button.sfxSetType = scene.topBar.primaryNavigationButton.sfxSetType;
         button.flags = UIButton.Flags.DoesConsumeTouchOnPress | UIButton.Flags.CanCauseCursorHover;
         UIButton._EI click = (Action<UIButton>)(_ => clicked());
         callbacks.Add(click);

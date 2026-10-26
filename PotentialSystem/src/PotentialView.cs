@@ -160,9 +160,7 @@ internal sealed class PotentialView : IDisposable
                 BrowserWidgets.Place(namecard, NamecardCenter, new Vector2(407f, 407f * 74f / 564f) * UserScale);
                 namecardText = new NativeLabel(template, graphicsParent, "Namecard.Name", anchor,
                     Constrained2DAlignment.Center, NameCenter, 1f);
-                namecardText.Text.SetStrokeEnable(true, Text.UpdateType.DontUpdateMesh);
-                namecardText.Text.SetStrokeColor(new Color(0.08f, 0.06f, 0.12f), Text.UpdateType.DontUpdateMesh);
-                namecardText.Text.SetStrokeSize(0.06f, Text.UpdateType.DontUpdateMesh);
+                namecardText.SetOutline(new Color(0.08f, 0.06f, 0.12f), 0.06f);
             }
         }
         catch { Dispose(); throw; }
@@ -308,10 +306,10 @@ internal sealed class PotentialView : IDisposable
         }
         if (namecardText.Set(name, Color.white)) nameLaidOut = false;
         if (nameLaidOut) return;
-        NativePotentialPage.PlaceLabel(namecardText, NameCenter, NameWidth, 1f);
-        float height = namecardText.Text.GetComponent<Constrained2D>()._mrA().y;
-        if (height <= 0f) return;
-        NativePotentialPage.PlaceLabel(namecardText, NameCenter, NameWidth, 45f * UserScale / height, 1f);
+        var bounds = namecardText.Measure(1f);
+        if (bounds.width <= 0f || bounds.height <= 0f) return;
+        float scale = Math.Min(NameWidth / bounds.width, 45f * UserScale / bounds.height);
+        namecardText.PlaceBounds(NameCenter + new Vector2(NameWidth / 2f, 0f), new Vector2(1f, 0.5f), scale);
         nameLaidOut = true;
     }
 

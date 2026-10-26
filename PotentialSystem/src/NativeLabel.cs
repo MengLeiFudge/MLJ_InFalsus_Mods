@@ -84,6 +84,47 @@ internal sealed class NativeLabel : IDisposable
         language = current;
         return true;
     }
+    /// <summary>描边开关和颜色由原生布局回写；同时配置布局属性，避免下次刷新清除描边。</summary>
+    internal void SetOutline(Color tint, float size)
+    {
+        var constrained = Text.GetComponent<Constrained2D>();
+        var layout = constrained.constrained2DTransform;
+        var extra = layout.typeSpecificExtraScale;
+        extra.y = 1f;
+        layout.typeSpecificExtraScale = extra;
+        layout.typeSpecificTilingRepeatValue = new Vector4(tint.r, tint.g, tint.b, tint.a);
+        constrained.constrained2DTransform = layout;
+        Text.SetStrokeEnable(true, Text.UpdateType.DontUpdateMesh);
+        Text.SetStrokeColor(tint, Text.UpdateType.DontUpdateMesh);
+        Text.SetStrokeSize(size, Text.UpdateType.DontUpdateMesh);
+        constrained._PQA(0x3f);
+    }
+
+    /// <summary>单行文字在布局坐标中的完整边界，保留字形中心相对文字原点的偏移。</summary>
+    /// <param name="fontSize">FastText 字号。</param>
+    /// <returns>相对文字原点的边界；字形未就绪时为空。</returns>
+    internal Rect Measure(float fontSize)
+    {
+        Text.presention = (Text.presention & ~Text.FastTextPresentation.AutoLineBreak) | Text.FastTextPresentation.IgnoreLinebreak;
+        Text.SetFontSize(fontSize, Text.UpdateType.DontUpdateMesh);
+        Text.EnsureDirtyFlagsProcessed();
+        var size = Text.GetComponent<Constrained2D>()._mrA();
+        var bounds = Text.Bounds;
+        if (bounds.size.x <= 0f || bounds.size.y <= 0f) return default;
+        return new Rect(bounds.min.x * size.x / bounds.size.x, bounds.min.y * size.y / bounds.size.y, size.x, size.y);
+    }
+
+    /// <summary>将完整文字边界中的指定位置对齐到布局坐标，不将文字原点误当成字形中心。</summary>
+    /// <param name="position">相对原生 parentAlignment 的目标坐标。</param>
+    /// <param name="pivot">边界内的归一化位置；(0.5,0.5) 为中心，(0,0) 为左下。</param>
+    /// <param name="fontSize">FastText 字号。</param>
+    internal void PlaceBounds(Vector2 position, Vector2 pivot, float fontSize)
+    {
+        var bounds = Measure(fontSize);
+        var constrained = Text.GetComponent<Constrained2D>();
+        var origin = position - bounds.position - Vector2.Scale(bounds.size, pivot);
+        BrowserWidgets.Place(constrained, origin, constrained.constrained2DTransform.sizeInPixels);
+    }
 
     /// <summary>仅销毁本对象的文字副本。</summary>
     public void Dispose()
