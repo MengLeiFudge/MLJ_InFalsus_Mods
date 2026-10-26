@@ -65,12 +65,18 @@ internal static class PlayHistoryImage
         return image.ToPixels();
     }
 
-    /// <summary>选歌页面仅显示最近十场；透明绘制，无时间和定数来源，不影响详情页的完整历史。</summary>
+    /// <summary>选歌透明图展示历史最佳与近期记录，判定明细只来自最近一局。</summary>
     internal static PixelImage Selection(PotentialSnapshot snapshot, ChartKey key, IReadOnlyList<ChartPlay> history, string error)
     {
         if (!snapshot.Catalog.TryGet(key, out var chart)) throw new ArgumentException("选中谱面不在当前曲库中。", nameof(key));
         var play = snapshot.Find(key);
-        var recent = history.TakeLast(10).ToArray();
+        // 同分取最近一次最佳，避免最近十场已有同分纪录时再插入旧纪录。
+        int best = 0;
+        for (int i = 1; i < history.Count; i++) if (history[i].Score >= history[best].Score) best = i;
+        int start = Math.Max(0, history.Count - 10);
+        bool includeBest = best < start;
+        var recent = includeBest ? new[] { history[best] }.Concat(history.TakeLast(9)).ToArray() : history.Skip(start).ToArray();
+        int bestPoint = includeBest ? 0 : best - start;
         using var black = new WindowsBitmap(980, 520);
         using var white = new WindowsBitmap(980, 520);
         black.Fill(0, 0, 980, 520, 0);
@@ -82,25 +88,21 @@ internal static class PlayHistoryImage
         void Draw(WindowsBitmap image)
         {
             image.Text($"{PotentialPresentation.Difficulty(key.Difficulty)} · 定数 {PotentialCalculator.FormatConstant(chart.Constant)}",
-                12, 6, 620, 52, 38, Foreground, true);
-            image.Text($"最近 {recent.Length} 场", 660, 6, 300, 52, 34, Foreground, right: true);
+                12, 6, 490, 52, 36, Foreground, true);
             string ptt = play?.Potential is decimal value ? $"PTT {PotentialCalculator.Format(value)}  #{play.Rank}" : "尚未游玩";
-            image.Text(ptt, 12, 65, 948, 62, 46, Accent, true);
+            image.Text(ptt, 12, 65, 490, 62, 46, Accent, true);
             if (recent.Length == 0)
             {
                 image.Text(string.IsNullOrEmpty(error) ? "没有可读取的逐局记录" : error, 12, 220, 948, 65, 38, Foreground);
                 return;
             }
-            image.Text($"近期最高 {PotentialPresentation.Score(recent.Max(p => p.Score))}", 12, 138, 500, 50, 32, Foreground, true);
-            image.Text($"最近 {PotentialPresentation.Score(recent[^1].Score)}", 520, 138, 440, 50, 32, Foreground, right: true);
-            DrawCurve(image, recent, (145, 230, 810, 220), recent.Length - 1, 26);
-            if (recent.Length == 1)
-                image.Text("1", 535, 470, 60, 38, 28, Foreground);
-            else
-            {
-                image.Text("1", 140, 470, 80, 38, 28, Foreground);
-                image.Text(recent.Length.ToString(), 865, 470, 90, 38, 28, Foreground, right: true);
-            }
+            var latest = history[^1];
+            image.Text($"历史最高 {PotentialPresentation.Score(history[best].Score)}", 12, 138, 500, 50, 32, Foreground, true);
+            image.Text($"最近 {PotentialPresentation.Score(latest.Score)}", 520, 6, 440, 52, 34, Foreground, right: true);
+            image.Text($"EXACT+ {latest.ExactPlus:N0}   EXACT {latest.Exact:N0}", 515, 65, 445, 38, 26, Foreground, right: true);
+            image.Text($"NEAR {latest.Near:N0}   MISS {latest.Miss:N0}", 515, 105, 445, 38, 26, Foreground, right: true);
+            image.Text($"最大连击 {latest.Combo:N0}", 520, 145, 440, 38, 26, Foreground, right: true);
+            DrawCurve(image, recent, (145, 230, 810, 220), recent.Length - 1, 26, bestPoint);
         }
     }
 
@@ -114,7 +116,7 @@ internal static class PlayHistoryImage
 
     /// <summary>曲线按每局分数绘制，纵轴包含全部数据并留边；基准线仅在量程内显示。</summary>
     private static void DrawCurve(WindowsBitmap image, IReadOnlyList<ChartPlay> history,
-        (int X, int Y, int Width, int Height) box, int selected, int axisFont = 17)
+        (int X, int Y, int Width, int Height) box, int selected, int axisFont = 17, int best = -1)
     {
         double min = history.Min(p => (double)p.Score), max = history.Max(p => (double)p.Score);
         double pad = Math.Max(100000d, (max - min) * 0.1d);
@@ -145,6 +147,13 @@ internal static class PlayHistoryImage
         int stride = Math.Max(1, (int)((long)history.Count * 7 / box.Width));
         for (int i = 0; i < points.Length; i += stride)
             image.RoundedFill((points[i].X - 3, points[i].Y - 3, 6, 6), 3, history[i].NewBest ? 0xf5d795U : Accent);
+        if (best >= 0)
+        {
+            var peak = points[best];
+            image.RoundedFill((peak.X - 9, peak.Y - 9, 18, 18), 9, 0xf5d795);
+            image.Text("BEST", Math.Clamp(peak.X - 40, box.X - 40, image.Width - 95), box.Y + box.Height + 20,
+                90, 38, 28, 0xf5d795, true);
+        }
         var point = points[selected];
         image.RoundedFill((point.X - 7, point.Y - 7, 14, 14), 7, Foreground);
     }

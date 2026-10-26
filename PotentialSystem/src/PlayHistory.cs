@@ -9,7 +9,15 @@ namespace InFalsusMod.Potential;
 /// <param name="Miss">四种音符的 MISS 总和。</param>
 /// <param name="Time">原生有效 UTC 时间；缺失时为空。</param>
 /// <param name="NewBest">是否严格超过此前记录的最高分，首次记录不标新高。</param>
-internal sealed record ChartPlay(ulong Score, byte Clear, int Combo, int Miss, DateTimeOffset? Time, bool NewBest);
+internal sealed record ChartPlay(ulong Score, byte Clear, int Combo, int Miss, DateTimeOffset? Time, bool NewBest)
+{
+    /// <summary>四种音符的 EXACT+ 总数，对应原生 Shiny。</summary>
+    internal int ExactPlus { get; init; }
+    /// <summary>四种音符的普通 EXACT 总数，不含 EXACT+。</summary>
+    internal int Exact { get; init; }
+    /// <summary>四种音符的 NEAR 总数，合计 Early 与 Late。</summary>
+    internal int Near { get; init; }
+}
 
 /// <summary>仅在选择谱面时复制原生逐局数据；不写游戏存档，不把最佳 PTT 当作最高分。</summary>
 internal static class PlayHistory
@@ -34,9 +42,15 @@ internal static class PlayHistory
                 continue;
             DateTimeOffset? time = result.SecondsSinceEpochUtc is > 0 and <= 253402300799UL
                 ? DateTimeOffset.FromUnixTimeSeconds((long)result.SecondsSinceEpochUtc) : null;
-            int miss = result.TapCounts.Miss + result.HoldCounts.Miss + result.SkyAreaCounts.Miss + result.FlickCounts.Miss;
+            var counts = new[] { result.TapCounts, result.HoldCounts, result.SkyAreaCounts, result.FlickCounts };
+            int miss = counts.Sum(c => (int)c.Miss);
             plays.Add(new ChartPlay(result.PlayerScore, (byte)result.CalculatedResultClear, result.MaxCombo, miss,
-                time, plays.Count > 0 && result.PlayerScore > best));
+                time, plays.Count > 0 && result.PlayerScore > best)
+            {
+                ExactPlus = counts.Sum(c => (int)c.Shiny),
+                Exact = counts.Sum(c => c.PerfectEarly + c.PerfectLate),
+                Near = counts.Sum(c => c.NearEarly + c.NearLate)
+            });
             best = Math.Max(best, result.PlayerScore);
         }
         return plays.AsReadOnly();
