@@ -518,10 +518,7 @@ public sealed class PotentialController : MonoBehaviour
         catch (Exception ex)
         {
             browser?.Close();
-            selectionView?.Dispose();
-            selectionView = null;
-            selectionViewFailed = true;
-            Plugin.Logger.LogError($"潜力值成绩浏览页更新失败：{ex}");
+            Plugin.Logger.LogError($"潜力值成绩浏览页打开或更新失败，已关闭页面并保留选歌入口：{ex}");
         }
     }
 

@@ -31,7 +31,14 @@ internal sealed class PotentialPageCopy : IDisposable
     /// <summary>独立加载模板，不经过 CoreScene 导航；同一时间只保留一个源场景引用。</summary>
     internal PotentialPageCopy(SongSelectScene owner)
     {
-        if (active != null || SceneManager.GetSceneByName("RecipeScene").isLoaded)
+        bool recipeLoaded = false;
+        // GetSceneByName 的生成包装依赖无法解析的 ReadOnlySpan 方法；枚举使用原生调用入口。
+        for (int i = 0; i < SceneManager.sceneCount; i++)
+        {
+            var scene = SceneManager.GetSceneAt(i);
+            if (scene.isLoaded && scene.name == "RecipeScene") { recipeLoaded = true; break; }
+        }
+        if (active != null || recipeLoaded)
             throw new InvalidOperationException("卡牌页面资源正在使用或释放，请稍后再打开。");
         this.owner = owner;
         completed = (Action<AsyncOperationHandle<SceneInstance>>)(_ => Drain());
