@@ -61,6 +61,11 @@ public sealed class Plugin : BasePlugin
     /// <inheritdoc />
     public override bool Unload()
     {
+        if (PotentialPageCopy.IsBusy)
+        {
+            Log.LogWarning("请先关闭潜力值页面，等待页面素材释放后再卸载模组。");
+            return false;
+        }
         harmony?.UnpatchSelf();
         harmony = null;
         Settings = null;

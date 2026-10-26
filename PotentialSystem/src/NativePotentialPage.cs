@@ -9,7 +9,7 @@ using Object = UnityEngine.Object;
 
 namespace InFalsusMod.Potential;
 
-/// <summary>在实际卡牌库存场景中展示潜力值内容；页面外壳、导航与布局均由原版提供。</summary>
+/// <summary>在卡牌页面副本中展示潜力值内容；复用原版外壳、导航和三栏图形。</summary>
 internal sealed class NativePotentialPage : IDisposable
 {
     private readonly RecipeScene scene;
@@ -45,11 +45,11 @@ internal sealed class NativePotentialPage : IDisposable
     private readonly Il2CppSystem.Action close, openSettings, home;
     private readonly List<TopBar._Pc> tabCallbacks = new();
 
-    /// <summary>原场景正常完成初始化后接管其展示区域；库存控制器及其交互退出输入栈。</summary>
-    internal NativePotentialPage(RecipeScene scene, InputReceiver receiver, PotentialBrowser browser)
+    /// <summary>只接入隔离后的显示副本；原版场景控制器不参与本页生命周期。</summary>
+    internal NativePotentialPage(RecipeScene scene, GameObject copyRoot, InputReceiver receiver, PotentialBrowser browser)
     {
         this.scene = scene; this.receiver = receiver; this.browser = browser;
-        PrepareScene(scene, receiver);
+        PrepareScene(scene, copyRoot);
         widgets = new BrowserWidgets(scene, receiver);
         try
         {
@@ -101,26 +101,10 @@ internal sealed class NativePotentialPage : IDisposable
         catch { Dispose(); throw; }
     }
 
-    /// <summary>保留原场景和视觉层级，停止卡牌页控制器及库存操作；普通卡牌入口不经过此方法。</summary>
-    private static void PrepareScene(RecipeScene scene, InputReceiver receiver)
+    /// <summary>隐藏副本中的库存内容；显示与输入仅由本模组和 TopBar 控件管理。</summary>
+    private static void PrepareScene(RecipeScene scene, GameObject copyRoot)
     {
-        scene.StopAllCoroutines();
-        scene._hy(RecipeScene._Xd._eCA, true);
-        foreach (var director in scene.openAnimations.Concat(scene.closeAnimations))
-        {
-            director.playableDirector.Pause();
-            director.enabled = false;
-        }
-        var animation = scene.openAnimations.FirstOrDefault(value => value.playableAsset != null && value.playableAsset.name.StartsWith("RecipeScene_OpenCards", StringComparison.Ordinal))
-            ?? throw new InvalidOperationException("原版卡牌页缺少打开动画。");
-        animation.playableDirector.Play();
-        animation.playableDirector.time = animation.playableDirector.duration;
-        animation.playableDirector.Evaluate();
-        animation.playableDirector.Pause();
-        scene.enabled = false;
         var inventory = scene.cardInventoryLayer;
-        inventory.StopAllCoroutines();
-        inventory.enabled = false;
         inventory.gridScrollView.enabled = false;
         inventory.gridScrollView.contentContainer.gameObject.SetActive(false);
         scene.overviewContainer.gameObject.SetActive(false);
@@ -137,46 +121,48 @@ internal sealed class NativePotentialPage : IDisposable
         inventory.inventorySelectedContainer.enabled = false;
         foreach (var indicator in inventory.filterIndicatorOffOn) indicator.gameObject.SetActive(false);
         // 原版按钮仍显示时也不得残留删除、配方、库存筛选等回调。
-        foreach (var button in scene.GetComponentsInChildren<UIButton>(true)) UIManager._A._ktA(button);
+        foreach (var button in copyRoot.GetComponentsInChildren<UIButton>(true)) UIManager._A._ktA(button);
         inventory.filterButton.gameObject.SetActive(false);
         inventory.sortButton.gameObject.SetActive(false);
         inventory.scrollBarButton.gameObject.SetActive(false);
         scene.guidanceButton.gameObject.SetActive(false);
         // 卡牌场景的 TopBar 未配置帮助按钮；该引用在原版资源中允许为空。
         if (scene.topBar.guideButton != null) scene.topBar.guideButton.gameObject.SetActive(false);
-        foreach (var input in scene.GetComponentsInChildren<InputReceiver>(true))
-            if (input.Pointer != receiver.Pointer)
-            {
-                input.enabled = false;
-                InputManager.Instance.ReleaseInputControl(input);
-            }
+        foreach (var button in scene.topBar.GetComponentsInChildren<UIButton>(true))
+            if (button.ButtonCollider != null) button.ButtonCollider.enabled = true;
     }
 
     /// <summary>三栏边界取自原版实际控件；窗口比例变化时重新读取。</summary>
     private void ReadNativeBounds()
     {
         var native = scene.cardInventoryLayer;
-        // 手动卡牌列表未序列化 self；布局组件实际挂在 GridContainer 上。
-        originalGrid = BoundsWhenVisible(native.gridScrollView.GetComponent<Constrained2D>());
-        var detail = native.inventorySelectedContainer;
-        var detailLayout = detail.GetComponent<Constrained2D>() ?? detail.activeContainer.GetComponentInParent<Constrained2D>();
-        rightColumn = BoundsWhenVisible(detailLayout);
-        filterRow = BoundsWhenVisible(native.filterButton.constrained2D);
-        sortRow = BoundsWhenVisible(native.sortButton.constrained2D);
-        if (originalGrid.width <= 0 || originalGrid.height <= 0 || rightColumn.width <= 0 || filterRow.height <= 0)
-            throw new InvalidOperationException("原版卡牌页三栏布局尚未就绪。");
+        // 原版列表占整页，详情和筛选父节点为零尺寸定位容器；范围须读取实际图形。
+        var page = BoundsWhenVisible(native.gridScrollView.transform, "");
+        var sidebar = BoundsWhenVisible(native.transform, "backing-sidebar-right");
+        filterRow = BoundsWhenVisible(native.filterButton.transform, "btn-filter");
+        sortRow = BoundsWhenVisible(native.sortButton.transform, "btn-sort");
+        originalGrid = Rect.MinMaxRect(filterRow.xMax + Gap, page.yMin, sidebar.xMin - Gap, filterRow.yMax);
+        rightColumn = Rect.MinMaxRect(sidebar.xMin, page.yMin, Math.Min(sidebar.xMax, page.xMax), filterRow.yMax);
+        if (originalGrid.width <= 0 || originalGrid.height <= 0 || rightColumn.width <= 0)
+            throw new InvalidOperationException($"卡牌副本三栏范围无效：内容={originalGrid}，详情={rightColumn}。");
     }
 
-    private Rect BoundsWhenVisible(Constrained2D target)
+    private Rect BoundsWhenVisible(Transform parent, string path)
     {
-        if (target == null) throw new InvalidOperationException("原版卡牌页缺少布局组件。");
+        var node = path.Length == 0 ? parent : parent.Find(path);
+        var target = node == null ? null : node.GetComponent<Constrained2D>();
+        if (target == null) throw new InvalidOperationException($"卡牌副本缺少布局组件：{parent.name}/{path}。");
         var hidden = new List<GameObject>();
-        for (var parent = target.transform; parent != null; parent = parent.parent)
-            if (!parent.gameObject.activeSelf) hidden.Add(parent.gameObject);
+        for (var ancestor = target.transform; ancestor != null; ancestor = ancestor.parent)
+            if (!ancestor.gameObject.activeSelf) hidden.Add(ancestor.gameObject);
         try
         {
             foreach (var root in hidden.AsEnumerable().Reverse()) root.SetActive(true);
-            return widgets.Bounds(target);
+            var bounds = widgets.Bounds(target);
+            if (!float.IsFinite(bounds.xMin) || !float.IsFinite(bounds.yMin) || !float.IsFinite(bounds.width)
+                || !float.IsFinite(bounds.height) || bounds.width <= 0 || bounds.height <= 0)
+                throw new InvalidOperationException($"卡牌副本图形范围无效：{parent.name}/{path}={bounds}。");
+            return bounds;
         }
         finally { foreach (var root in hidden) root.SetActive(false); }
     }
@@ -521,7 +507,17 @@ internal sealed class NativePotentialPage : IDisposable
 
     public void Dispose()
     {
-        try { if (scroll != null) UIManager._A?._ItA(scroll); }
+        try
+        {
+            if (scene != null && scene.topBar != null)
+            {
+                foreach (var button in scene.topBar.GetComponentsInChildren<UIButton>(true)) UIManager._A?._ktA(button);
+                scene.topBar.OnBackPressed = null;
+                scene.topBar.OnHubPressed = null;
+                scene.topBar.OnSettingsOutsidePressed = null;
+            }
+            if (scroll != null) UIManager._A?._ItA(scroll);
+        }
         finally
         {
             settings?.Dispose();

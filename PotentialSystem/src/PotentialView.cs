@@ -16,15 +16,15 @@ internal sealed record ResultSummary(decimal? Previous, decimal Best, decimal Pl
 /// <summary>拥有原生 PTT 文字、角色菱形与独立档位徽章；结算视图展示单曲与变化状态。</summary>
 internal sealed class PotentialView : IDisposable
 {
-    /// <summary>Arcaea UserCell：150 的头像框、128 的头像、85 的徽章，徽章偏移 (56,-37.5)。</summary>
-    internal const float FrameSize = 360f, BadgeSize = FrameSize * 85f / 150f;
-    private const float EntryHeight = 330f, PortraitSize = FrameSize * 128f / 150f;
-    internal static readonly Vector2 PortraitCenter = new(0f, 75f);
+    /// <summary>1920×1080 参考中头像约 150 像素；换算到游戏 2160 高设计空间，保留 UserCell 的 150:128:85 比例。</summary>
+    internal const float FrameSize = 300f, BadgeSize = FrameSize * 85f / 150f;
+    private const float EntryHeight = 275f, PortraitSize = FrameSize * 128f / 150f;
+    internal static readonly Vector2 PortraitCenter = new(0f, 62.5f);
     internal static readonly Vector2 BadgeCenter = PortraitCenter + new Vector2(56f, -37.5f) * (FrameSize / 150f);
-    /// <summary>UserCell 昵称采用右对齐，右边距 75.1712、字号 45；横幅使用 APK 的阶梯原图和名片选择框的 407 宽度。</summary>
-    private const float UserScale = FrameSize / 150f, NameWidth = 173f * UserScale;
-    private static readonly Vector2 NamecardCenter = PortraitCenter + new Vector2(-407f / 2f, 4.8811f) * UserScale;
-    private static readonly Vector2 NameCenter = PortraitCenter + new Vector2(-75.1712f - 173f / 2f, 4.8811f) * UserScale;
+    /// <summary>16:9 截图中横幅位于头像左侧，宽约 424、高 74；保留原图高度，裁掉右端，不压扁横幅。</summary>
+    private const float UserScale = FrameSize / 150f, NameWidth = 173f * UserScale, NamecardWidth = 424f;
+    private static readonly Vector2 NamecardCenter = PortraitCenter + new Vector2(-NamecardWidth / 2f, 0.5f) * UserScale;
+    private static readonly Vector2 NameCenter = PortraitCenter + new Vector2(-90f - 173f / 2f, 0.5f) * UserScale;
     /// <summary>结算信息相对顶部中央布局；左侧显示单曲变化，右侧显示账号变化，避开两端导航按钮。</summary>
     private static readonly (Vector2 Center, float Width, float Font)[] ResultSlots =
     {
@@ -151,13 +151,13 @@ internal sealed class PotentialView : IDisposable
                 namecardMaterial = new Material(sourceMaterial)
                 {
                     name = "PotentialSystem.Namecard", hideFlags = HideFlags.HideAndDontSave,
-                    mainTexture = badges.Namecard(0), mainTextureScale = Vector2.one, mainTextureOffset = Vector2.zero
+                    mainTexture = badges.Namecard(0), mainTextureScale = new Vector2(NamecardWidth / 564f, 1f), mainTextureOffset = Vector2.zero
                 };
                 namecard._irA(namecardMaterial);
                 var namecardLayout = namecard.constrained2DTransform;
                 namecardLayout.zPosition = 0f;
                 namecard.constrained2DTransform = namecardLayout;
-                BrowserWidgets.Place(namecard, NamecardCenter, new Vector2(407f, 407f * 74f / 564f) * UserScale);
+                BrowserWidgets.Place(namecard, NamecardCenter, new Vector2(NamecardWidth, 74f) * UserScale);
                 namecardText = new NativeLabel(template, graphicsParent, "Namecard.Name", anchor,
                     Constrained2DAlignment.Center, NameCenter, 1f);
                 namecardText.SetOutline(new Color(0.08f, 0.06f, 0.12f), 0.06f);
@@ -301,14 +301,15 @@ internal sealed class PotentialView : IDisposable
         if (namecard == null || namecardText == null) return;
         if (displayedNamecardColor != color)
         {
-            namecardMaterial = BrowserWidgets.SwapMaterial(namecard, namecardMaterial!, badges.Namecard(color), Vector2.one, Vector2.zero);
+            namecardMaterial = BrowserWidgets.SwapMaterial(namecard, namecardMaterial!, badges.Namecard(color),
+                new Vector2(NamecardWidth / 564f, 1f), Vector2.zero);
             displayedNamecardColor = color;
         }
         if (namecardText.Set(name, Color.white)) nameLaidOut = false;
         if (nameLaidOut) return;
         var bounds = namecardText.Measure(1f);
         if (bounds.width <= 0f || bounds.height <= 0f) return;
-        float scale = Math.Min(NameWidth / bounds.width, 45f * UserScale / bounds.height);
+        float scale = Math.Min(NameWidth / bounds.width, 35f * UserScale / bounds.height);
         namecardText.PlaceBounds(NameCenter + new Vector2(NameWidth / 2f, 0f), new Vector2(1f, 0.5f), scale);
         nameLaidOut = true;
     }

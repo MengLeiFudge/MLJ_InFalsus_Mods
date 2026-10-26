@@ -23,7 +23,7 @@ internal sealed class PotentialBrowser : IDisposable
     private SongSelectScene? owner;
     private RecipeScene? inventory;
     private bool loading;
-    private Il2CppSystem.Action<RecipeScene>? loaded;
+    private PotentialPageCopy? pageCopy;
     private float openedAt;
     internal CharacterUniversalIconMapping? Portraits { get; private set; }
     private PotentialSnapshot? snapshot, exporting, filteredSnapshot;
@@ -56,7 +56,7 @@ internal sealed class PotentialBrowser : IDisposable
         : (int)(SaveOwner._CEb?._DEb?._iEb?.GeneralSaveState?.SelectedCharacter ?? default);
 
     internal bool IsOpen => receiver != null;
-    internal DataAccess? DataAccess => inventory == null ? null : inventory.dataAccess;
+    internal DataAccess? DataAccess => owner == null ? null : owner.dataAccess;
 
     internal PotentialBrowser(PotentialBadges badges) => this.badges = badges;
 
@@ -76,53 +76,50 @@ internal sealed class PotentialBrowser : IDisposable
     /// <summary>在同一异常边界内管理原生视图、过滤结果与异步导出。</summary>
     internal void Update(SongSelectScene? scene, PotentialSnapshot? data)
     {
+        PotentialPageCopy.Drain();
         if (closeRequested) { Close(); return; }
         if (requestedFrame >= 0 && Time.frameCount > requestedFrame)
         {
             requestedFrame = -1;
             if (owner == null || owner != scene || InputManager.Instance?.IsHeadOfStack(owner) != true)
             { Close(); return; }
-            loading = true;
-            openedAt = Time.realtimeSinceStartup;
-            loaded = (Action<RecipeScene>)RecipeReady;
-            CoreScene._c._Bj<SongSelectScene, RecipeScene>(_d._AB._nl, null, null, loaded);
+            var root = new GameObject("InFalsus.PotentialSystem.BrowserInput");
+            try
+            {
+                root.layer = owner.gameObject.layer;
+                root.transform.SetParent(owner.transform, false);
+                receiver = root.AddComponent<PotentialInputReceiver>();
+                receiver.Bind(this);
+                InputManager.Instance.TakeInputControl(receiver);
+                pageCopy = new PotentialPageCopy(owner);
+                loading = true;
+                openedAt = Time.realtimeSinceStartup;
+            }
+            catch { Close(); if (root != null) Object.Destroy(root); throw; }
         }
+        if (pageCopy != null && (owner == null || owner != scene || receiver == null || InputManager.Instance?.IsHeadOfStack(receiver) != true))
+        { Close(); return; }
         if (loading)
         {
             if (Time.realtimeSinceStartup - openedAt > 45f)
             {
-                Plugin.Logger.LogError("原版卡牌页面加载超时，已取消潜力值页面接入。");
-                Close();
+                Plugin.Logger.LogError("卡牌页面副本加载超时，已取消打开。");
+                Close(); return;
             }
-            return;
+            if (pageCopy?.Prepare() != true) return;
+            inventory = pageCopy.Scene;
+            covers = new CoverCache();
+            search = "";
+            caret = anchor = 0;
+            focused = false;
+            filteredSnapshot = null;
+            status = "";
+            view = new NativePotentialPage(inventory!, pageCopy.Root!, receiver!, this);
+            loading = false;
+            InputManager.Instance.RequestLastMouseMoveReplay();
         }
         if (inventory == null || snapshot == null) { if (IsOpen) Close(); return; }
         if (data != null) snapshot = data;
-        if (!IsOpen)
-        {
-            var root = new GameObject("InFalsus.PotentialSystem.BrowserInput");
-            try
-            {
-                root.layer = inventory.gameObject.layer;
-                root.transform.SetParent(inventory.transform, false);
-                receiver = root.AddComponent<PotentialInputReceiver>();
-                receiver.Bind(this);
-                covers = new CoverCache();
-                search = "";
-                caret = anchor = 0;
-                focused = false;
-                filteredSnapshot = null;
-                status = "";
-                view = new NativePotentialPage(inventory, receiver, this);
-                InputManager.Instance.TakeInputControl(receiver);
-                InputManager.Instance.RequestLastMouseMoveReplay();
-            }
-            catch { Close(); if (root != null) Object.Destroy(root); throw; }
-        }
-        if (!IsOpen)
-            return;
-        if (InputManager.Instance?.IsHeadOfStack(receiver) != true)
-        { Close(); return; }
         if (filteredSnapshot != snapshot || filteredSearch != search || filteredSort != Settings.BrowserSort
             || filteredDifficulty != Settings.BrowserDifficulty)
         {
@@ -346,12 +343,13 @@ internal sealed class PotentialBrowser : IDisposable
     /// <summary>同步注销本页控件，然后归还输入；关闭不改原生成绩和剪贴板。</summary>
     internal void Close()
     {
-        var returningFrom = inventory;
+        var returningFrom = owner;
         bool home = returnToHub;
         returnToHub = false;
         inventory = null;
         loading = false;
-        loaded = null;
+        var copy = pageCopy;
+        pageCopy = null;
         if (Portraits != null) Object.Destroy(Portraits);
         Portraits = null;
         requestedFrame = -1;
@@ -385,28 +383,12 @@ internal sealed class PotentialBrowser : IDisposable
             }
             finally
             {
-                resources?.Dispose();
-                if (returningFrom != null && CoreScene._c != null)
-                {
-                    if (home) CoreScene._c._Bj<RecipeScene, HubScene>(_d._AB._nl);
-                    else CoreScene._c._Bj<RecipeScene, SongSelectScene>(_d._AB._nl);
-                }
+                try { resources?.Dispose(); }
+                finally { copy?.Dispose(); }
+                if (home && returningFrom != null && CoreScene._c != null)
+                    CoreScene._c._Bj<SongSelectScene, HubScene>(_d._AB._nl);
             }
         }
-    }
-
-    /// <summary>只接入本次入口请求加载的原生页面；普通卡牌页不受影响。</summary>
-    private void RecipeReady(RecipeScene scene)
-    {
-        if (!loading)
-        {
-            if (scene != null && CoreScene._c != null)
-                CoreScene._c._Bj<RecipeScene, SongSelectScene>(_d._AB._nl);
-            return;
-        }
-        inventory = scene;
-        loading = false;
-        owner = null;
     }
 
     public void Dispose() => Close();

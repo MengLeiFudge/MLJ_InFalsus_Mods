@@ -29,7 +29,7 @@ internal sealed class PotentialRatingText : IDisposable
         catch { Dispose(); throw; }
     }
 
-    /// <summary>共同适配徽章后对齐两段文字的下边界，不用不同字号下的固定 Y 偏移。</summary>
+    /// <summary>保留 34:24 字号比例与共同底边；三位小数允许略宽于徽章，不按两位小数强行压缩。</summary>
     internal void Set(string value, Vector2 center, float diameter)
     {
         int point = value.IndexOf('.');
@@ -42,8 +42,8 @@ internal sealed class PotentialRatingText : IDisposable
         float width = large.width + small.width;
         float height = Math.Max(large.height, small.height);
         if (width <= 0f || height <= 0f) return;
-        // UserCell 的两段数字总宽 65、高 34，徽章为 85；三位小数共同缩放，保持字号比例。
-        float scale = Math.Min(diameter * (65f / 85f) / width, diameter * (34f / 85f) / height);
+        // Exo-SemiBold 34 号数字的可见高度约 25；16:9 参考的三位小数略跨出 85 宽徽章。
+        float scale = Math.Min(diameter * 1.1f / width, diameter * (25f / 85f) / height);
         large = whole.Measure(scale);
         small = fraction.Measure(scale * 24f / 34f);
         if (large.height <= 0f || (point >= 0 && small.height <= 0f)) return;

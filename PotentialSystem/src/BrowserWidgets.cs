@@ -26,7 +26,7 @@ internal sealed class BrowserWidgets : IDisposable
     {
         this.scene = scene;
         this.owner = owner;
-        Root = Container(scene.overviewContainer.transform.parent, "Results", Vector2.zero);
+        Root = Container(scene.cardInventoryLayer.transform, "Results", Vector2.zero);
         try
         {
             var layout = Root.constrained2DTransform;
