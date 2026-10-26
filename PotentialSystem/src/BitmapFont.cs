@@ -9,7 +9,7 @@ internal sealed class BitmapFont : IDisposable
     private IntPtr data, resource;
     internal IntPtr Handle { get; private set; }
 
-    internal BitmapFont(string file, string family, int size)
+    internal BitmapFont(string file, string family, int size, int weight = 400)
     {
         try
         {
@@ -23,7 +23,7 @@ internal sealed class BitmapFont : IDisposable
             uint count = 0;
             resource = AddFontMemResourceEx(data, (uint)bytes.Length, IntPtr.Zero, ref count);
             if (resource == IntPtr.Zero || count == 0) throw new Win32Exception(Marshal.GetLastWin32Error(), "加载名片字体失败。");
-            Handle = CreateFontW(-size, 0, 0, 0, 400, 0, 0, 0, 1, 4, 0, 4, 0, family);
+            Handle = CreateFontW(-size, 0, 0, 0, weight, 0, 0, 0, 1, 4, 0, 4, 0, family);
             if (Handle == IntPtr.Zero) throw new Win32Exception(Marshal.GetLastWin32Error(), "建立名片字体失败。");
         }
         catch { Dispose(); throw; }

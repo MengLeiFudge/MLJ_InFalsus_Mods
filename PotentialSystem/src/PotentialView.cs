@@ -16,15 +16,20 @@ internal sealed record ResultSummary(decimal? Previous, decimal Best, decimal Pl
 /// <summary>拥有原生 PTT 文字、角色菱形与独立档位徽章；结算视图展示单曲与变化状态。</summary>
 internal sealed class PotentialView : IDisposable
 {
-    /// <summary>1920×1080 参考中头像约 150 像素；换算到游戏 2160 高设计空间，保留 UserCell 的 150:128:85 比例。</summary>
-    internal const float FrameSize = 300f, BadgeSize = FrameSize * 85f / 150f;
-    private const float EntryHeight = 275f, PortraitSize = FrameSize * 128f / 150f;
-    internal static readonly Vector2 PortraitCenter = new(0f, 62.5f);
-    internal static readonly Vector2 BadgeCenter = PortraitCenter + new Vector2(56f, -37.5f) * (FrameSize / 150f);
-    /// <summary>16:9 截图中横幅位于头像左侧，宽约 424、高 74；保留原图高度，裁掉右端，不压扁横幅。</summary>
-    private const float UserScale = FrameSize / 150f, NamecardWidth = 424f;
-    private static readonly Vector2 NamecardCenter = PortraitCenter + new Vector2(-NamecardWidth / 2f, 0.5f) * UserScale;
-    private static readonly Vector2 NameRightCenter = PortraitCenter + new Vector2(-90f, 0.5f) * UserScale;
+    /// <summary>APK 的 720 高设计空间换算到游戏 2160；账号节点缩放 0.7，头像框原始边长 150。</summary>
+    private const float ScreenScale = 3f, UserScale = 0.7f * ScreenScale;
+    internal const float FrameSize = 150f * UserScale, BadgeSize = 170f;
+    private const float EntryHeight = 275f, PortraitSize = 128f * UserScale;
+    internal static readonly Vector2 PortraitCenter = new(0f, EntryHeight / 2f - 30.5f * ScreenScale);
+    /// <summary>PTT 的大小与中心独立于头像横幅，使用已校准的显示坐标。</summary>
+    internal static readonly Vector2 BadgeCenter = new(112f, -12.5f);
+    /// <summary>横幅按昵称宽度从右侧裁切；原图顶端去掉 4，保留 70 高，中心比头像高 7.5。</summary>
+    private const float NamecardMinWidth = 404f, NamecardMaxWidth = 514f, NamecardHeight = 70f;
+    private static readonly Vector2 NameRightCenter = PortraitCenter + new Vector2(-85f, 4.8811035f) * UserScale;
+    /// <summary>TopBar.csb 的设置按钮为 98×51，顶部 y=301；TopBar 原点距屏幕顶端 300。</summary>
+    internal static readonly Vector2 SettingsSize = new(98f * ScreenScale, 51f * ScreenScale);
+    internal static readonly Vector2 SettingsCenter = new((762.9059f - 640f) * ScreenScale,
+        EntryHeight / 2f + (301f - 300f - 51f / 2f) * ScreenScale);
     /// <summary>结算信息相对顶部中央布局；左侧显示单曲变化，右侧显示账号变化，避开两端导航按钮。</summary>
     private static readonly (Vector2 Center, float Width, float Font)[] ResultSlots =
     {
@@ -49,10 +54,11 @@ internal sealed class PotentialView : IDisposable
     private int displayedTier = -1;
     private float displayedPop = -1f;
     /// <summary>选歌名片使用独立背景与昵称，随头像容器统一隐藏。</summary>
-    private Constrained2D? namecard;
-    private Material? namecardMaterial;
+    private Constrained2D? namecard, settingsGraphic;
+    private Material? namecardMaterial, settingsMaterial;
     private PotentialNameText? namecardText;
     private int displayedNamecardColor = -1;
+    private float displayedNamecardWidth = -1f;
     /// <summary>选歌入口绑定不带渲染缩放的容器，头像、边框、徽章和数字分别布局。</summary>
     internal Constrained2D Entry => entryRoot!;
 
@@ -126,7 +132,7 @@ internal sealed class PotentialView : IDisposable
                     name = "PotentialSystem.AvatarBacking", hideFlags = HideFlags.HideAndDontSave,
                     mainTexture = badges.AvatarBacking, mainTextureScale = Vector2.one, mainTextureOffset = Vector2.zero
                 };
-                CropAtGameTop(backing, backingMaterial, FrameSize);
+                CropAtGameTop(backing, backingMaterial, PortraitSize);
                 // Sprite 的 Transform 随网格尺寸缩放；全部子控件挂在独立容器下，保持彼此字号与坐标。
                 portrait = CloneGraphic(graphicTemplate, graphicsParent, "Portrait");
                 var portraitLayout = portrait.constrained2DTransform;
@@ -150,14 +156,25 @@ internal sealed class PotentialView : IDisposable
                 namecardMaterial = new Material(sourceMaterial)
                 {
                     name = "PotentialSystem.Namecard", hideFlags = HideFlags.HideAndDontSave,
-                    mainTexture = badges.Namecard(0), mainTextureScale = new Vector2(NamecardWidth / 564f, 1f), mainTextureOffset = Vector2.zero
+                    mainTexture = badges.Namecard(0), mainTextureScale = new Vector2(NamecardMinWidth / 564f, NamecardHeight / 74f), mainTextureOffset = Vector2.zero
                 };
                 namecard._irA(namecardMaterial);
                 var namecardLayout = namecard.constrained2DTransform;
                 namecardLayout.zPosition = 0f;
                 namecard.constrained2DTransform = namecardLayout;
-                BrowserWidgets.Place(namecard, NamecardCenter, new Vector2(NamecardWidth, 74f) * UserScale);
                 namecardText = new PotentialNameText(graphicTemplate, graphicsParent);
+                var settingsTexture = badges.SettingsButton;
+                settingsGraphic = CloneGraphic(graphicTemplate, graphicsParent, "Account.Settings");
+                var settingsLayout = settingsGraphic.constrained2DTransform;
+                settingsLayout.zPosition = 0f;
+                settingsGraphic.constrained2DTransform = settingsLayout;
+                settingsMaterial = new Material(sourceMaterial)
+                {
+                    name = "PotentialSystem.Account.Settings", hideFlags = HideFlags.HideAndDontSave,
+                    mainTexture = settingsTexture, mainTextureScale = Vector2.one, mainTextureOffset = Vector2.zero
+                };
+                settingsGraphic._irA(settingsMaterial);
+                BrowserWidgets.Place(settingsGraphic, SettingsCenter, SettingsSize);
             }
         }
         catch { Dispose(); throw; }
@@ -254,7 +271,7 @@ internal sealed class PotentialView : IDisposable
             for (int y = 0; y < size; y++)
                 for (int x = 0; x < size; x++)
                 {
-                    // 到菱形边缘的像素距离；内侧为正。菱形与 FrameSize 中的白框内沿一致。
+                    // 到菱形边缘的像素距离；内侧为正。深色底与角色使用同一轮廓，外侧仅保留 UserCell 的细框。
                     float inside = (half - Math.Abs(x + 0.5f - half) - Math.Abs(y + 0.5f - half)) * 0.7071f;
                     float coverage = Mathf.Clamp01(inside / 1.5f + 0.5f);
                     int alpha = y * size * 4 + x * 4 + 3;
@@ -296,13 +313,17 @@ internal sealed class PotentialView : IDisposable
     internal void SetNamecard(string name, int color)
     {
         if (namecard == null || namecardText == null) return;
-        if (displayedNamecardColor != color)
+        namecardText.Set(name, color, NameRightCenter, (NamecardMaxWidth - 250f) * UserScale, UserScale);
+        float width = Math.Clamp(250f + namecardText.NaturalWidth, NamecardMinWidth, NamecardMaxWidth);
+        if (displayedNamecardColor != color || displayedNamecardWidth != width)
         {
             namecardMaterial = BrowserWidgets.SwapMaterial(namecard, namecardMaterial!, badges.Namecard(color),
-                new Vector2(NamecardWidth / 564f, 1f), Vector2.zero);
+                new Vector2(width / 564f, NamecardHeight / 74f), Vector2.zero);
+            BrowserWidgets.Place(namecard, PortraitCenter + new Vector2(-width / 2f, 7.5f) * UserScale,
+                new Vector2(width, NamecardHeight) * UserScale);
             displayedNamecardColor = color;
+            displayedNamecardWidth = width;
         }
-        namecardText.Set(name, color, NameRightCenter, (NamecardWidth - 90f) * UserScale, UserScale);
     }
 
     /// <summary>同步选歌入口尺寸并刷新徽章数值，保持分辨率变化后的点击范围与显示一致。</summary>
@@ -379,6 +400,9 @@ internal sealed class PotentialView : IDisposable
         if (namecardMaterial != null) Object.Destroy(namecardMaterial);
         namecardMaterial = null;
         namecard = null;
+        if (settingsMaterial != null) Object.Destroy(settingsMaterial);
+        settingsMaterial = null;
+        settingsGraphic = null;
         foreach (var label in labels)
             label.Dispose();
         labels.Clear();

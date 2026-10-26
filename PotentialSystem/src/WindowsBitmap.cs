@@ -150,14 +150,14 @@ internal sealed class WindowsBitmap : IDisposable
     }
 
     /// <summary>按原字体轮廓填字及描边；高分辨率画布缩放后形成抗锯齿，不依赖游戏 SDF 材质。</summary>
-    internal void OutlinedText(string text, BitmapFont font, int x, int y, int outline, uint rgb)
+    internal void OutlinedText(string text, BitmapFont font, int x, int y, int outline, uint rgb, uint? stroke = null)
     {
         var brush = CreateSolidBrush(ColorRef(rgb));
         Check(brush != IntPtr.Zero, "建立名片文字画刷");
         IntPtr pen = IntPtr.Zero, oldFont = IntPtr.Zero, oldBrush = IntPtr.Zero, oldPen = IntPtr.Zero;
         try
         {
-            pen = CreatePen(0, outline * 2, ColorRef(rgb));
+            pen = CreatePen(0, outline * 2, ColorRef(stroke ?? rgb));
             Check(pen != IntPtr.Zero, "建立名片文字描边");
             oldFont = SelectObject(dc, font.Handle);
             Check(oldFont != IntPtr.Zero && oldFont != new IntPtr(-1), "选择名片字体");

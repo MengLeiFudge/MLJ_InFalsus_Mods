@@ -1,4 +1,4 @@
-# PTT 字形素材
+# 账号区域资源与布局
 
 在仓库根目录运行 `python3 PotentialSystem/tools/build-rating-font.py`，重新生成 `Assets/Fonts/RatingGlyphs.png` 和 `RatingGlyphs.json`。构建素材需要 Pillow；游戏运行不需要 Python 或 Pillow。
 
@@ -17,15 +17,25 @@
 
 `PotentialRatingText` 只负责选曲入口的数字图形。它与徽章共享父坐标，数值变化时重新合成透明纹理，尺寸变化时只调整显示大小；关闭页面时释放图形、材质和纹理。
 
-昵称由 `PotentialNameText` 独立绘制。ASCII 昵称使用 DLL 中的 `GeosansLight.ttf`；该字体不含中文，其他昵称沿用 APK 的 `NotoSansCJKsc-Regular.otf`。两份字体均与 APK 原件一致。中文回退选型是模组的兼容处理，尚未确认 Arcaea 原生中文昵称的字体切换路径。
+昵称由 `PotentialNameText` 独立绘制。ASCII 昵称使用 DLL 中的 `GeosansLight.ttf`；该字体不含中文，其他昵称使用 APK 的 `NotoSansCJKsc-Light.otf`，GDI 字重为 300，描边降为 1/4 原始单位，以保留细笔画。两份字体均与 APK 原件一致。中文回退选型是模组的兼容处理，尚未确认 Arcaea 原生中文昵称的字体切换路径。
 
 `UserCell.csb` 的 username 字号为 45。函数 `0x854078` 为昵称添加宽度 1、与文字同色的描边，以及偏移 `(1,-2)`、模糊 0 的阴影。正文颜色来自 `0xb31cdc`，阴影颜色来自 `0x1416f74`。当前四款名片的颜色如下，透明度均为 255：
 
-| 模组配色 | APK 资源 | 正文及描边 | 阴影 |
+| 名片款式 | APK 资源 | 正文及描边 | 阴影 |
 | --- | --- | --- | --- |
-| 青 | course_banner_4 | #344961 | #F2F3F5 |
-| 紫 | course_banner_12 | #FFFFFF | #D59F78 |
-| 红 | course_banner_8 | #FFFFFF | #4B1A79 |
-| 蓝 | course_banner_2 | #38505C | #FFFFFF |
+| 阶梯 4 | course_banner_4 | #344961 | #F2F3F5 |
+| 阶梯 12 | course_banner_12 | #FFFFFF | #D59F78 |
+| 阶梯 8 | course_banner_8 | #FFFFFF | #4B1A79 |
+| 阶梯 2 | course_banner_2 | #38505C | #FFFFFF |
 
-颜色随名片款式切换，不随昵称语言或 PTT 数值切换。Windows 位图画布临时注册嵌入字体，按四倍分辨率描绘字形轮廓，再合成透明纹理；字体不安装到系统。正常昵称保持 45 字号，过长时才缩至横幅可用宽度。名字或配色变化后重建纹理，页面关闭时释放图形资源。GDI 与 Cocos 的字形栅格化实现不同，不能据静态参数相同声称逐像素一致。
+颜色随名片款式切换，不随昵称语言或 PTT 数值切换。Windows 位图画布临时注册嵌入字体，按四倍分辨率描绘字形轮廓，再合成透明纹理；字体不安装到系统。正常昵称保持 45 字号，过长时才缩至横幅非装饰区域的可用宽度。名字或配色变化后重建纹理，页面关闭时释放图形资源。GDI 与 Cocos 的字形栅格化实现不同，不能据静态参数相同声称逐像素一致。
+
+## 头像、横幅与设定按钮
+
+`avatar_frame.png` 是 APK 的 `assets/layouts/mainmenu/network/icon_back.png` 原件，SHA256 为 `ee16edf3a385ad6bf6ce72dc96c78ad317e28fdb52e557013c09cc7aacc0d17a`。账号页使用这份细边素材。深色底只铺在角色头像内部，按同一菱形裁切。
+
+函数 `0x14b9a04` 将账号节点缩放到 0.7，放在屏幕中点、距顶部 20 的位置。节点为 150×150，锚点 `(0.5,0.5)`，图标 y=60；头像中心距顶部为 `20+(75-60)×0.7=30.5`。将 APK 的 720 高设计空间换算到本游戏的 2160 高空间，头像框为 315。PTT 的大小与位置由 `PotentialView.BadgeSize/BadgeCenter` 独立保持。
+
+函数 `0x854078` 将横幅顶端裁去 4，保留 70 高，中心放在头像上方 7.5；没有课程数字装饰时，昵称右端距头像中心 85。以昵称前进宽度为 W，横幅宽度为 `clamp(250+W,404,514)`，从原图右侧裁切。昵称 y=64.8811035，头像 y=60。各阶梯横幅的图案不同，点阵数量不能用来推断共同的裁切高度。
+
+设定按钮来自 `TopBar.csb`：按钮中心 x=762.9059、顶部 y=301，锚点 `(0.5,1)`，尺寸 98×51；齿轮中心 `(761.6654,272)`、31×31、透明度 99；文字中心 `(762.8451,270.9554)`、字号 16、描边 2、描边色 `#402D3F`。TopBar 的顶部基准 y=300，布局按三倍设计单位换算。`settings_button.png` 和 `settings_icon.png` 分别保留 APK 的 `assets/layouts/1080/topbar/top_button_settings.png`、`assets/layouts/topbar/settings.png` 原件；`PotentialBadges.DrawSettings` 按这些数据合成中文按钮。

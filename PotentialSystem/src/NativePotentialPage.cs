@@ -321,7 +321,7 @@ internal sealed class NativePotentialPage : IDisposable
         float bottom = body.yMin + filterRow.height * 2 + Gap;
         Button("ProfileName", focused ? query : string.IsNullOrEmpty(browser.Settings.ProfileName) ? "设置名片昵称" : browser.Settings.ProfileName,
             new Rect(body.xMin, bottom, body.width / 2, filterRow.height), browser.FocusName);
-        string[] colors = { "青", "紫", "红", "蓝" };
+        string[] colors = { "阶梯 4", "阶梯 12", "阶梯 8", "阶梯 2" };
         for (int i = 0; i < colors.Length; i++)
         {
             int color = i;

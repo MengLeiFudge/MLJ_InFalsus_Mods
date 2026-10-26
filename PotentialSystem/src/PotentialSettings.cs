@@ -23,7 +23,7 @@ internal sealed class PotentialSettings
         portrait = config.Bind("Appearance", "PortraitCharacter", -1,
             new ConfigDescription("头像角色编号；-1 跟随游戏当前角色。", new AcceptableValueRange<int>(-1, 25)));
         namecardColor = config.Bind("Appearance", "NamecardColor", 0,
-            new ConfigDescription("名片配色：0 青，1 紫，2 红，3 蓝。", new AcceptableValueRange<int>(0, 3)));
+            new ConfigDescription("名片款式：0 阶梯4，1 阶梯12，2 阶梯8，3 阶梯2。", new AcceptableValueRange<int>(0, 3)));
         profileName = config.Bind("Appearance", "ProfileName", "", "名片昵称，留空使用角色名称。");
     }
 

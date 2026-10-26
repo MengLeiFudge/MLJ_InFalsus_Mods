@@ -29,10 +29,11 @@ internal sealed class PotentialSelection : IDisposable
     private readonly SongSelectScene scene;
     private readonly PotentialBrowser browser;
     private PotentialView? account;
-    /// <summary>头像和 PTT 各有独立菱形碰撞体；委托在注销前保持有效。</summary>
+    /// <summary>头像、PTT 与设定按钮各有独立碰撞体；委托在注销前保持有效。</summary>
     private readonly List<UIButton> entries = new();
-    private readonly List<UIButton._EI> openResults = new();
+    private readonly List<UIButton._EI> openPages = new();
     private SelectedChartInfo? selectedInfo;
+    private UIButton? settingsEntry;
     private bool? entryEnabled;
     /// <summary>池化小卡按对象身份复用文字，歌曲切换时更新内容。</summary>
     private readonly Dictionary<IntPtr, NativeScoreLine> ranks = new();
@@ -59,18 +60,21 @@ internal sealed class PotentialSelection : IDisposable
             var graphic = scene.leftSongCardContainer.songCardPrefab.jacket;
             account = new PotentialView(scene.topBar.text, scene.scene.transform, graphic, badges);
             RefreshPortrait();
-            CreateEntry("Portrait", PotentialView.PortraitCenter, PotentialView.FrameSize);
-            CreateEntry("PTT", PotentialView.BadgeCenter, PotentialView.BadgeSize);
+            CreateEntry("Portrait", PotentialView.PortraitCenter, Vector2.one * PotentialView.FrameSize, PotentialTab.Appearance);
+            CreateEntry("PTT", PotentialView.BadgeCenter, Vector2.one * PotentialView.BadgeSize, PotentialTab.Scores);
+            settingsEntry = CreateEntry("Settings", PotentialView.SettingsCenter, PotentialView.SettingsSize, PotentialTab.Settings);
             selectedInfo = new SelectedChartInfo(scene);
         }
         catch { Dispose(); throw; }
     }
 
-    /// <summary>建立旋转 45 度的正方形碰撞体，与显示菱形共用中心和对角线长度。</summary>
+    /// <summary>头像/PTT 使用菱形命中区域，设定按钮使用其矩形范围；只登记本模组的页面回调。</summary>
     /// <param name="name">入口名称。</param>
     /// <param name="center">相对头像容器中心的设计像素偏移。</param>
-    /// <param name="size">菱形水平及垂直对角线长度。</param>
-    private void CreateEntry(string name, Vector2 center, float size)
+    /// <param name="size">图形的设计宽高，菱形为对角线长度。</param>
+    /// <param name="tab">点击后打开的模组页签。</param>
+    /// <returns>由当前选歌视图管理生命周期的按钮。</returns>
+    private UIButton CreateEntry(string name, Vector2 center, Vector2 size, PotentialTab tab)
     {
         var root = new GameObject("InFalsus.PotentialSystem." + name);
         root.SetActive(false);
@@ -82,13 +86,13 @@ internal sealed class PotentialSelection : IDisposable
         entry.constrained2D = constrained;
         entry.button = scene.backButton.button;
         entry.sfxSetType = scene.backButton.sfxSetType;
-        UIButton._EI click = (Action<UIButton>)OpenResults;
-        openResults.Add(click);
+        UIButton._EI click = (Action<UIButton>)(button => OpenPage(button, tab));
+        openPages.Add(click);
         entry._DSA(click);
-        var hit = new GameObject("DiamondHitArea");
+        var hit = new GameObject("HitArea");
         hit.layer = root.layer;
         hit.transform.SetParent(root.transform, false);
-        hit.transform.localRotation = Quaternion.Euler(0f, 0f, 45f);
+        hit.transform.localRotation = tab == PotentialTab.Settings ? Quaternion.identity : Quaternion.Euler(0f, 0f, 45f);
         entry.ButtonCollider = hit.AddComponent<BoxCollider>();
         entry.ButtonCollider.enabled = false;
         entry.flags = UIButton.Flags.DoesConsumeTouchOnPress | UIButton.Flags.DoesHoverBlockOtherHover
@@ -114,17 +118,18 @@ internal sealed class PotentialSelection : IDisposable
         entry.constrained2D._rQA();
         entry.constrained2D._RQA();
         entry.constrained2D._PQA(0x3f);
-        BrowserWidgets.Place(entry.constrained2D, center, Vector2.one * size);
+        BrowserWidgets.Place(entry.constrained2D, center, size);
+        return entry;
     }
 
-    /// <summary>原生菱形碰撞体完成点击判定；顶部被裁切部分及选歌输入失效时不打开。</summary>
-    private void OpenResults(UIButton button)
+    /// <summary>原生碰撞体完成点击判定；选歌没有输入权限时不打开模组页面。</summary>
+    private void OpenPage(UIButton button, PotentialTab tab)
     {
         var input = InputManager.Instance;
         if (entryEnabled == true && entries.Any(entry => entry.Pointer == button.Pointer)
             && button.ButtonCollider.enabled && scene.isActiveAndEnabled && !scene.DisableInputEvents
             && input?.IsHeadOfStack(scene) == true)
-            browser.RequestOpen(scene, snapshot, button.Pointer == entries[0].Pointer ? PotentialTab.Appearance : PotentialTab.Scores);
+            browser.RequestOpen(scene, snapshot, tab);
     }
 
     /// <summary>刷新当前难度排名，并在曲包、难度、定数来源或成绩变化后重新应用自选排序。</summary>
@@ -168,7 +173,8 @@ internal sealed class PotentialSelection : IDisposable
             bool wasEnabled = entry.ButtonCollider.enabled;
             BrowserWidgets.SyncHitArea(container, entry.ButtonCollider);
             var hitSize = entry.ButtonCollider.size;
-            entry.ButtonCollider.size = new Vector3(hitSize.x * 0.70710678f, hitSize.y * 0.70710678f, hitSize.z);
+            if (entry != settingsEntry)
+                entry.ButtonCollider.size = new Vector3(hitSize.x * 0.70710678f, hitSize.y * 0.70710678f, hitSize.z);
             // 菱形由原生射线判定；这里只裁切 UI 黑边，不用另一套布局坐标重复裁切入口。
             entry.ButtonCollider.enabled &= enabled && visible;
             hitAreaChanged |= wasEnabled != entry.ButtonCollider.enabled;
@@ -386,7 +392,8 @@ internal sealed class PotentialSelection : IDisposable
             catch (Exception ex) { Plugin.Logger.LogError($"注销潜力值徽章入口失败：{ex}"); }
         }
         entries.Clear();
-        openResults.Clear();
+        settingsEntry = null;
+        openPages.Clear();
         account?.Dispose();
         account = null;
         selectedInfo?.Dispose();

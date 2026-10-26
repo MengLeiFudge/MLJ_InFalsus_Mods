@@ -16,6 +16,8 @@ internal sealed class PotentialNameText : IDisposable
     private string? displayed;
     private int displayedColor = -1;
     private Vector2 imageSize;
+    /// <summary>45 字号下的昵称前进宽度，按 APK 账号坐标计算，不含透明留边。</summary>
+    internal float NaturalWidth => Math.Max(0f, imageSize.x - 2f * Padding / RasterScale);
 
     internal PotentialNameText(Constrained2D template, Transform parent)
     {
@@ -71,12 +73,12 @@ internal sealed class PotentialNameText : IDisposable
             imageSize * fit);
     }
 
-    /// <summary>Geosans 不含中文；非 ASCII 名字沿用 APK 的 NotoSC Regular，同样应用名片描边与阴影。</summary>
+    /// <summary>Geosans 不含中文；非 ASCII 名字使用 APK 的 NotoSC Light，并减小描边以保持细字重。</summary>
     private static PixelImage Compose(string value, int color)
     {
         bool latin = value.All(c => c <= 0x7f);
-        using var font = new BitmapFont(latin ? "GeosansLight.ttf" : "NotoSansCJKsc-Regular.otf",
-            latin ? "GeosansLight" : "Noto Sans CJK SC Regular", FontSize * RasterScale);
+        using var font = new BitmapFont(latin ? "GeosansLight.ttf" : "NotoSansCJKsc-Light.otf",
+            latin ? "GeosansLight" : "Noto Sans CJK SC Light", FontSize * RasterScale, latin ? 400 : 300);
         using var measure = new WindowsBitmap(1, 1);
         var size = measure.Measure(value, font);
         int width = checked(size.Width + 2 * Padding), height = checked(size.Height + 2 * Padding);
@@ -98,9 +100,10 @@ internal sealed class PotentialNameText : IDisposable
 
         void Draw(WindowsBitmap canvas)
         {
-            // APK 的 (1,-2) 转为位图向下的 Y；描边 1、阴影模糊 0。
-            canvas.OutlinedText(value, font, Padding + RasterScale, Padding + 2 * RasterScale, RasterScale, shadow);
-            canvas.OutlinedText(value, font, Padding, Padding, RasterScale, foreground);
+            // APK 的 (1,-2) 转为位图向下的 Y；英文描边 1，中文用 1/4 避免细字被描粗。
+            int outline = latin ? RasterScale : 1;
+            canvas.OutlinedText(value, font, Padding + RasterScale, Padding + 2 * RasterScale, outline, shadow);
+            canvas.OutlinedText(value, font, Padding, Padding, outline, foreground);
         }
     }
 
