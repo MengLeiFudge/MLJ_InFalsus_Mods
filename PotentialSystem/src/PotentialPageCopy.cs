@@ -21,7 +21,6 @@ internal sealed class PotentialPageCopy : IDisposable
     private static PotentialPageCopy? active;
     internal static bool IsBusy => active != null;
     private AsyncOperationHandle<SceneInstance>? loading, unloading;
-    private readonly Il2CppSystem.Action<AsyncOperationHandle<SceneInstance>> completed;
     private readonly SongSelectScene owner;
     private readonly List<Renderer> hidden = new();
     private bool disposed, releaseFailed;
@@ -41,12 +40,10 @@ internal sealed class PotentialPageCopy : IDisposable
         if (active != null || recipeLoaded)
             throw new InvalidOperationException("卡牌页面资源正在使用或释放，请稍后再打开。");
         this.owner = owner;
-        completed = (Action<AsyncOperationHandle<SceneInstance>>)(_ => Drain());
         active = this;
         try
         {
             loading = Addressables.LoadSceneAsync((Il2CppSystem.String)"RecipeScene", LoadSceneMode.Additive);
-            loading.add_Completed(completed);
         }
         catch { active = null; throw; }
     }
@@ -112,7 +109,7 @@ internal sealed class PotentialPageCopy : IDisposable
         foreach (var root in scene.gameObject.scene.GetRootGameObjects()) root.SetActive(false);
     }
 
-    /// <summary>取消加载后仍由主线程收尾，保留隔离标记直至源场景彻底卸载。</summary>
+    /// <summary>控制器每帧在主线程检查取消后的加载及卸载，保留隔离标记直至源场景释放；不注册携带 IL2CPP 非 blittable 句柄的托管回调。</summary>
     internal static void Drain()
     {
         var current = active;
@@ -133,7 +130,6 @@ internal sealed class PotentialPageCopy : IDisposable
             {
                 current.unloading = Addressables.UnloadSceneAsync(current.loading, autoReleaseHandle: false);
                 current.loading = null;
-                current.unloading.add_Completed(current.completed);
             }
             else { Addressables.Release(current.loading); current.loading = null; active = null; }
         }

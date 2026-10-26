@@ -76,7 +76,6 @@ internal sealed class PotentialBrowser : IDisposable
     /// <summary>在同一异常边界内管理原生视图、过滤结果与异步导出。</summary>
     internal void Update(SongSelectScene? scene, PotentialSnapshot? data)
     {
-        PotentialPageCopy.Drain();
         if (closeRequested) { Close(); return; }
         if (requestedFrame >= 0 && Time.frameCount > requestedFrame)
         {

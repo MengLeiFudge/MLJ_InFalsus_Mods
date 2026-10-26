@@ -69,14 +69,18 @@ public sealed class PotentialController : MonoBehaviour
     private bool constantsProcessed;
     /// <summary>主线程采用或提示失败后停止本次检查，避免逐帧重复报错。</summary>
     private bool constantsUpdateFailed;
+    /// <summary>业务更新失败后仅保留模板场景的异步释放，避免停用组件时遗留正在加载的资源。</summary>
+    private bool stopped;
 
     /// <summary>绑定由 IL2CPP 创建的组件。</summary>
     /// <param name="pointer">原生 Unity 组件指针。</param>
     public PotentialController(IntPtr pointer) : base(pointer) { }
 
-    /// <summary>按场景生命周期显示 PTT，并用非缩放时间推进结算数值动画。</summary>
+    /// <summary>先推进页面素材释放，再按场景显示 PTT 和结算动画；业务停止后仍完成异步收尾。</summary>
     public void Update()
     {
+        PotentialPageCopy.Drain();
+        if (stopped) return;
         try
         {
             bool selectionAvailable = false;
@@ -144,9 +148,9 @@ public sealed class PotentialController : MonoBehaviour
         }
         catch (Exception ex)
         {
-            Plugin.Logger.LogError($"潜力值更新失败，已停止本组件：{ex}");
+            Plugin.Logger.LogError($"潜力值更新失败，已停止业务更新并保留页面素材释放：{ex}");
+            stopped = true;
             ReleaseViews();
-            enabled = false;
         }
     }
 
@@ -155,6 +159,7 @@ public sealed class PotentialController : MonoBehaviour
     [HideFromIl2Cpp]
     internal void EnterSelection(SongSelectScene scene)
     {
+        if (stopped) return;
         if (selection != scene)
         {
             selectionView?.Dispose();
@@ -174,6 +179,7 @@ public sealed class PotentialController : MonoBehaviour
     [HideFromIl2Cpp]
     internal void EnterResults(ResultsScene scene)
     {
+        if (stopped) return;
         browser?.Close();
         if (resultsScene != scene)
         {
