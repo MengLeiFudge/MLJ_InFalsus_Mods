@@ -22,9 +22,9 @@ internal sealed class PotentialView : IDisposable
     internal static readonly Vector2 PortraitCenter = new(0f, 62.5f);
     internal static readonly Vector2 BadgeCenter = PortraitCenter + new Vector2(56f, -37.5f) * (FrameSize / 150f);
     /// <summary>16:9 截图中横幅位于头像左侧，宽约 424、高 74；保留原图高度，裁掉右端，不压扁横幅。</summary>
-    private const float UserScale = FrameSize / 150f, NameWidth = 173f * UserScale, NamecardWidth = 424f;
+    private const float UserScale = FrameSize / 150f, NamecardWidth = 424f;
     private static readonly Vector2 NamecardCenter = PortraitCenter + new Vector2(-NamecardWidth / 2f, 0.5f) * UserScale;
-    private static readonly Vector2 NameCenter = PortraitCenter + new Vector2(-90f - 173f / 2f, 0.5f) * UserScale;
+    private static readonly Vector2 NameRightCenter = PortraitCenter + new Vector2(-90f, 0.5f) * UserScale;
     /// <summary>结算信息相对顶部中央布局；左侧显示单曲变化，右侧显示账号变化，避开两端导航按钮。</summary>
     private static readonly (Vector2 Center, float Width, float Font)[] ResultSlots =
     {
@@ -51,9 +51,8 @@ internal sealed class PotentialView : IDisposable
     /// <summary>选歌名片使用独立背景与昵称，随头像容器统一隐藏。</summary>
     private Constrained2D? namecard;
     private Material? namecardMaterial;
-    private NativeLabel? namecardText;
+    private PotentialNameText? namecardText;
     private int displayedNamecardColor = -1;
-    private bool nameLaidOut;
     /// <summary>选歌入口绑定不带渲染缩放的容器，头像、边框、徽章和数字分别布局。</summary>
     internal Constrained2D Entry => entryRoot!;
 
@@ -158,9 +157,7 @@ internal sealed class PotentialView : IDisposable
                 namecardLayout.zPosition = 0f;
                 namecard.constrained2DTransform = namecardLayout;
                 BrowserWidgets.Place(namecard, NamecardCenter, new Vector2(NamecardWidth, 74f) * UserScale);
-                namecardText = new NativeLabel(template, graphicsParent, "Namecard.Name", anchor,
-                    Constrained2DAlignment.Center, NameCenter, 1f);
-                namecardText.SetOutline(new Color(0.08f, 0.06f, 0.12f), 0.06f);
+                namecardText = new PotentialNameText(graphicTemplate, graphicsParent);
             }
         }
         catch { Dispose(); throw; }
@@ -305,17 +302,7 @@ internal sealed class PotentialView : IDisposable
                 new Vector2(NamecardWidth / 564f, 1f), Vector2.zero);
             displayedNamecardColor = color;
         }
-        if (namecardText.Set(name, Color.white))
-        {
-            PotentialFonts.ApplyName(namecardText.Text, name);
-            nameLaidOut = false;
-        }
-        if (nameLaidOut) return;
-        var bounds = namecardText.Measure(1f);
-        if (bounds.width <= 0f || bounds.height <= 0f) return;
-        float scale = Math.Min(NameWidth / bounds.width, 35f * UserScale / bounds.height);
-        namecardText.PlaceBounds(NameCenter + new Vector2(NameWidth / 2f, 0f), new Vector2(1f, 0.5f), scale);
-        nameLaidOut = true;
+        namecardText.Set(name, color, NameRightCenter, (NamecardWidth - 90f) * UserScale, UserScale);
     }
 
     /// <summary>同步选歌入口尺寸并刷新徽章数值，保持分辨率变化后的点击范围与显示一致。</summary>

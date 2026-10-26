@@ -136,6 +136,58 @@ internal sealed class WindowsBitmap : IDisposable
         finally { SelectObject(dc, old); }
     }
 
+    /// <summary>使用已注册字体的实际行框度量，不套用选歌模板文字的边界或缩放。</summary>
+    internal (int Width, int Height) Measure(string text, BitmapFont font)
+    {
+        var old = SelectObject(dc, font.Handle);
+        Check(old != IntPtr.Zero && old != new IntPtr(-1), "选择名片字体");
+        try
+        {
+            Check(GetTextExtentPoint32W(dc, text, text.Length, out var size), "测量名片文字");
+            return (size.Width, size.Height);
+        }
+        finally { SelectObject(dc, old); }
+    }
+
+    /// <summary>按原字体轮廓填字及描边；高分辨率画布缩放后形成抗锯齿，不依赖游戏 SDF 材质。</summary>
+    internal void OutlinedText(string text, BitmapFont font, int x, int y, int outline, uint rgb)
+    {
+        var brush = CreateSolidBrush(ColorRef(rgb));
+        Check(brush != IntPtr.Zero, "建立名片文字画刷");
+        IntPtr pen = IntPtr.Zero, oldFont = IntPtr.Zero, oldBrush = IntPtr.Zero, oldPen = IntPtr.Zero;
+        try
+        {
+            pen = CreatePen(0, outline * 2, ColorRef(rgb));
+            Check(pen != IntPtr.Zero, "建立名片文字描边");
+            oldFont = SelectObject(dc, font.Handle);
+            Check(oldFont != IntPtr.Zero && oldFont != new IntPtr(-1), "选择名片字体");
+            oldBrush = SelectObject(dc, brush);
+            Check(oldBrush != IntPtr.Zero && oldBrush != new IntPtr(-1), "选择名片文字画刷");
+            oldPen = SelectObject(dc, pen);
+            Check(oldPen != IntPtr.Zero && oldPen != new IntPtr(-1), "选择名片文字描边");
+            Check(BeginPath(dc), "开始名片文字轮廓");
+            Check(TextOutW(dc, x, y, text, text.Length), "生成名片文字轮廓");
+            Check(EndPath(dc), "完成名片文字轮廓");
+            Check(StrokeAndFillPath(dc), "绘制名片文字");
+        }
+        finally
+        {
+            if (oldPen != IntPtr.Zero && oldPen != new IntPtr(-1)) SelectObject(dc, oldPen);
+            if (oldBrush != IntPtr.Zero && oldBrush != new IntPtr(-1)) SelectObject(dc, oldBrush);
+            if (oldFont != IntPtr.Zero && oldFont != new IntPtr(-1)) SelectObject(dc, oldFont);
+            if (pen != IntPtr.Zero) DeleteObject(pen);
+            DeleteObject(brush);
+        }
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct NativeSize { internal int Width, Height; }
+    [DllImport("gdi32.dll", CharSet = CharSet.Unicode, SetLastError = true)] [return: MarshalAs(UnmanagedType.Bool)] private static extern bool GetTextExtentPoint32W(IntPtr dc, string text, int length, out NativeSize size);
+    [DllImport("gdi32.dll", SetLastError = true)] [return: MarshalAs(UnmanagedType.Bool)] private static extern bool BeginPath(IntPtr dc);
+    [DllImport("gdi32.dll", SetLastError = true)] [return: MarshalAs(UnmanagedType.Bool)] private static extern bool EndPath(IntPtr dc);
+    [DllImport("gdi32.dll", SetLastError = true)] [return: MarshalAs(UnmanagedType.Bool)] private static extern bool StrokeAndFillPath(IntPtr dc);
+    [DllImport("gdi32.dll", CharSet = CharSet.Unicode, SetLastError = true)] [return: MarshalAs(UnmanagedType.Bool)] private static extern bool TextOutW(IntPtr dc, int x, int y, string text, int length);
+
     /// <summary>透明图像转成预乘 BGRA 后合成，保留 Arcaea 徽章的透明边缘。</summary>
     internal void Image(PixelImage image, int x, int y, int width, int height)
     {

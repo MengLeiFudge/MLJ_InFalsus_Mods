@@ -10,7 +10,7 @@ namespace InFalsusMod.Potential;
 internal static class PotentialFonts
 {
     /// <summary>字体缓存不随页面关闭或插件重载重复创建；原生 FastText 在退出时统一回收字形资源。</summary>
-    private static FastTextFontFamily? chinese, nameLatin;
+    private static FastTextFontFamily? chinese;
 
     /// <summary>仅给传入的模组文字副本绑定字体，保留其字号、字重、颜色和原生字体设置。</summary>
     /// <param name="text">本模组拥有的文字组件。</param>
@@ -22,33 +22,16 @@ internal static class PotentialFonts
             text.SetFontFamilyAsset(chinese);
     }
 
-    /// <summary>昵称使用 APK 的 GeosansLight；含中日韩字符时使用完整 Noto 常规字重，不继承模板字重。</summary>
-    /// <param name="text">名片文字副本。</param>
-    /// <param name="value">昵称，用于选择支持该字符范围的字体。</param>
-    internal static void ApplyName(Text text, string value)
-    {
-        if (value.All(c => c <= 0x7f))
-        {
-            nameLatin ??= Create(text.fontFamilyAsset, "GeosansLight.ttf");
-            if (text.fontFamilyAsset != nameLatin) text.SetFontFamilyAsset(nameLatin);
-        }
-        else Apply(text);
-        text.style = Text.FastTextStyle.Regular;
-        text.presention &= ~(Text.FastTextPresentation.ParseStyleTags | Text.FastTextPresentation.SplitColors);
-        text.dirtyFlags |= Text.DirtyFlags.FontChanged | Text.DirtyFlags.TextChanged;
-    }
-
     /// <summary>创建六个字重槽位均有效的字体族；中文界面不依赖原生子集或系统字体。</summary>
     /// <param name="template">提供 FastText 排版设置的原生字体族。</param>
     /// <returns>由本模块保留、供所有模组文字共享的字体族。</returns>
-    private static FastTextFontFamily Create(FastTextFontFamily template, string? singleFont = null)
+    private static FastTextFontFamily Create(FastTextFontFamily template)
     {
         var assets = new List<FastTextAsset>();
         FastTextFontFamily? family = null;
         try
         {
-            var names = singleFont != null ? new[] { singleFont }
-                : new[] { "NotoSansCJKsc-Regular.otf", "NotoSansCJKsc-Bold.otf", "NotoSansCJKsc-Light.otf" };
+            var names = new[] { "NotoSansCJKsc-Regular.otf", "NotoSansCJKsc-Bold.otf", "NotoSansCJKsc-Light.otf" };
             foreach (string name in names)
             {
                 using var stream = typeof(PotentialFonts).Assembly.GetManifestResourceStream("PotentialSystem.Fonts." + name)
@@ -63,15 +46,13 @@ internal static class PotentialFonts
                 asset.PointSizeMultiplier = 1f;
             }
             family = ScriptableObject.CreateInstance<FastTextFontFamily>();
-            family.name = "PotentialSystem." + (singleFont ?? "Chinese");
+            family.name = "PotentialSystem.Chinese";
             family.hideFlags = HideFlags.HideAndDontSave;
             family.settings = template.settings;
             family.behaviours = template.behaviours;
             family.supportsLocalization = false;
             // Regular / Bold / Italic / Light / Medium / SemiBold；没有独立斜体时仍提供完整中文字形。
-            family.fontAssets = new Il2CppReferenceArray<FastTextAsset>(singleFont != null
-                ? Enumerable.Repeat(assets[0], 6).ToArray()
-                : new[] { assets[0], assets[1], assets[0], assets[2], assets[0], assets[1] });
+            family.fontAssets = new Il2CppReferenceArray<FastTextAsset>(new[] { assets[0], assets[1], assets[0], assets[2], assets[0], assets[1] });
             return family;
         }
         catch
