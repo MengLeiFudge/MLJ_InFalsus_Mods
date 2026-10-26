@@ -1,6 +1,7 @@
 using System.Reflection;
 using HarmonyLib;
-using ifapp.Game.Input;
+using System.Runtime.InteropServices;
+using Il2CppInterop.Common;
 using ifapp.Game.Scenes;
 using ifapp.Game.Scenes.Recipe;
 using ifapp.Game.UI.Common;
@@ -90,7 +91,8 @@ internal sealed class PotentialPageCopy : IDisposable
     /// <summary>加载、关闭及销毁期间都隔离模板控制器；正常卡牌页面不在此范围内。</summary>
     internal static bool IsProtected(Component component)
     {
-        if (active != null && component.gameObject.scene.name == "RecipeScene") return true;
+        if (active == null) return false;
+        if (component.gameObject.scene.name == "RecipeScene") return true;
         for (var node = component.transform; node != null; node = node.parent)
             if (node.name == RootName) return true;
         return false;
@@ -152,20 +154,43 @@ internal sealed class PotentialPageCopy : IDisposable
 [HarmonyPatch]
 internal static class PotentialPageCopyLifecyclePatch
 {
+    /// <summary>仅隔离卡牌模板中的业务控制器；共享原生入口只安装一次补丁，空实现不需要隔离。</summary>
     private static IEnumerable<MethodBase> TargetMethods()
     {
-        string[] messages = { "Awake", "Start", "OnEnable", "OnDisable", "OnDestroy", "Update", "LateUpdate" };
-        foreach (var type in typeof(RecipeScene).Assembly.GetTypes())
+        (Type Type, string[] Methods)[] targets =
         {
-            if (type.IsAbstract || type.IsGenericType || !typeof(MonoBehaviour).IsAssignableFrom(type)) continue;
-            if (type.Namespace != typeof(RecipeScene).Namespace && !typeof(InputReceiver).IsAssignableFrom(type)) continue;
-            foreach (string name in messages)
+            (typeof(RecipeScene), new[] { "Awake", "Start", "OnEnable", "OnDisable", "OnDestroy", "Update" }),
+            (typeof(CardInventoryLayer), new[] { "Awake", "OnEnable", "OnDisable", "OnDestroy" }),
+            (typeof(CardFilterLayer), new[] { "Awake", "OnEnable", "OnDestroy" }),
+            (typeof(CraftingLayer), new[] { "Awake", "Start", "Update", "OnDisable", "OnDestroy" }),
+            (typeof(CraftingBonusAreasInformationContainer), new[] { "Start", "OnDestroy" }),
+            (typeof(CraftingStrikeInformationContainer), new[] { "Awake", "OnEnable", "Update" }),
+            (typeof(GridHoverHexToolTip), new[] { "Awake", "OnDestroy" }),
+            (typeof(IotaFilterLayer), new[] { "Awake", "OnEnable", "OnDestroy" }),
+            (typeof(IotaInventoryLayer), new[] { "Awake", "OnEnable", "OnDisable", "OnDestroy" }),
+            (typeof(IotaScrollAreaContainer), new[] { "Awake", "Update" }),
+            (typeof(RecipeFilterLayer), new[] { "Awake", "OnEnable", "OnDestroy" }),
+            (typeof(RecipeSelectedCardContainer), new[] { "OnEnable", "OnDestroy" }),
+            (typeof(RecipeSelectedLayer), new[] { "Awake", "OnDestroy" }),
+            (typeof(RewardBannerV2), new[] { "OnDisable", "OnDestroy" }),
+            (typeof(SelectedRecipeLayerScrollContainer), new[] { "Awake", "Update" }),
+            (typeof(SmallRecipeButton), new[] { "Awake" })
+        };
+        var entries = new HashSet<IntPtr>();
+        foreach (var (type, methods) in targets)
+            foreach (string name in methods)
             {
                 var method = type.GetMethod(name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly,
-                    null, Type.EmptyTypes, null);
-                if (method != null && method.ReturnType == typeof(void)) yield return method;
+                    null, Type.EmptyTypes, null) ?? throw new MissingMethodException(type.FullName, name);
+                var field = Il2CppInteropUtils.GetIl2CppMethodInfoPointerFieldForGeneratedMethod(method);
+                if (field?.GetValue(null) is not IntPtr info || info == IntPtr.Zero)
+                    throw new InvalidOperationException($"无法读取卡牌控制器入口：{type.Name}.{name}。");
+                var entry = Marshal.ReadIntPtr(info);
+                if (entry == IntPtr.Zero) throw new InvalidOperationException($"卡牌控制器入口为空：{type.Name}.{name}。");
+                // Windows x64 的 RET/RET imm16 可能由无关类型共享；拦截它会影响整个进程。
+                if (Marshal.ReadByte(entry) is 0xc3 or 0xc2 || !entries.Add(entry)) continue;
+                yield return method;
             }
-        }
     }
 
     [HarmonyPrefix]
