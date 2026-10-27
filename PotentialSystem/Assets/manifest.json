@@ -1,7 +1,7 @@
 {
   "namespace": "MengLei",
   "name": "PotentialSystem",
-  "version_number": "1.0.1",
+  "version_number": "1.0.2",
   "website_url": "https://github.com/MengLeiFudge/MLJ_InFalsus_Mods",
   "description": "潜力值系统：三来源定数、成绩卡片与逐局分数曲线、角色头像和名片设置、排序记忆、B50 图片导出及结算 PTT。",
   "dependencies": [

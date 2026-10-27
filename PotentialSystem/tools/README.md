@@ -42,4 +42,6 @@
 
 “设定”的字体由 `0x1790da4` 识别 `Fonts/L2-Semibold.ttf` 后，以类型 2 调用 `0x1809ddc`；`zh-Hans` 分支选择 `Fonts/NotoSansCJKsc-Bold.otf`（全局指针 `0x1bccd58` 的重定位目标为 `0x5555ad`）。嵌入字体与 APK 原件逐字节相同，SHA256 为 `f32e8651b534178dfd21cbc3fac22861883c2105a8cb39a4f305170b715fe503`。GDI 使用字体族 `Noto Sans CJK SC Bold`、字重 700；先描边，再填充完整白色正文，避免居中描边盖住笔画。
 
-`PotentialSelection.Render` 按原生 `TopBar` 的 `CalculatedZFromCamera` 将账号容器放在其前方 0.2 深度单位，头像、名片、PTT、设定及命中区域随容器同步。它只调整绘制深度，保持账号的二维布局与原生顶部栏不变。
+`PotentialSelection` 创建账号后，将账号下全部 `Renderer`（包括暂时隐藏的昵称与 PTT）切换到原生 `TopBar.primaryNavigationButton` 所在的层。当前游戏中，曲绘模板在 `Lowiro_Default`（6），顶部黑条与导航在 `Lowiro_Layer2`（10）；`URP-Performant-Renderer` 用独立的 `RenderObjects` 绘制后者（`LowiroLayer2Transparent`，LayerMask 1024）。只改 Z 或材质队列无法跨越这两个绘制阶段。按钮与碰撞体保留原输入层。
+
+`PotentialSelection.Render` 再按 `TopBar` 的 `CalculatedZFromCamera` 将账号容器放在其前方 0.2 深度单位；账号的二维布局、原生顶部栏与设置/弹窗的更上层绘制顺序保持不变。

@@ -9,7 +9,7 @@ using Object = UnityEngine.Object;
 namespace InFalsusMod.Potential;
 
 /// <summary>注册独立潜力值模组和原生场景完成后的观察入口。</summary>
-[BepInPlugin("menglei.infalsus.potentialsystem", "In Falsus Potential System", "1.0.1")]
+[BepInPlugin("menglei.infalsus.potentialsystem", "In Falsus Potential System", "1.0.2")]
 [BepInProcess("infalsus.exe")]
 public sealed class Plugin : BasePlugin
 {
@@ -55,7 +55,7 @@ public sealed class Plugin : BasePlugin
             Controller = null;
             throw;
         }
-        Log.LogInfo("潜力值系统 1.0.1 已加载，安小璃更新和萌泪酱新谱面计算将在后台完成。");
+        Log.LogInfo("潜力值系统 1.0.2 已加载，安小璃更新和萌泪酱新谱面计算将在后台完成。");
     }
 
     /// <inheritdoc />

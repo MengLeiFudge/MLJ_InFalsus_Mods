@@ -59,6 +59,10 @@ internal sealed class PotentialSelection : IDisposable
         {
             var graphic = scene.leftSongCardContainer.songCardPrefab.jacket;
             account = new PotentialView(scene.topBar.text, scene.scene.transform, graphic, badges);
+            // 原生顶部栏在独立的 Lowiro_Layer2 绘制阶段；曲绘的层不会因前移 Z 而越过它。
+            // 仅调整账号图形，按钮与碰撞体继续使用选歌输入层。
+            foreach (var renderer in account.Entry.GetComponentsInChildren<Renderer>(true))
+                renderer.gameObject.layer = scene.topBar.primaryNavigationButton.gameObject.layer;
             RefreshPortrait();
             CreateEntry("Portrait", PotentialView.PortraitCenter, Vector2.one * PotentialView.FrameSize, PotentialTab.Appearance);
             CreateEntry("PTT", PotentialView.BadgeCenter, Vector2.one * PotentialView.BadgeSize, PotentialTab.Scores);
