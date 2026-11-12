@@ -97,7 +97,10 @@ internal sealed class PotentialBrowser : IDisposable
             catch { Close(); if (root != null) Object.Destroy(root); throw; }
         }
         if (pageCopy != null && (owner == null || owner != scene || receiver == null || InputManager.Instance?.IsHeadOfStack(receiver) != true))
-        { Close(); return; }
+        {
+            Plugin.Logger.LogDebug($"潜力值页面因场景或输入归属变化而关闭，当前输入：{InputManager.Instance?.GetCurrentInputReceiverHead()?.name}。");
+            Close(); return;
+        }
         if (loading)
         {
             if (Time.realtimeSinceStartup - openedAt > 45f)

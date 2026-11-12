@@ -21,6 +21,9 @@ internal sealed class PotentialPageCopy : IDisposable
     private static PotentialPageCopy? active;
     internal static bool IsBusy => active != null;
     private AsyncOperationHandle<SceneInstance>? loading, unloading;
+    /// <summary>在激活前记录源场景句柄，隔离不依赖 Addressables 地址键或打包后的场景名称。</summary>
+    private int? sourceSceneHandle;
+    private AsyncOperation? activation;
     private readonly SongSelectScene owner;
     private readonly List<Renderer> hidden = new();
     private bool disposed, releaseFailed;
@@ -30,20 +33,13 @@ internal sealed class PotentialPageCopy : IDisposable
     /// <summary>独立加载模板，不经过 CoreScene 导航；同一时间只保留一个源场景引用。</summary>
     internal PotentialPageCopy(SongSelectScene owner)
     {
-        bool recipeLoaded = false;
-        // GetSceneByName 的生成包装依赖无法解析的 ReadOnlySpan 方法；枚举使用原生调用入口。
-        for (int i = 0; i < SceneManager.sceneCount; i++)
-        {
-            var scene = SceneManager.GetSceneAt(i);
-            if (scene.isLoaded && scene.name == "RecipeScene") { recipeLoaded = true; break; }
-        }
-        if (active != null || recipeLoaded)
+        if (active != null || Object.FindObjectsOfType<RecipeScene>(true).Length != 0)
             throw new InvalidOperationException("卡牌页面资源正在使用或释放，请稍后再打开。");
         this.owner = owner;
         active = this;
         try
         {
-            loading = Addressables.LoadSceneAsync((Il2CppSystem.String)"RecipeScene", LoadSceneMode.Additive);
+            loading = Addressables.LoadSceneAsync((Il2CppSystem.String)"RecipeScene", LoadSceneMode.Additive, activateOnLoad: false);
         }
         catch { active = null; throw; }
     }
@@ -56,6 +52,7 @@ internal sealed class PotentialPageCopy : IDisposable
         if (loading == null || !loading.IsDone) return false;
         if (loading.Status != AsyncOperationStatus.Succeeded)
             throw new InvalidOperationException("加载卡牌页面素材失败：" + loading.OperationException?.Message);
+        if (!ActivateSource()) return false;
         var source = loading.Result.Scene;
         var roots = source.GetRootGameObjects();
         var group = new GameObject("InFalsus.PotentialSystem.PageSource");
@@ -92,11 +89,24 @@ internal sealed class PotentialPageCopy : IDisposable
         return true;
     }
 
+    /// <summary>先确定模板身份再激活；关闭期间也必须完成此步，避免未激活场景堵住 Unity 异步队列。</summary>
+    /// <returns>源场景已激活，允许复制或卸载。</returns>
+    private bool ActivateSource()
+    {
+        if (activation == null)
+        {
+            var source = loading!.Result;
+            sourceSceneHandle = source.Scene.handle;
+            activation = source.ActivateAsync();
+        }
+        return activation.isDone;
+    }
+
     /// <summary>加载、关闭及销毁期间都隔离模板控制器；正常卡牌页面不在此范围内。</summary>
     internal static bool IsProtected(Component component)
     {
         if (active == null) return false;
-        if (component.gameObject.scene.name == "RecipeScene") return true;
+        if (component.gameObject.scene.handle == active.sourceSceneHandle) return true;
         for (var node = component.transform; node != null; node = node.parent)
             if (node.name == RootName) return true;
         return false;
@@ -105,7 +115,7 @@ internal sealed class PotentialPageCopy : IDisposable
     /// <summary>Awake 阶段隐藏源场景，防止复制之前闪现卡牌界面。</summary>
     internal static void HideSource(RecipeScene scene)
     {
-        if (active == null || scene.gameObject.scene.name != "RecipeScene") return;
+        if (active == null || scene.gameObject.scene.handle != active.sourceSceneHandle) return;
         foreach (var root in scene.gameObject.scene.GetRootGameObjects()) root.SetActive(false);
     }
 
@@ -128,6 +138,7 @@ internal sealed class PotentialPageCopy : IDisposable
             if (current.loading == null || !current.loading.IsDone) return;
             if (current.loading.Status == AsyncOperationStatus.Succeeded)
             {
+                if (!current.ActivateSource()) return;
                 current.unloading = Addressables.UnloadSceneAsync(current.loading, autoReleaseHandle: false);
                 current.loading = null;
             }
