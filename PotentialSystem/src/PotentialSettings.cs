@@ -5,14 +5,16 @@ namespace InFalsusMod.Potential;
 /// <summary>潜力值与个性化的 profile 配置；界面由模组页面持有，不再注入游戏通用设置。</summary>
 internal sealed class PotentialSettings
 {
+    /// <summary>新配置及配置尚未就绪时统一使用萌泪酱；已有选择不迁移。</summary>
+    internal const ChartConstantSource DefaultSource = ChartConstantSource.MengLei;
     private readonly ConfigEntry<int> source, selectionSort, browserSort, browserDifficulty, portrait, namecardColor;
     private readonly ConfigEntry<string> profileName;
 
     /// <summary>沿用既有配置键，不改写游戏存档。</summary>
     internal PotentialSettings(ConfigFile config)
     {
-        source = config.Bind("PotentialSystem", "ChartConstantSource", (int)ChartConstantSource.AnXiaoLi,
-            new ConfigDescription("谱面定数来源：0 官方等级、1 安小璃（默认）、2 萌泪酱；缺失定数回退等级。",
+        source = config.Bind("PotentialSystem", "ChartConstantSource", (int)DefaultSource,
+            new ConfigDescription("谱面定数来源：0 官方等级、1 安小璃、2 萌泪酱（默认）；缺失定数回退等级。",
                 new AcceptableValueList<int>(Enum.GetValues<ChartConstantSource>().Select(value => (int)value).ToArray())));
         selectionSort = config.Bind("PotentialSystem", "SelectionSort", 0,
             new ConfigDescription("选歌排序：0 原版，1 定数升序，2 定数降序，3 PTT 升序，4 PTT 降序。", new AcceptableValueRange<int>(0, 4)));

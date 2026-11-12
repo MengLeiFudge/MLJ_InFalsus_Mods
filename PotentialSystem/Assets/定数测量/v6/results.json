@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-22T18:09:30.416573+00:00",
+  "generated_at": "2026-11-12T03:14:13.939266+00:00",
   "input_sha256": {
     ".codex/chart-constant-estimation/ops-ranking/formula-features.json": "d46370c3e13ed76b903f026bc726a38d796ea967a546eac5d4c2369b63b5243f",
     ".codex/chart-constant-estimation/ops-ranking/sim-features.json": "4a287799f21d9a1fdeeb83beaa699ded6399d95549a872597d54d7256985906d",
@@ -48,9 +48,9 @@
     ".codex/chart-constant-estimation/v3/engine.py": "9459eb98e58503136c29121d8d7e969e3f5ef259d99a7b2aa3c1b2eddae8b7c0",
     ".codex/chart-constant-estimation/extract-workload.py": "e7f9b4d932c6ec993940e4153f8514e033d3186604145501fcabba0bec9b250b",
     ".codex/chart-constant-estimation/tool-comparison/comparison.json": "3eb80a8c2e4936e94bc8f49ffe77197158fa50c2fba18c8bd182288c0c8fe107",
-    "PotentialSystem/Assets/定数测量/v6/generate.py": "7f057635bf300b2822437394eb5a8469dd161eabf0d6d996be5bba11e68ca6f4",
+    "PotentialSystem/Assets/定数测量/v6/generate.py": "a9ebac18151b5d00dc3ee50684e41da7626dc4463eab9a9e289acba1839dcb21",
     "PotentialSystem/Assets/定数测量/v6/v6_model.py": "e662fda6369ecb094d339c98ff49668cb945a497d24943919f9e3086d07196eb",
-    "PotentialSystem/Assets/AnXiaoLiConstants.json": "e037e970bfac71d62e3f621c54bb66424ff1cf76bf10f9e8e126fe0d3ddb65d1",
+    "PotentialSystem/Assets/AnXiaoLiConstants.json": "342efff9ea453deadfa6717deba8f91e84232baf3bdfd1ce7ca8c05ac93f6fc9",
     "PotentialSystem/Assets/定数测量/chart-constants-v4.xlsx": "ffcaeb8673c289bd74e6499b71790e6383d1de39a764269ab57d8affc88ffbd0",
     "PotentialSystem/Assets/定数测量/chart-constants-v5.xlsx": "af346a72843f516d7adf4cf8103a49bc0c96e6f6e6457efb4e44de2642e8eac6",
     ".codex/chart-constant-estimation/ops-ranking/ml-final.json": "fcdd3d00ffba5d6947766d373348a99fb1e2ea35cf64bb698f1555b3aacb0c0a"
@@ -188,7 +188,7 @@
     },
     "当前安小璃：EVO": {
       "charts": 78,
-      "mae": 0.3628205128205128,
+      "mae": 0.3641025641025641,
       "within_0_1": 25,
       "within_0_2": 25,
       "over_0_3": 53,
@@ -200,27 +200,27 @@
     },
     "当前安小璃：ULT": {
       "charts": 79,
-      "mae": 0.17848101265822788,
-      "within_0_1": 49,
-      "within_0_2": 58,
-      "over_0_3": 15,
-      "comparable_pairs": 804,
-      "same_direction": 596,
-      "ties": 102,
-      "opposite": 106,
-      "pair_agreement": 0.804726368159204
+      "mae": 0.16708860759493674,
+      "within_0_1": 48,
+      "within_0_2": 61,
+      "over_0_3": 13,
+      "comparable_pairs": 805,
+      "same_direction": 601,
+      "ties": 107,
+      "opposite": 97,
+      "pair_agreement": 0.8130434782608695
     },
     "当前安小璃：FBD": {
-      "charts": 79,
-      "mae": 0.15696202531645573,
-      "within_0_1": 44,
-      "within_0_2": 63,
-      "over_0_3": 7,
-      "comparable_pairs": 661,
-      "same_direction": 433,
-      "ties": 123,
-      "opposite": 105,
-      "pair_agreement": 0.7481089258698941
+      "charts": 76,
+      "mae": 0.14078947368421052,
+      "within_0_1": 48,
+      "within_0_2": 62,
+      "over_0_3": 5,
+      "comparable_pairs": 574,
+      "same_direction": 409,
+      "ties": 108,
+      "opposite": 57,
+      "pair_agreement": 0.8066202090592335
     }
   },
   "comparison": {
@@ -303,7 +303,7 @@
       "title": "à la mode",
       "difficulty": "ULT",
       "official_level": 9,
-      "community": 9.3,
+      "community": 9.4,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -337,7 +337,7 @@
       "title": "à la mode",
       "difficulty": "FBD",
       "official_level": 11,
-      "community": 11.4,
+      "community": 11.5,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -429,7 +429,7 @@
       "title": "Altered Edge",
       "difficulty": "ULT",
       "official_level": 9,
-      "community": 9.4,
+      "community": 9.5,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -715,7 +715,7 @@
       "title": "Chaoticism Legacy",
       "difficulty": "FBD",
       "official_level": 13,
-      "community": 13.7,
+      "community": 13.8,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -841,7 +841,7 @@
       "title": "Chronomia",
       "difficulty": "FBD",
       "official_level": 11,
-      "community": 11.2,
+      "community": 11.1,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -904,7 +904,7 @@
       "title": "Chronophobia",
       "difficulty": "EVO",
       "official_level": 9,
-      "community": 9.9,
+      "community": 9.8,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -1093,7 +1093,7 @@
       "title": "code:Leviathan",
       "difficulty": "FBD",
       "official_level": 14,
-      "community": 14.1,
+      "community": 14.2,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -1311,7 +1311,7 @@
       "title": "Cryogenic",
       "difficulty": "ULT",
       "official_level": 9,
-      "community": 9.1,
+      "community": 9.2,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -1345,7 +1345,7 @@
       "title": "Cryogenic",
       "difficulty": "FBD",
       "official_level": 12,
-      "community": 12.3,
+      "community": 12.4,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -1563,7 +1563,7 @@
       "title": "Destr0yer",
       "difficulty": "ULT",
       "official_level": 9,
-      "community": 9.3,
+      "community": 9.4,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -1849,7 +1849,7 @@
       "title": "Everything",
       "difficulty": "FBD",
       "official_level": 10,
-      "community": 10.8,
+      "community": 10.9,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -2101,7 +2101,7 @@
       "title": "Falling Shadow",
       "difficulty": "FBD",
       "official_level": 11,
-      "community": 11.2,
+      "community": 11.1,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -2319,7 +2319,7 @@
       "title": "FFFF",
       "difficulty": "ULT",
       "official_level": 9,
-      "community": 9.8,
+      "community": 9.9,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -2445,7 +2445,7 @@
       "title": "F0 CHA0S",
       "difficulty": "ULT",
       "official_level": 9,
-      "community": 9.8,
+      "community": 9.9,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -2479,7 +2479,7 @@
       "title": "F0 CHA0S",
       "difficulty": "FBD",
       "official_level": 11,
-      "community": 11.8,
+      "community": 11.7,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -2571,7 +2571,7 @@
       "title": "Greyscale City",
       "difficulty": "ULT",
       "official_level": 10,
-      "community": 10.3,
+      "community": 10.4,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -2697,7 +2697,7 @@
       "title": "Hanabi",
       "difficulty": "ULT",
       "official_level": 9,
-      "community": 9.6,
+      "community": 9.7,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -2731,7 +2731,7 @@
       "title": "Hanabi",
       "difficulty": "FBD",
       "official_level": 11,
-      "community": 11.1,
+      "community": 11.0,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -3075,7 +3075,7 @@
       "title": "Kirapico Riot: Kirapicorin",
       "difficulty": "ULT",
       "official_level": 9,
-      "community": 9.4,
+      "community": 9.5,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -3235,7 +3235,7 @@
       "title": "KIRETSU",
       "difficulty": "FBD",
       "official_level": 13,
-      "community": 13.2,
+      "community": 13.5,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -3705,7 +3705,7 @@
       "title": "Mémoire",
       "difficulty": "ULT",
       "official_level": 11,
-      "community": 11.5,
+      "community": 11.6,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -3739,7 +3739,7 @@
       "title": "Mémoire",
       "difficulty": "FBD",
       "official_level": 13,
-      "community": 13.4,
+      "community": 13.5,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -3831,7 +3831,7 @@
       "title": "Minerva",
       "difficulty": "ULT",
       "official_level": 9,
-      "community": 9.0,
+      "community": 9.2,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -3865,7 +3865,7 @@
       "title": "Minerva",
       "difficulty": "FBD",
       "official_level": 11,
-      "community": 11.6,
+      "community": 11.7,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -4117,7 +4117,7 @@
       "title": "M / O / O / N / D / I / V / E / R",
       "difficulty": "FBD",
       "official_level": 11,
-      "community": 11.9,
+      "community": 11.8,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -4209,7 +4209,7 @@
       "title": "Moonsliders",
       "difficulty": "ULT",
       "official_level": 10,
-      "community": 10.5,
+      "community": 10.6,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -4461,7 +4461,7 @@
       "title": "New Vision",
       "difficulty": "ULT",
       "official_level": 9,
-      "community": 9.3,
+      "community": 9.4,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -4713,7 +4713,7 @@
       "title": "Now I know",
       "difficulty": "ULT",
       "official_level": 10,
-      "community": 10.4,
+      "community": 10.5,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -4747,7 +4747,7 @@
       "title": "Now I know",
       "difficulty": "FBD",
       "official_level": 12,
-      "community": 12.3,
+      "community": 12.4,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -4873,7 +4873,7 @@
       "title": "Outer Justice",
       "difficulty": "FBD",
       "official_level": 12,
-      "community": 12.5,
+      "community": 12.4,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -5062,7 +5062,7 @@
       "title": "PhylaXron",
       "difficulty": "EVO",
       "official_level": 9,
-      "community": 10.0,
+      "community": 10.1,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -5125,7 +5125,7 @@
       "title": "PhylaXron",
       "difficulty": "FBD",
       "official_level": 14,
-      "community": 14.5,
+      "community": 14.6,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -5343,7 +5343,7 @@
       "title": "Reconnect",
       "difficulty": "ULT",
       "official_level": 9,
-      "community": 9.2,
+      "community": 9.3,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -5503,7 +5503,7 @@
       "title": "Re:Flection",
       "difficulty": "FBD",
       "official_level": 13,
-      "community": 13.0,
+      "community": 13.1,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -5629,7 +5629,7 @@
       "title": "Scarlet Espada",
       "difficulty": "FBD",
       "official_level": 12,
-      "community": 12.6,
+      "community": 12.7,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -5847,7 +5847,7 @@
       "title": "Shadows of Unknown",
       "difficulty": "ULT",
       "official_level": 10,
-      "community": 10.5,
+      "community": 10.4,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -5973,7 +5973,7 @@
       "title": "should have been",
       "difficulty": "ULT",
       "official_level": 10,
-      "community": 10.7,
+      "community": 10.8,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -6351,7 +6351,7 @@
       "title": "TACTOM",
       "difficulty": "ULT",
       "official_level": 11,
-      "community": 11.9,
+      "community": 11.8,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -6385,7 +6385,7 @@
       "title": "TACTOM",
       "difficulty": "FBD",
       "official_level": 14,
-      "community": 14.7,
+      "community": 14.6,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -6511,7 +6511,7 @@
       "title": "Things I Treasure",
       "difficulty": "FBD",
       "official_level": 11,
-      "community": 11.5,
+      "community": 11.4,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -6637,7 +6637,7 @@
       "title": "Toccata Funebre",
       "difficulty": "FBD",
       "official_level": 13,
-      "community": 13.0,
+      "community": 12.9,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -6658,8 +6658,8 @@
       "estimate": 13.04395453242309,
       "constant": 13.0,
       "method": "独立线性与核岭",
-      "reference_in_range": true,
-      "status": "社区回归",
+      "reference_in_range": false,
+      "status": "社区回归；社区值超出当前官方等级",
       "v4": 12.8,
       "v5": 13,
       "leave_one": 13.1
@@ -6729,7 +6729,7 @@
       "title": "▓",
       "difficulty": "ULT",
       "official_level": 12,
-      "community": 12.8,
+      "community": 12.9,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -7015,7 +7015,7 @@
       "title": "Transparency",
       "difficulty": "FBD",
       "official_level": 10,
-      "community": 10.5,
+      "community": 10.4,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -7107,7 +7107,7 @@
       "title": "Vesper",
       "difficulty": "ULT",
       "official_level": 10,
-      "community": 10.6,
+      "community": 10.5,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -7267,7 +7267,7 @@
       "title": "With Truth",
       "difficulty": "FBD",
       "official_level": 10,
-      "community": 10.1,
+      "community": 10.0,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -7359,7 +7359,7 @@
       "title": "World Ender",
       "difficulty": "ULT",
       "official_level": 10,
-      "community": 10.6,
+      "community": 10.5,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -7485,7 +7485,7 @@
       "title": "yggthrasir",
       "difficulty": "ULT",
       "official_level": 10,
-      "community": 10.4,
+      "community": 10.3,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -7519,7 +7519,7 @@
       "title": "yggthrasir",
       "difficulty": "FBD",
       "official_level": 12,
-      "community": 12.5,
+      "community": 12.6,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -7611,7 +7611,7 @@
       "title": "Zetta",
       "difficulty": "ULT",
       "official_level": 10,
-      "community": 10.5,
+      "community": 10.6,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -8023,7 +8023,7 @@
       "title": "Ghost Ray",
       "difficulty": "FBD",
       "official_level": 10,
-      "community": 9.5,
+      "community": 9.4,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -8149,7 +8149,7 @@
       "title": "WonderRoom2.0",
       "difficulty": "FBD",
       "official_level": 10,
-      "community": 10.0,
+      "community": 10.2,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -8401,7 +8401,7 @@
       "title": "cylin",
       "difficulty": "FBD",
       "official_level": 12,
-      "community": 12.5,
+      "community": 12.6,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -8619,7 +8619,7 @@
       "title": "Rainshower",
       "difficulty": "ULT",
       "official_level": 10,
-      "community": 10.4,
+      "community": 10.5,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -8745,7 +8745,7 @@
       "title": "Albedo",
       "difficulty": "ULT",
       "official_level": 10,
-      "community": 10.2,
+      "community": 10.3,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -8779,7 +8779,7 @@
       "title": "Albedo",
       "difficulty": "FBD",
       "official_level": 12,
-      "community": 12.9,
+      "community": 13.0,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -8800,8 +8800,8 @@
       "estimate": 12.592092835956613,
       "constant": 12.6,
       "method": "独立线性与核岭",
-      "reference_in_range": true,
-      "status": "社区回归",
+      "reference_in_range": false,
+      "status": "社区回归；社区值超出当前官方等级",
       "v4": 12.6,
       "v5": 12.6,
       "leave_one": 12.5
@@ -8871,7 +8871,7 @@
       "title": "NEONViSION",
       "difficulty": "ULT",
       "official_level": 9,
-      "community": 9.4,
+      "community": 9.5,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -8997,7 +8997,7 @@
       "title": "Disruptor Array",
       "difficulty": "ULT",
       "official_level": 11,
-      "community": 11.0,
+      "community": 11.2,
       "new_chart": true,
       "features_reused": false,
       "f": {
@@ -9019,7 +9019,7 @@
       "constant": 11.4,
       "method": "独立线性与核岭",
       "reference_in_range": true,
-      "status": "新谱面；社区回归；社区仍为整数等级，细分未确认",
+      "status": "新谱面；社区回归",
       "v4": null,
       "v5": null,
       "leave_one": null
@@ -9123,7 +9123,7 @@
       "title": "Space Creation Theory",
       "difficulty": "ULT",
       "official_level": 10,
-      "community": 10.0,
+      "community": 10.6,
       "new_chart": true,
       "features_reused": false,
       "f": {
@@ -9145,7 +9145,7 @@
       "constant": 10.6,
       "method": "独立线性与核岭",
       "reference_in_range": true,
-      "status": "新谱面；社区回归；社区仍为整数等级，细分未确认",
+      "status": "新谱面；社区回归",
       "v4": null,
       "v5": null,
       "leave_one": null
@@ -9157,7 +9157,7 @@
       "title": "Space Creation Theory",
       "difficulty": "FBD",
       "official_level": 12,
-      "community": 12.0,
+      "community": 13.1,
       "new_chart": true,
       "features_reused": false,
       "f": {
@@ -9178,8 +9178,8 @@
       "estimate": 12.609098469351121,
       "constant": 12.6,
       "method": "独立线性与核岭",
-      "reference_in_range": true,
-      "status": "新谱面；社区回归；社区仍为整数等级，细分未确认",
+      "reference_in_range": false,
+      "status": "新谱面；社区回归；社区值超出当前官方等级",
       "v4": null,
       "v5": null,
       "leave_one": null
@@ -9249,7 +9249,7 @@
       "title": "Megameteor",
       "difficulty": "ULT",
       "official_level": 10,
-      "community": 10.0,
+      "community": 10.1,
       "new_chart": true,
       "features_reused": false,
       "f": {
@@ -9271,7 +9271,7 @@
       "constant": 10.6,
       "method": "独立线性与核岭",
       "reference_in_range": true,
-      "status": "新谱面；社区回归；社区仍为整数等级，细分未确认",
+      "status": "新谱面；社区回归",
       "v4": null,
       "v5": null,
       "leave_one": null
@@ -9283,7 +9283,7 @@
       "title": "Megameteor",
       "difficulty": "FBD",
       "official_level": 13,
-      "community": 13.0,
+      "community": 13.7,
       "new_chart": true,
       "features_reused": false,
       "f": {
@@ -9305,7 +9305,7 @@
       "constant": 13.7,
       "method": "独立线性与核岭",
       "reference_in_range": true,
-      "status": "新谱面；社区回归；社区仍为整数等级，细分未确认",
+      "status": "新谱面；社区回归",
       "v4": null,
       "v5": null,
       "leave_one": null
@@ -9409,7 +9409,7 @@
       "title": "TECHNOPOLIS 2085",
       "difficulty": "FBD",
       "official_level": 13,
-      "community": 13.0,
+      "community": 13.2,
       "new_chart": true,
       "features_reused": false,
       "f": {
@@ -9431,7 +9431,7 @@
       "constant": 13.5,
       "method": "独立线性与核岭",
       "reference_in_range": true,
-      "status": "新谱面；社区回归；社区仍为整数等级，细分未确认",
+      "status": "新谱面；社区回归",
       "v4": null,
       "v5": null,
       "leave_one": null
@@ -9535,7 +9535,7 @@
       "title": "Yume no hajimari",
       "difficulty": "FBD",
       "official_level": 10,
-      "community": 10.0,
+      "community": 10.7,
       "new_chart": true,
       "features_reused": false,
       "f": {
@@ -9557,7 +9557,7 @@
       "constant": 10.3,
       "method": "独立线性与核岭",
       "reference_in_range": true,
-      "status": "新谱面；社区回归；社区仍为整数等级，细分未确认",
+      "status": "新谱面；社区回归",
       "v4": null,
       "v5": null,
       "leave_one": null
@@ -9787,7 +9787,7 @@
       "title": "Monitoring",
       "difficulty": "FBD",
       "official_level": 11,
-      "community": 11.1,
+      "community": 11.2,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -10039,7 +10039,7 @@
       "title": "Lost One's Weeping",
       "difficulty": "FBD",
       "official_level": 11,
-      "community": 11.2,
+      "community": 11.1,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -10257,7 +10257,7 @@
       "title": "Apparently there's a cheat code to happiness",
       "difficulty": "ULT",
       "official_level": 10,
-      "community": 10.3,
+      "community": 10.4,
       "new_chart": false,
       "features_reused": true,
       "f": {
@@ -10318,5 +10318,7 @@
       "v5": 12.5,
       "leave_one": 12.4
     }
-  ]
+  ],
+  "frozen_model_sha256": "2c080c5e27924d883f19ff2485a762c790ac99cd47e2813e84677454e3721384",
+  "frozen_training_sha256": "42f7ca958db67712b574c36ae241103fd849c4fa4cc6b886d3f2894c077bcae3"
 }

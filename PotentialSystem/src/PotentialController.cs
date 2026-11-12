@@ -248,7 +248,7 @@ public sealed class PotentialController : MonoBehaviour
                 browser?.Close();
                 var nextStorage = new PotentialStorage(path);
                 var nextProfile = nextStorage.Load() ?? PotentialProfile.Create();
-                var nextCatalog = ChartCatalog.Read(data, Plugin.Settings?.Source ?? ChartConstantSource.AnXiaoLi);
+                var nextCatalog = ChartCatalog.Read(data, Plugin.Settings?.Source ?? PotentialSettings.DefaultSource);
                 nextProfile.SynchronizeHistory(container._iEb.GameResults, nextCatalog);
                 savePath = path;
                 blockedPath = null;
@@ -265,12 +265,12 @@ public sealed class PotentialController : MonoBehaviour
                 Plugin.Logger.LogInfo($"潜力值已载入：{catalog.Count} 个动态谱面，上限 {PotentialCalculator.Format(catalog.Maximum)}。");
             }
             else if (refreshCatalog || catalog == null || catalog.Language != NativeLabel.CurrentLanguage()
-                || catalog.Source != (Plugin.Settings?.Source ?? ChartConstantSource.AnXiaoLi)
+                || catalog.Source != (Plugin.Settings?.Source ?? PotentialSettings.DefaultSource)
                 || catalog.ConstantsRevision != CommunityConstants.Revision(catalog.Source))
             {
-                bool sourceChanged = catalog?.Source != (Plugin.Settings?.Source ?? ChartConstantSource.AnXiaoLi)
+                bool sourceChanged = catalog?.Source != (Plugin.Settings?.Source ?? PotentialSettings.DefaultSource)
                     || (catalog != null && catalog.ConstantsRevision != CommunityConstants.Revision(catalog.Source));
-                catalog = ChartCatalog.Read(data, Plugin.Settings?.Source ?? ChartConstantSource.AnXiaoLi);
+                catalog = ChartCatalog.Read(data, Plugin.Settings?.Source ?? PotentialSettings.DefaultSource);
                 snapshot = profile!.Calculate(catalog);
                 if (sourceChanged && resultsScene != null && resultsScene.isActiveAndEnabled && observedResult.HasValue)
                 {

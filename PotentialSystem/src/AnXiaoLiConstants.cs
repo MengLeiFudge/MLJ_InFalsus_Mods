@@ -8,8 +8,8 @@ namespace InFalsusMod.Potential;
 /// <summary>维护安小璃定数的内置副本、profile 缓存及每次加载的一次后台更新。</summary>
 internal sealed class AnXiaoLiConstants : IDisposable
 {
-    /// <summary>GitHub 官方 Contents API 返回用户指定仓库文件的原文。</summary>
-    private const string SourceUrl = "https://api.github.com/repos/Anling20/InFalsusTools/contents/config/levels/experimental.json?ref=master";
+    /// <summary>GitHub Contents API 返回 In Falsus Tools 独立数据仓库中的社区定数原文。</summary>
+    private const string SourceUrl = "https://api.github.com/repos/Anling20/InFalsusTools_Data/contents/constants.json?ref=main";
     /// <summary>限制外部输入体积；缓存另预留 1 KiB 存放本地元数据。</summary>
     private const int MaximumBytes = 1024 * 1024;
     /// <summary>缓存归属当前 profile，并以内置资源摘要区分发布批次。</summary>
@@ -87,7 +87,7 @@ internal sealed class AnXiaoLiConstants : IDisposable
             using var timeout = CancellationTokenSource.CreateLinkedTokenSource(token);
             timeout.CancelAfter(TimeSpan.FromSeconds(15));
             using var client = new HttpClient { Timeout = Timeout.InfiniteTimeSpan };
-            client.DefaultRequestHeaders.UserAgent.ParseAdd("InFalsus-PotentialSystem/1.0.1");
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("InFalsus-PotentialSystem/1.0.2");
             client.DefaultRequestHeaders.Accept.ParseAdd("application/vnd.github.raw+json");
             using var response = await client.GetAsync(SourceUrl, HttpCompletionOption.ResponseHeadersRead, timeout.Token).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
