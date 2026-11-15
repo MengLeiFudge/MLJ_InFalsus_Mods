@@ -25,6 +25,10 @@ internal sealed class PotentialBrowser : IDisposable
     private bool loading;
     private PotentialPageCopy? pageCopy;
     private float openedAt;
+    /// <summary>借用原版三角转场：遮挡完成后准备页面，首帧绘制后揭幕；结束或取消时恢复原速度。</summary>
+    private GenericTriangleTransition? transition;
+    private float transitionSpeed;
+    private const float PageTransitionSpeed = 0.85f;
     internal CharacterUniversalIconMapping? Portraits { get; private set; }
     private PotentialSnapshot? snapshot, exporting, filteredSnapshot;
     private PotentialInputReceiver? receiver;
@@ -63,7 +67,9 @@ internal sealed class PotentialBrowser : IDisposable
     /// <summary>只在选歌场景拥有输入时预约打开，防止场景切换期间抢占输入。</summary>
     internal void RequestOpen(SongSelectScene scene, PotentialSnapshot? data, PotentialTab tab = PotentialTab.Scores)
     {
-        if (IsOpen || loading || inventory != null || requestedFrame >= 0 || data == null || InputManager.Instance?.IsHeadOfStack(scene) != true)
+        var animation = CoreScene._c?.genericTriangleTransition;
+        if (IsOpen || loading || inventory != null || requestedFrame >= 0 || data == null || scene.DisableInputEvents
+            || InputManager.Instance?.IsHeadOfStack(scene) != true || animation == null || animation._e() != GenericTriangleTransition._d._J)
             return;
         Tab = tab;
         owner = scene;
@@ -80,7 +86,9 @@ internal sealed class PotentialBrowser : IDisposable
         if (requestedFrame >= 0 && Time.frameCount > requestedFrame)
         {
             requestedFrame = -1;
-            if (owner == null || owner != scene || InputManager.Instance?.IsHeadOfStack(owner) != true)
+            var animation = CoreScene._c?.genericTriangleTransition;
+            if (owner == null || owner != scene || InputManager.Instance?.IsHeadOfStack(owner) != true
+                || owner.DisableInputEvents || animation == null || animation._e() != GenericTriangleTransition._d._J)
             { Close(); return; }
             var root = new GameObject("InFalsus.PotentialSystem.BrowserInput");
             try
@@ -93,6 +101,11 @@ internal sealed class PotentialBrowser : IDisposable
                 pageCopy = new PotentialPageCopy(owner);
                 loading = true;
                 openedAt = Time.realtimeSinceStartup;
+                transition = animation;
+                transitionSpeed = transition.TimeMultiplier;
+                transition.TimeMultiplier = PageTransitionSpeed;
+                transition._E();
+                transition._F(GenericTriangleTransition._C._i);
             }
             catch { Close(); if (root != null) Object.Destroy(root); throw; }
         }
@@ -108,6 +121,7 @@ internal sealed class PotentialBrowser : IDisposable
                 Plugin.Logger.LogError("卡牌页面副本加载超时，已取消打开。");
                 Close(); return;
             }
+            if (transition!._e() != GenericTriangleTransition._d._K) return;
             if (pageCopy?.Prepare() != true) return;
             inventory = pageCopy.Scene;
             covers = new CoverCache();
@@ -155,6 +169,18 @@ internal sealed class PotentialBrowser : IDisposable
         string value = editName ? nameDraft : search;
         string displayed = focused ? value.Insert(Math.Min(caret, value.Length), "|") : value;
         view!.Render(snapshot, covers!, displayed, status, focused, exporting != null);
+        if (transition != null)
+        {
+            // 首次 Render 已建立当前页签的控件、卡片和命中区，再让原版动画揭开新内容。
+            if (transition.targetState == GenericTriangleTransition._D._m)
+                transition._g(GenericTriangleTransition._C._i);
+            else if (transition._e() == GenericTriangleTransition._d._J)
+            {
+                transition.TimeMultiplier = transitionSpeed;
+                transition = null;
+                InputManager.Instance.RequestLastMouseMoveReplay();
+            }
+        }
     }
 
     /// <summary>冻结点击时的 B50 快照；搜索和滚动不会改变导出内容。</summary>
@@ -201,7 +227,7 @@ internal sealed class PotentialBrowser : IDisposable
     /// <summary>原生输入回调的异常不逃回游戏输入循环，下一次更新统一关闭页面。</summary>
     internal void Guard(Action action)
     {
-        try { if (IsOpen && !closeRequested) action(); }
+        try { if (IsOpen && !loading && transition == null && !closeRequested) action(); }
         catch (Exception ex)
         {
             closeRequested = true;
@@ -272,57 +298,65 @@ internal sealed class PotentialBrowser : IDisposable
     });
 
     /// <summary>原生键盘负责退出与搜索编辑，选歌和开始快捷键保持被本页隔离。</summary>
-    internal void Key(Key key, bool control, bool shift) => Guard(() =>
+    internal void Key(Key key, bool control, bool shift)
     {
-        if (key == UnityEngine.InputSystem.Key.Escape)
+        if (loading || transition != null)
         {
-            if (focused) { FinishEdit(); return; }
-            if (HistoryExpanded) { CollapseHistory(); return; }
-            if (Selected != null && Tab == PotentialTab.Scores) { CollapseDetail(); return; }
-            RequestClose(); return;
-        }
-        if (key == UnityEngine.InputSystem.Key.Tab)
-        { if (focused) FinishEdit(); else if (Tab == PotentialTab.Scores) FocusSearch(); else if (Tab == PotentialTab.Appearance) FocusName(); return; }
-        if (!focused)
+            if (key == UnityEngine.InputSystem.Key.Escape) closeRequested = true;
             return;
-        int first = Math.Min(caret, anchor), last = Math.Max(caret, anchor);
-        if (control)
+        }
+        Guard(() =>
         {
+            if (key == UnityEngine.InputSystem.Key.Escape)
+            {
+                if (focused) { FinishEdit(); return; }
+                if (HistoryExpanded) { CollapseHistory(); return; }
+                if (Selected != null && Tab == PotentialTab.Scores) { CollapseDetail(); return; }
+                RequestClose(); return;
+            }
+            if (key == UnityEngine.InputSystem.Key.Tab)
+            { if (focused) FinishEdit(); else if (Tab == PotentialTab.Scores) FocusSearch(); else if (Tab == PotentialTab.Appearance) FocusName(); return; }
+            if (!focused)
+                return;
+            int first = Math.Min(caret, anchor), last = Math.Max(caret, anchor);
+            if (control)
+            {
+                switch (key)
+                {
+                    case UnityEngine.InputSystem.Key.A: anchor = 0; caret = EditText.Length; return;
+                    case UnityEngine.InputSystem.Key.C:
+                    case UnityEngine.InputSystem.Key.X:
+                        if (first != last)
+                        {
+                            GUIUtility.systemCopyBuffer = EditText[first..last];
+                            if (key == UnityEngine.InputSystem.Key.X) ReplaceSelection("");
+                        }
+                        return;
+                    case UnityEngine.InputSystem.Key.V:
+                        ReplaceSelection(new string((GUIUtility.systemCopyBuffer ?? "").Where(c => !char.IsControl(c)).ToArray()));
+                        return;
+                }
+            }
             switch (key)
             {
-                case UnityEngine.InputSystem.Key.A: anchor = 0; caret = EditText.Length; return;
-                case UnityEngine.InputSystem.Key.C:
-                case UnityEngine.InputSystem.Key.X:
-                    if (first != last)
-                    {
-                        GUIUtility.systemCopyBuffer = EditText[first..last];
-                        if (key == UnityEngine.InputSystem.Key.X) ReplaceSelection("");
-                    }
-                    return;
-                case UnityEngine.InputSystem.Key.V:
-                    ReplaceSelection(new string((GUIUtility.systemCopyBuffer ?? "").Where(c => !char.IsControl(c)).ToArray()));
-                    return;
+                case UnityEngine.InputSystem.Key.Backspace:
+                    if (first == last) anchor = Previous(caret);
+                    ReplaceSelection(""); break;
+                case UnityEngine.InputSystem.Key.Delete:
+                    if (first == last) anchor = Next(caret);
+                    ReplaceSelection(""); break;
+                case UnityEngine.InputSystem.Key.LeftArrow:
+                    caret = !shift && first != last ? first : Previous(caret); break;
+                case UnityEngine.InputSystem.Key.RightArrow:
+                    caret = !shift && first != last ? last : Next(caret); break;
+                case UnityEngine.InputSystem.Key.Home: caret = 0; break;
+                case UnityEngine.InputSystem.Key.End: caret = EditText.Length; break;
+                case UnityEngine.InputSystem.Key.Enter:
+                case UnityEngine.InputSystem.Key.NumpadEnter: FinishEdit(); break;
             }
-        }
-        switch (key)
-        {
-            case UnityEngine.InputSystem.Key.Backspace:
-                if (first == last) anchor = Previous(caret);
-                ReplaceSelection(""); break;
-            case UnityEngine.InputSystem.Key.Delete:
-                if (first == last) anchor = Next(caret);
-                ReplaceSelection(""); break;
-            case UnityEngine.InputSystem.Key.LeftArrow:
-                caret = !shift && first != last ? first : Previous(caret); break;
-            case UnityEngine.InputSystem.Key.RightArrow:
-                caret = !shift && first != last ? last : Next(caret); break;
-            case UnityEngine.InputSystem.Key.Home: caret = 0; break;
-            case UnityEngine.InputSystem.Key.End: caret = EditText.Length; break;
-            case UnityEngine.InputSystem.Key.Enter:
-            case UnityEngine.InputSystem.Key.NumpadEnter: FinishEdit(); break;
-        }
-        if (!shift) anchor = caret;
-    });
+            if (!shift) anchor = caret;
+        });
+    }
 
     /// <summary>以完整文本元素移动，避免退格或方向键拆开代理对和组合字符。</summary>
     private int Previous(int position) => StringInfo.ParseCombiningCharacters(EditText).LastOrDefault(i => i < position);
@@ -352,6 +386,8 @@ internal sealed class PotentialBrowser : IDisposable
         loading = false;
         var copy = pageCopy;
         pageCopy = null;
+        var animation = transition;
+        transition = null;
         if (Portraits != null) Object.Destroy(Portraits);
         Portraits = null;
         requestedFrame = -1;
@@ -386,7 +422,19 @@ internal sealed class PotentialBrowser : IDisposable
             finally
             {
                 try { resources?.Dispose(); }
-                finally { copy?.Dispose(); }
+                finally
+                {
+                    try { copy?.Dispose(); }
+                    finally
+                    {
+                        if (animation != null)
+                        {
+                            animation.targetState = GenericTriangleTransition._D._L;
+                            animation.progress = 0f;
+                            animation.TimeMultiplier = transitionSpeed;
+                        }
+                    }
+                }
                 if (home && returningFrom != null && CoreScene._c != null)
                     CoreScene._c._Bj<SongSelectScene, HubScene>(_d._AB._nl);
             }
