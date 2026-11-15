@@ -104,6 +104,12 @@ internal sealed class NativePotentialPage : IDisposable
     /// <summary>隐藏副本中的库存内容；显示与输入仅由本模组和 TopBar 控件管理。</summary>
     private static void PrepareScene(RecipeScene scene, GameObject copyRoot)
     {
+        // 隐藏按钮尚未执行 Awake，先补齐同节点碰撞体；原版注销及 TopBar 登记都直接用它作字典键。
+        foreach (var button in copyRoot.GetComponentsInChildren<UIButton>(true))
+        {
+            button.ButtonCollider = button.GetComponent<BoxCollider>();
+            if (button.ButtonCollider != null) UIManager._A._ktA(button);
+        }
         var inventory = scene.cardInventoryLayer;
         inventory.gridScrollView.enabled = false;
         inventory.gridScrollView.contentContainer.gameObject.SetActive(false);
@@ -120,8 +126,6 @@ internal sealed class NativePotentialPage : IDisposable
         inventory.floatingDeleteButtonElements.Container.gameObject.SetActive(false);
         inventory.inventorySelectedContainer.enabled = false;
         foreach (var indicator in inventory.filterIndicatorOffOn) indicator.gameObject.SetActive(false);
-        // 原版按钮仍显示时也不得残留删除、配方、库存筛选等回调。
-        foreach (var button in copyRoot.GetComponentsInChildren<UIButton>(true)) UIManager._A._ktA(button);
         inventory.filterButton.gameObject.SetActive(false);
         inventory.sortButton.gameObject.SetActive(false);
         inventory.scrollBarButton.gameObject.SetActive(false);
@@ -511,7 +515,8 @@ internal sealed class NativePotentialPage : IDisposable
         {
             if (scene != null && scene.topBar != null)
             {
-                foreach (var button in scene.topBar.GetComponentsInChildren<UIButton>(true)) UIManager._A?._ktA(button);
+                foreach (var button in scene.topBar.GetComponentsInChildren<UIButton>(true))
+                    if (button.ButtonCollider != null) UIManager._A?._ktA(button);
                 scene.topBar.OnBackPressed = null;
                 scene.topBar.OnHubPressed = null;
                 scene.topBar.OnSettingsOutsidePressed = null;

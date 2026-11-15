@@ -103,7 +103,8 @@ internal sealed class PotentialSettingsSection : IDisposable
     {
         if (root == null) return;
         root.SetActive(false);
-        foreach (var button in root.GetComponentsInChildren<UIButton>(true)) UIManager._A?._ktA(button);
+        foreach (var button in root.GetComponentsInChildren<UIButton>(true))
+            if (button.ButtonCollider != null) UIManager._A?._ktA(button);
         Object.Destroy(root);
     }
 }
