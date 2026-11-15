@@ -203,8 +203,9 @@ internal sealed class NativePotentialPage : IDisposable
             if (browser.Tab == PotentialTab.Scores) RenderScores(snapshot, query, focused, exporting);
             else if (browser.Tab == PotentialTab.Appearance) RenderAppearance(snapshot, query, focused);
             else RenderSettings(snapshot);
+            float font = scene.cardInventoryLayer.sortButtonDescriptionText.FontSize;
             var bottom = new Rect(originalGrid.xMin, originalGrid.yMin, BodyBounds.width, filterRow.height);
-            Label("Status", message, bottom, scene.cardInventoryLayer.sortButtonDescriptionText.FontSize, PlayHistoryImage.Muted);
+            Label("Status", message, bottom, font * 0.9f, PlayHistoryImage.Muted);
             foreach (var pair in buttons) pair.Value.gameObject.SetActive(visibleButtons.Contains(pair.Key));
             foreach (var pair in labels) pair.Value.Text.gameObject.SetActive(visibleLabels.Contains(pair.Key));
             dirty = false;
@@ -241,7 +242,8 @@ internal sealed class NativePotentialPage : IDisposable
 
     private void RenderScores(PotentialSnapshot snapshot, string query, bool focused, bool exporting)
     {
-        Button("Search", focused || query.Length > 0 ? query : "搜索谱面", filterRow, browser.FocusSearch);
+        float font = scene.cardInventoryLayer.sortButtonDescriptionText.FontSize;
+        Button("Search", focused || query.Length > 0 ? query : "搜索谱面", filterRow, browser.FocusSearch, focused);
         Button("Sort", PotentialBrowser.SortNames[browser.Settings.BrowserSort], sortRow, browser.CycleSort);
         float top = sortRow.yMin - Gap;
         byte[] difficulties = { 0, 1, 2, 4, 8 };
@@ -253,29 +255,32 @@ internal sealed class NativePotentialPage : IDisposable
                 () => browser.SetDifficulty(target), browser.Settings.BrowserDifficulty == target);
             top = row.yMin - Gap;
         }
-        Label("Count", $"{plays.Length} 张谱面", new Rect(filterRow.xMin, top - filterRow.height, filterRow.width, filterRow.height), 22, PlayHistoryImage.Muted);
+        Label("Count", $"{plays.Length} 张谱面", new Rect(filterRow.xMin, top - filterRow.height, filterRow.width, filterRow.height), font, PlayHistoryImage.Muted);
         var body = browser.Selected == null || browser.HistoryExpanded ? BodyBounds : originalGrid;
-        float header = filterRow.height * 1.7f;
+        float header = filterRow.height;
+        float exportWidth = filterRow.width * 1.15f;
+        Button("Export", exporting ? "正在导出…" : "导出 B50", new Rect(body.xMax - exportWidth, body.yMax - header, exportWidth, header), browser.RequestExport);
+        float metricGap = Gap * 1.5f;
+        float metricWidth = Math.Min(filterRow.width * 1.35f, (body.width - exportWidth - metricGap * 3) / 3f);
         string[] names = { "PTT", "B10", "B50" };
         decimal[] values = { snapshot.Potential, snapshot.B10Average, snapshot.B50Average };
-        float metricWidth = (body.width - filterRow.width - Gap) / 3;
         for (int i = 0; i < names.Length; i++)
-            Label(names[i], names[i] + "  " + PotentialCalculator.Format(values[i]),
-                new Rect(body.xMin + i * metricWidth, body.yMax - header, metricWidth, header), 30,
+            Label(names[i], $"{names[i]}  {PotentialCalculator.Format(values[i])}",
+                new Rect(body.xMin + i * (metricWidth + metricGap), body.yMax - header, metricWidth, header), font * 1.3f,
                 i == 0 ? PlayHistoryImage.Accent : PlayHistoryImage.Foreground);
-        Button("Export", exporting ? "正在导出…" : "导出 B50", new Rect(body.xMax - filterRow.width, body.yMax - header, filterRow.width, filterRow.height), browser.RequestExport);
         if (browser.HistoryExpanded && browser.Selected != null)
         {
-            Button("BackToList", "返回成绩列表", new Rect(body.xMin, body.yMax - header - filterRow.height - Gap, filterRow.width, filterRow.height), browser.CollapseHistory);
-            var imageBounds = Rect.MinMaxRect(body.xMin, body.yMin + filterRow.height, body.xMax, body.yMax - header - filterRow.height - Gap * 2);
+            float barTop = body.yMax - header - Gap - filterRow.height;
+            Button("BackToList", "返回成绩列表", new Rect(body.xMin, barTop, filterRow.width * 1.15f, filterRow.height), browser.CollapseHistory);
+            var imageBounds = Rect.MinMaxRect(body.xMin, body.yMin + filterRow.height + Gap, body.xMax, barTop - Gap);
             ShowHistory(PlayHistoryImage.Full(browser.Selected, browser.History, browser.SelectedPlay), FitImage(imageBounds, PlayHistoryImage.Width, PlayHistoryImage.Height));
             HitPlot(historyImage.Layout);
-            Button("PreviousPlay", "上一次", new Rect(body.xMax - 2 * filterRow.width - Gap, body.yMax - header - filterRow.height - Gap, filterRow.width, filterRow.height), () => browser.MovePlay(-1));
-            Button("NextPlay", "下一次", new Rect(body.xMax - filterRow.width, body.yMax - header - filterRow.height - Gap, filterRow.width, filterRow.height), () => browser.MovePlay(1));
+            Button("PreviousPlay", "上一次", new Rect(body.xMax - 2 * filterRow.width - Gap, barTop, filterRow.width, filterRow.height), () => browser.MovePlay(-1));
+            Button("NextPlay", "下一次", new Rect(body.xMax - filterRow.width, barTop, filterRow.width, filterRow.height), () => browser.MovePlay(1));
             return;
         }
-        LayoutList(Rect.MinMaxRect(body.xMin, body.yMin + filterRow.height, body.xMax - Gap * 2, body.yMax - header - Gap));
-        if (plays.Length == 0) Label("Empty", "没有符合条件的已游玩谱面", listBounds, 25, PlayHistoryImage.Muted);
+        LayoutList(Rect.MinMaxRect(body.xMin, body.yMin + filterRow.height + Gap * 0.5f, body.xMax - Gap * 2, body.yMax - header - Gap));
+        if (plays.Length == 0) Label("Empty", "没有符合条件的已游玩谱面", listBounds, font * 1.15f, PlayHistoryImage.Muted, 0);
         if (browser.Selected != null) RenderDetail();
     }
 
@@ -289,27 +294,64 @@ internal sealed class NativePotentialPage : IDisposable
         selected.traitDetailsContainer.gameObject.SetActive(false);
         foreach (var text in selected.GetComponentsInChildren<FastText.FastText>(true)) text.gameObject.SetActive(false);
         var body = rightColumn;
-        Button("Collapse", "收起详情", new Rect(body.xMax - filterRow.width - Gap, body.yMax - filterRow.height - Gap, filterRow.width, filterRow.height), browser.CollapseDetail);
+        Button("Collapse", "收起详情", new Rect(body.xMax - filterRow.width - Gap, body.yMax - filterRow.height, filterRow.width, filterRow.height), browser.CollapseDetail);
         var image = PlayHistoryImage.Summary(browser.Selected!, browser.History, browser.HistoryError);
-        ShowHistory(image, FitImage(Rect.MinMaxRect(body.xMin + Gap, body.yMin + filterRow.height * 2, body.xMax - Gap, body.yMax - filterRow.height * 2), image.Width, image.Height));
+        ShowHistory(image, FitImage(Rect.MinMaxRect(body.xMin + Gap, body.yMin + filterRow.height + Gap * 2, body.xMax - Gap, body.yMax - filterRow.height - Gap), image.Width, image.Height));
         Button("ExpandHistory", "完整游玩记录", new Rect(body.xMin + Gap, body.yMin + Gap, body.width - Gap * 2, filterRow.height), browser.ExpandHistory);
     }
 
-    /// <summary>头像与名片在原版内容区域中展示。</summary>
+    /// <summary>头像与名片在原版三栏中分区展示：左栏控制名片与角色跟随，主区展示角色网格。</summary>
     private void RenderAppearance(PotentialSnapshot snapshot, string query, bool focused)
     {
+        float font = scene.cardInventoryLayer.sortButtonDescriptionText.FontSize;
+        float leftX = filterRow.xMin;
+        float leftW = filterRow.width;
+        float rowH = filterRow.height;
+        float top = filterRow.yMax;
+        Label("AppearanceSectionPortrait", "头像设置", new Rect(leftX, top - rowH * 0.8f, leftW, rowH * 0.8f), font * 0.95f, PlayHistoryImage.Muted);
+        top -= rowH * 0.8f + Gap * 0.5f;
+        Button("FollowPortrait", "跟随游戏角色", new Rect(leftX, top - rowH, leftW, rowH), () => browser.SetPortrait(-1), browser.Settings.Portrait == -1);
+        top -= rowH + Gap * 1.5f;
+        Label("AppearanceSectionName", "名片昵称", new Rect(leftX, top - rowH * 0.8f, leftW, rowH * 0.8f), font * 0.95f, PlayHistoryImage.Muted);
+        top -= rowH * 0.8f + Gap * 0.5f;
+        string currentName = focused ? query : string.IsNullOrEmpty(browser.Settings.ProfileName) ? "点击输入昵称" : browser.Settings.ProfileName;
+        Button("ProfileName", currentName, new Rect(leftX, top - rowH, leftW, rowH), browser.FocusName, focused);
+        top -= rowH + Gap * 1.5f;
+        Label("AppearanceSectionStyle", "名片款式", new Rect(leftX, top - rowH * 0.8f, leftW, rowH * 0.8f), font * 0.95f, PlayHistoryImage.Muted);
+        top -= rowH * 0.8f + Gap * 0.5f;
+        string[] colors = { "阶梯 4", "阶梯 12", "阶梯 8", "阶梯 2" };
+        for (int i = 0; i < colors.Length; i++)
+        {
+            int color = i;
+            Button("Color" + i, colors[i], new Rect(leftX, top - rowH, leftW, rowH), () => browser.SetNamecardColor(color), browser.Settings.NamecardColor == i);
+            top -= rowH + Gap * 0.8f;
+        }
         var body = BodyBounds;
-        Label("AppearanceTitle", "头像与名片", new Rect(body.xMin, body.yMax - filterRow.height, body.width, filterRow.height), 30, PlayHistoryImage.Foreground);
-        Button("FollowPortrait", "跟随游戏角色", filterRow, () => browser.SetPortrait(-1), browser.Settings.Portrait == -1);
+        float header = rowH;
+        int selectedChar = browser.Settings.Portrait;
+        string activePortrait = selectedChar < 0 ? $"当前：跟随游戏角色 ({(CharacterIdentifier)browser.PortraitCharacter})" : $"当前：{(CharacterIdentifier)selectedChar}";
+        Label("AppearanceTitle", "选择角色头像", new Rect(body.xMin, body.yMax - header, body.width * 0.35f, header), font * 1.25f, PlayHistoryImage.Foreground);
+        Label("AppearanceCurrent", activePortrait, new Rect(body.xMin + body.width * 0.32f, body.yMax - header, body.width * 0.43f, header), font, PlayHistoryImage.Muted);
+        Label("AppearancePTT", "PTT  " + PotentialCalculator.Format(snapshot.Potential), new Rect(body.xMax - body.width * 0.25f, body.yMax - header, body.width * 0.25f, header), font * 1.25f, PlayHistoryImage.Accent, 1);
+        var grid = Rect.MinMaxRect(body.xMin, body.yMin + rowH + Gap, body.xMax, body.yMax - header - Gap * 1.5f);
         var characters = Enum.GetValues<CharacterIdentifier>();
-        int rows = (characters.Length + 8) / 9;
-        float tile = Math.Min(filterRow.width, Math.Min((body.width - Gap * 8) / 9,
-            (body.height - filterRow.height * (rows + 5) - Gap * (rows + 1)) / rows));
+        const int cols = 9;
+        int rows = (characters.Length + cols - 1) / cols;
+        float labelH = rowH * 0.65f;
+        float colGap = Gap * 1.2f;
+        float rowGap = Gap * 1.1f;
+        float cellW = (grid.width - colGap * (cols - 1)) / cols;
+        float cellH = (grid.height - rowGap * (rows - 1)) / rows;
+        float tile = Math.Min(cellW, cellH - labelH);
+        float totalH = rows * (tile + labelH) + (rows - 1) * rowGap;
+        float startY = grid.center.y + totalH / 2f;
         for (int i = 0; i < characters.Length; i++)
         {
             int character = (int)characters[i];
-            float x = body.xMin + i % 9 * (tile + Gap), y = body.yMax - filterRow.height * 2 - i / 9 * (tile + filterRow.height + Gap);
-            var bounds = new Rect(x, y - tile, tile, tile);
+            int col = i % cols, row = i / cols;
+            float cellX = grid.xMin + col * (cellW + colGap);
+            float topY = startY - row * (tile + labelH + rowGap);
+            var bounds = new Rect(cellX + (cellW - tile) / 2f, topY - tile, tile, tile);
             if (!portraitGraphics.TryGetValue(character, out var graphic))
             {
                 var pixels = Portrait(character);
@@ -317,23 +359,22 @@ internal sealed class NativePotentialPage : IDisposable
                 portraitTextures.Add(character, texture);
                 portraitGraphics.Add(character, graphic = widgets.Graphic(widgets.Root.transform, "Portrait." + character, texture, Color.white));
             }
+            bool chosen = selectedChar == character || (selectedChar < 0 && browser.PortraitCharacter == character);
+            graphic.Tint(chosen ? Color.white : new Color(0.76f, 0.82f, 0.88f));
             graphic.Show(bounds.center, bounds.size, portraitTextures[character]);
-            Hit("Portrait" + character, new Rect(x, y - tile - filterRow.height, tile, tile + filterRow.height), () => browser.SetPortrait(character));
-            Label("PortraitName" + character, characters[i].ToString(), new Rect(x, y - tile - filterRow.height, tile, filterRow.height), 22,
-                browser.Settings.Portrait == character ? PlayHistoryImage.Accent : PlayHistoryImage.Foreground);
+            Hit("Portrait" + character, new Rect(cellX, topY - tile - labelH, cellW, tile + labelH), () => browser.SetPortrait(character));
+            Label("PortraitName" + character, FormatCharacterName(characters[i].ToString()), new Rect(cellX + 2f, topY - tile - labelH, cellW - 4f, labelH), font * 0.82f,
+                selectedChar == character ? PlayHistoryImage.Accent : chosen ? PlayHistoryImage.Foreground : PlayHistoryImage.Muted, 0);
         }
-        float bottom = body.yMin + filterRow.height * 2 + Gap;
-        Button("ProfileName", focused ? query : string.IsNullOrEmpty(browser.Settings.ProfileName) ? "设置名片昵称" : browser.Settings.ProfileName,
-            new Rect(body.xMin, bottom, body.width / 2, filterRow.height), browser.FocusName);
-        string[] colors = { "阶梯 4", "阶梯 12", "阶梯 8", "阶梯 2" };
-        for (int i = 0; i < colors.Length; i++)
-        {
-            int color = i;
-            Button("Color" + i, colors[i], new Rect(body.xMin + i * (filterRow.width + Gap), bottom - filterRow.height - Gap, filterRow.width, filterRow.height),
-                () => browser.SetNamecardColor(color), browser.Settings.NamecardColor == i);
-        }
-        Label("AppearancePTT", "PTT " + PotentialCalculator.Format(snapshot.Potential), new Rect(body.center.x, bottom, body.width / 2, filterRow.height), 30, PlayHistoryImage.Accent);
     }
+
+    private static string FormatCharacterName(string raw) => raw switch
+    {
+        "GhostManFemale" => "Ghost (F)",
+        "GhostManMale" => "Ghost (M)",
+        "GhostManStudent" => "Ghost (S)",
+        _ => raw
+    };
 
     private void RenderSettings(PotentialSnapshot snapshot)
     {
@@ -354,14 +395,14 @@ internal sealed class NativePotentialPage : IDisposable
         return pixels;
     }
 
-    private void Label(string key, string text, Rect bounds, float font, uint color)
+    private void Label(string key, string text, Rect bounds, float font, uint color, float align = -1)
     {
         if (!labels.TryGetValue(key, out var label))
             labels.Add(key, label = new NativeLabel(scene.sortButtonDescriptionText, widgets.Root.transform, key,
                 new Vector2(0.5f, 0.5f), Constrained2DAlignment.Center, Vector2.zero, font));
         label.Text.gameObject.SetActive(true);
         label.Set(text, PotentialPresentation.Color(color));
-        PlaceLabel(label, bounds.center, bounds.width, font, -1);
+        PlaceLabel(label, bounds.center, bounds.width, font, align);
         visibleLabels.Add(key);
     }
 
@@ -495,18 +536,18 @@ internal sealed class NativePotentialPage : IDisposable
     {
         var text = label.Text;
         text.presention = (text.presention & ~FastText.FastText.FastTextPresentation.AutoLineBreak) | FastText.FastText.FastTextPresentation.IgnoreLinebreak;
-        text.SetFontSize(fontSize, FastText.FastText.UpdateType.DontUpdateMesh);
-        text.EnsureDirtyFlagsProcessed();
+        var bounds = label.Measure(fontSize);
+        float scale = bounds.width > width && bounds.width > 0f ? width / bounds.width : 1f;
+        if (scale < 1f) bounds = label.Measure(fontSize * scale);
         var layout = text.GetComponent<Constrained2D>();
-        BrowserWidgets.Place(layout, center, layout.constrained2DTransform.sizeInPixels);
-        float measured = layout._mrA().x;
-        if (measured > width && measured > 0)
+        if (bounds.width <= 0f || bounds.height <= 0f)
         {
-            text.SetFontSize(fontSize * width / measured, FastText.FastText.UpdateType.Default);
-            layout._PQA(0x3f); measured = width;
+            BrowserWidgets.Place(layout, center, layout.constrained2DTransform.sizeInPixels);
+            return;
         }
-        if (align != 0 && measured > 0)
-            BrowserWidgets.Place(layout, center + new Vector2(align * (width - measured) / 2, 0), layout.constrained2DTransform.sizeInPixels);
+        var target = center + new Vector2(align * Math.Max(0f, width - bounds.width) / 2f, 0f);
+        var origin = target - bounds.center;
+        BrowserWidgets.Place(layout, origin, layout.constrained2DTransform.sizeInPixels);
     }
 
     public void Dispose()
