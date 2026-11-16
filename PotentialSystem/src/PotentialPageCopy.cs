@@ -72,6 +72,8 @@ internal sealed class PotentialPageCopy : IDisposable
         foreach (var behaviour in Root.GetComponentsInChildren<Behaviour>(true))
             if (behaviour.TryCast<Constrained2D>() == null && behaviour.TryCast<FastText.FastText>() == null
                 && behaviour.TryCast<UIButton>() == null && behaviour.TryCast<TopBar>() == null) behaviour.enabled = false;
+        // 源场景在业务 Awake 时停用，副本中的隐藏节点也必须在首次激活、测量或复制按钮前完成渲染绑定。
+        foreach (var layout in Root.GetComponentsInChildren<Constrained2D>(true)) BrowserWidgets.BindComponents(layout);
         foreach (var collider in Root.GetComponentsInChildren<Collider>(true)) collider.enabled = false;
         foreach (var root in owner.gameObject.scene.GetRootGameObjects())
         {

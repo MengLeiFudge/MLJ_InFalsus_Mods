@@ -280,15 +280,33 @@ internal sealed class BrowserWidgets : IDisposable
         return button;
     }
 
-    /// <summary>克隆层级后使布局缓存指向副本。</summary>
-    internal static void Rebind(Constrained2D layout)
+    /// <summary>激活副本前绑定本节点组件；隐藏节点不提前登记全局布局，首次激活仍由原版 Awake 处理。</summary>
+    internal static void BindComponents(Constrained2D layout)
     {
         var value = layout.constrained2DTransform;
         value.transform = layout.transform;
         value.meshRenderer = layout.GetComponent<MeshRenderer>();
         value.meshFilter = layout.GetComponent<MeshFilter>();
         value.fastText = layout.GetComponent<FastText.FastText>();
+        if ((value.type != Constrained2DType.Container && (value.meshRenderer == null || value.meshFilter == null))
+            || (value.type == Constrained2DType.FastText && value.fastText == null))
+        {
+            string path = layout.name;
+            for (var parent = layout.transform.parent; parent != null; parent = parent.parent) path = parent.name + "/" + path;
+            throw new InvalidOperationException($"页面副本布局缺少有效渲染组件：{path}（{value.type}）。");
+        }
+        if (value.fastText != null)
+        {
+            value.fastText.meshRenderer = value.meshRenderer;
+            value.fastText.meshFilter = value.meshFilter;
+        }
         layout.constrained2DTransform = value;
+    }
+
+    /// <summary>重绑组件后更新已复制或换父级控件的原生布局缓存。</summary>
+    internal static void Rebind(Constrained2D layout)
+    {
+        BindComponents(layout);
         layout._rQA();
         layout._RQA();
         layout._PQA(0x3f);

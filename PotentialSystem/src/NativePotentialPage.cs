@@ -398,7 +398,7 @@ internal sealed class NativePotentialPage : IDisposable
     private void Label(string key, string text, Rect bounds, float font, uint color, float align = -1)
     {
         if (!labels.TryGetValue(key, out var label))
-            labels.Add(key, label = new NativeLabel(scene.sortButtonDescriptionText, widgets.Root.transform, key,
+            labels.Add(key, label = new NativeLabel(scene.cardInventoryLayer.sortButtonDescriptionText, widgets.Root.transform, key,
                 new Vector2(0.5f, 0.5f), Constrained2DAlignment.Center, Vector2.zero, font));
         label.Text.gameObject.SetActive(true);
         label.Set(text, PotentialPresentation.Color(color));
